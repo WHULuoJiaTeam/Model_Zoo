@@ -1,0 +1,491 @@
+{'data_dir': 'Train dataset directory.', 'per_batch_size': 'Batch size for Training.', 'pretrained_backbone': 'The ckpt file of CspDarkNet53.', 'resume_yolov5': 'The ckpt file of YOLOv5, which used to fine tune.', 'pretrained_checkpoint': 'The ckpt file of YOLOv5CspDarkNet53.', 'lr_scheduler': 'Learning rate scheduler, options: exponential, cosine_annealing.', 'lr': 'Learning rate.', 'lr_epochs': "Epoch of changing of lr changing, split with ','.", 'lr_gamma': 'Decrease lr by a factor of exponential lr_scheduler.', 'eta_min': 'Eta_min in cosine_annealing scheduler.', 'T_max': 'T-max in cosine_annealing scheduler.', 'max_epoch': 'Max epoch num to train the model.', 'warmup_epochs': 'Warmup epochs.', 'weight_decay': 'Weight decay factor.', 'momentum': 'Momentum.', 'loss_scale': 'Static loss scale.', 'label_smooth': 'Whether to use label smooth in CE.', 'label_smooth_factor': 'Smooth strength of original one-hot.', 'log_interval': 'Logging interval steps.', 'ckpt_path': 'Checkpoint save location.', 'ckpt_interval': 'Save checkpoint interval.', 'is_save_on_master': 'Save ckpt on master or all rank, 1 for master, 0 for all ranks.', 'is_distributed': 'Distribute train or not, 1 for yes, 0 for no.', 'bind_cpu': 'Whether bind cpu when distributed training.', 'device_num': 'Device numbers per server', 'rank': 'Local rank of distributed.', 'group_size': 'World size of device.', 'need_profiler': 'Whether use profiler. 0 for no, 1 for yes.', 'resize_rate': 'Resize rate for multi-scale training.', 'ann_file': 'path to annotation', 'each_multiscale': 'Apply multi-scale for each scale', 'labels': 'the label of train data', 'multi_label': 'use multi label to nms', 'multi_label_thresh': 'multi label thresh', 'pretrained': 'model_path, local pretrained model to load', 'log_path': 'checkpoint save location', 'ann_val_file': 'path to annotation', 'infer_log': 'infer result path', 'device_id': 'Device id for export', 'batch_size': 'batch size for export', 'testing_shape': 'shape for test', 'ckpt_file': 'Checkpoint file path for export', 'file_name': 'output file name for export', 'file_format': 'file format for export', 'result_files': 'path to 310 infer result floder'}
+device_id:0
+rank:0
+group_size:8
+2023-01-10 09:52:22,640:INFO:Args:
+2023-01-10 09:52:22,640:INFO:--> enable_modelarts: False
+2023-01-10 09:52:22,641:INFO:--> data_url: 
+2023-01-10 09:52:22,641:INFO:--> train_url: 
+2023-01-10 09:52:22,641:INFO:--> checkpoint_url: 
+2023-01-10 09:52:22,641:INFO:--> outputs_url: 
+2023-01-10 09:52:22,641:INFO:--> data_path: /cache/data
+2023-01-10 09:52:22,641:INFO:--> output_path: /cache/train
+2023-01-10 09:52:22,641:INFO:--> load_path: /cache/checkpoint_path
+2023-01-10 09:52:22,641:INFO:--> device_target: Ascend
+2023-01-10 09:52:22,641:INFO:--> need_modelarts_dataset_unzip: True
+2023-01-10 09:52:22,641:INFO:--> modelarts_dataset_unzip_name: coco
+2023-01-10 09:52:22,641:INFO:--> data_dir: /home/ma-user/modelarts/inputs/data_dir_0/
+2023-01-10 09:52:22,641:INFO:--> per_batch_size: 32
+2023-01-10 09:52:22,642:INFO:--> yolov5_version: yolov5s
+2023-01-10 09:52:22,642:INFO:--> pretrained_backbone: 
+2023-01-10 09:52:22,642:INFO:--> resume_yolov5: 
+2023-01-10 09:52:22,642:INFO:--> pretrained_checkpoint: 
+2023-01-10 09:52:22,642:INFO:--> save_checkpoint_epochs: 1
+2023-01-10 09:52:22,642:INFO:--> output_dir: /home/ma-user/modelarts/outputs/output_dir_0/
+2023-01-10 09:52:22,642:INFO:--> train_img_dir: train2017
+2023-01-10 09:52:22,642:INFO:--> train_json_file: annotations/instances_train2017.json
+2023-01-10 09:52:22,642:INFO:--> log_summary: False
+2023-01-10 09:52:22,642:INFO:--> lr_scheduler: cosine_annealing
+2023-01-10 09:52:22,642:INFO:--> lr: 0.02
+2023-01-10 09:52:22,642:INFO:--> lr_epochs: [220, 250]
+2023-01-10 09:52:22,643:INFO:--> lr_gamma: 0.1
+2023-01-10 09:52:22,643:INFO:--> eta_min: 0.0
+2023-01-10 09:52:22,643:INFO:--> T_max: 320
+2023-01-10 09:52:22,643:INFO:--> max_epoch: 320
+2023-01-10 09:52:22,643:INFO:--> warmup_epochs: 20
+2023-01-10 09:52:22,643:INFO:--> weight_decay: 0.0005
+2023-01-10 09:52:22,643:INFO:--> momentum: 0.9
+2023-01-10 09:52:22,643:INFO:--> loss_scale: 1024.0
+2023-01-10 09:52:22,643:INFO:--> label_smooth: 0
+2023-01-10 09:52:22,643:INFO:--> label_smooth_factor: 0.1
+2023-01-10 09:52:22,643:INFO:--> log_interval: 100
+2023-01-10 09:52:22,643:INFO:--> ckpt_path: outputs/
+2023-01-10 09:52:22,643:INFO:--> is_distributed: 1
+2023-01-10 09:52:22,644:INFO:--> bind_cpu: True
+2023-01-10 09:52:22,644:INFO:--> device_num: 8
+2023-01-10 09:52:22,644:INFO:--> rank: 0
+2023-01-10 09:52:22,644:INFO:--> group_size: 8
+2023-01-10 09:52:22,644:INFO:--> need_profiler: 0
+2023-01-10 09:52:22,644:INFO:--> resize_rate: 10
+2023-01-10 09:52:22,644:INFO:--> filter_weight: False
+2023-01-10 09:52:22,644:INFO:--> use_modelarts: 1
+2023-01-10 09:52:22,644:INFO:--> obs_ckpt_path: /home/ma-user/modelarts/outputs/obs_ckpt_path_1/
+2023-01-10 09:52:22,644:INFO:--> pretrained: /data02/tjy/OUTPUT/yolov5/test7_dota/train/yolov5_320_189.ckpt
+2023-01-10 09:52:22,644:INFO:--> log_path: /data02/tjy/OUTPUT/yolov5/test7_dota/train/eval_log
+2023-01-10 09:52:22,644:INFO:--> ann_val_file: 
+2023-01-10 09:52:22,645:INFO:--> eval_nms_thresh: 0.6
+2023-01-10 09:52:22,645:INFO:--> ignore_threshold: 0.7
+2023-01-10 09:52:22,645:INFO:--> test_ignore_threshold: 0.001
+2023-01-10 09:52:22,645:INFO:--> multi_label: False
+2023-01-10 09:52:22,645:INFO:--> multi_label_thresh: 0.1
+2023-01-10 09:52:22,645:INFO:--> infer_log: /home/xx/Desktop/yolov5/output/infer/val_test
+2023-01-10 09:52:22,645:INFO:--> epochtime_path: /data02/tjy/OUTPUT/yolov5/test7_dota/train/epochtime
+2023-01-10 09:52:22,645:INFO:--> loss_path: /data02/tjy/OUTPUT/yolov5/test7_dota/train/loss
+2023-01-10 09:52:22,645:INFO:--> device_id: 0
+2023-01-10 09:52:22,645:INFO:--> batch_size: 1
+2023-01-10 09:52:22,645:INFO:--> testing_shape: [640, 640]
+2023-01-10 09:52:22,645:INFO:--> ckpt_file: 
+2023-01-10 09:52:22,645:INFO:--> file_name: yolov5
+2023-01-10 09:52:22,646:INFO:--> file_format: MINDIR
+2023-01-10 09:52:22,646:INFO:--> dataset_path: 
+2023-01-10 09:52:22,646:INFO:--> ann_file: 
+2023-01-10 09:52:22,646:INFO:--> hue: 0.015
+2023-01-10 09:52:22,646:INFO:--> saturation: 1.5
+2023-01-10 09:52:22,646:INFO:--> value: 0.4
+2023-01-10 09:52:22,646:INFO:--> jitter: 0.3
+2023-01-10 09:52:22,646:INFO:--> num_classes: 16
+2023-01-10 09:52:22,646:INFO:--> max_box: 960
+2023-01-10 09:52:22,646:INFO:--> checkpoint_filter_list: ['feature_map.back_block1.conv.weight', 'feature_map.back_block1.conv.bias', 'feature_map.back_block2.conv.weight', 'feature_map.back_block2.conv.bias', 'feature_map.back_block3.conv.weight', 'feature_map.back_block3.conv.bias']
+2023-01-10 09:52:22,646:INFO:--> anchor_scales: [[12, 16], [19, 36], [40, 28], [36, 75], [76, 55], [72, 146], [142, 110], [192, 243], [459, 401]]
+2023-01-10 09:52:22,646:INFO:--> out_channel: 63
+2023-01-10 09:52:22,647:INFO:--> input_shape: [[3, 32, 64, 128, 256, 512, 1], [3, 48, 96, 192, 384, 768, 2], [3, 64, 128, 256, 512, 1024, 3], [3, 80, 160, 320, 640, 1280, 4]]
+2023-01-10 09:52:22,647:INFO:--> test_img_shape: [640, 640]
+2023-01-10 09:52:22,647:INFO:--> labels: ['plane', 'baseball-diamond', 'bridge', 'ground-track-field', 'small-vehicle', 'large-vehicle', 'ship', 'tennis-court', 'basketball-court', 'storage-tank', 'soccer-ball-field', 'roundabout', 'harbor', 'swimming-pool', 'helicopter', 'container-crane']
+2023-01-10 09:52:22,647:INFO:--> coco_ids: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+2023-01-10 09:52:22,647:INFO:--> result_files: ./result_Files
+2023-01-10 09:52:22,647:INFO:--> config_path: /home/ma-user/modelarts/user-job-dir/yolov5/model_utils/../default_config.yaml
+2023-01-10 09:52:22,647:INFO:--> data_root: /home/ma-user/modelarts/inputs/data_dir_0/train2017
+2023-01-10 09:52:22,647:INFO:--> annFile: /home/ma-user/modelarts/inputs/data_dir_0/annotations/instances_train2017.json
+2023-01-10 09:52:22,647:INFO:--> logger: <LOGGER YOLOV5 (NOTSET)>
+2023-01-10 09:52:22,647:INFO:
+loading annotations into memory...
+Done (t=10.26s)
+creating index...
+index created!
+2023-01-10 09:52:39,784:INFO:Finish loading dataset
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:10.926.049 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:10.930.468 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:10.934.545 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:11.416.811 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:11.848.445 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.073.468 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.118.254 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.118.965 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.124.492 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.125.042 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.140.236 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.140.812 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.144.570 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.145.214 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.145.797 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.146.372 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.146.950 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.147.541 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.155.673 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.158.868 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.162.059 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.163.011 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.163.855 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.164.383 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.169.615 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.170.114 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.190.040 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.190.544 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.378.017 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.378.720 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.383.830 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.384.339 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.397.777 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.398.355 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.402.024 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.402.600 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.403.163 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.403.713 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.404.274 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.404.831 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.412.499 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.415.477 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.418.428 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.419.295 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.420.100 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.420.572 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.425.636 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.426.123 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.445.348 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.445.821 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.675.076 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.675.768 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.680.833 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.681.315 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.694.180 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.694.761 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.698.391 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.698.954 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.699.505 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.700.061 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.700.619 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.701.167 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.708.884 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.711.826 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.714.774 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.715.625 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.716.430 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.716.895 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.721.766 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.722.247 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.740.886 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] DEVICE(198,ffffa2318010,python):2023-01-10-09:54:12.741.370 [luojianet_ms/ccsrc/plugin/device/ascend/hal/device/kernel_select_ascend.cc:331] FilterRaisedOrReducePrecisionMatchedKernelInfo] Operator:[StridedSliceGrad] don't support int64, reduce precision from int64 to int32.
+[WARNING] PRE_ACT(198,ffffa2318010,python):2023-01-10-09:54:44.656.852 [luojianet_ms/ccsrc/backend/common/pass/communication_op_fusion.cc:199] GetAllReduceSplitSegment] Split threshold is 0. AllReduce nodes will take default fusion strategy.
+[WARNING] MD(198,fffec17fa1e0,python):2023-01-10-09:57:06.943.253 [luojianet_ms/ccsrc/minddata/dataset/engine/datasetops/source/generator_op.cc:192] operator()] Bad performance attention, it takes more than 25 seconds to generator.__next__ new row, which might cause `GetNext` timeout problem when sink_mode=True. You can increase the parameter num_parallel_workers in GeneratorDataset / optimize the efficiency of obtaining samples in the user-defined generator function.
+2023-01-10 09:57:08,532:INFO:epoch[1], iter[1], loss:7808.681641, fps:0.96 imgs/sec, lr:1.0638297680998221e-05, per step time: 266538.4922027588ms
+2023-01-10 09:59:21,229:INFO:epoch[2], iter[1], loss:718.493260, fps:181.36 imgs/sec, lr:1.0638297680998221e-05, per step time: 1411.558856355383ms
+2023-01-10 10:00:25,974:INFO:epoch[3], iter[1], loss:211.901843, fps:371.70 imgs/sec, lr:1.0638297680998221e-05, per step time: 688.7334128643604ms
+2023-01-10 10:01:37,564:INFO:epoch[4], iter[1], loss:182.679425, fps:336.16 imgs/sec, lr:1.0638297680998221e-05, per step time: 761.5438243176075ms
+2023-01-10 10:02:49,255:INFO:epoch[5], iter[1], loss:173.454173, fps:335.67 imgs/sec, lr:1.0638297680998221e-05, per step time: 762.66252233627ms
+2023-01-10 10:03:52,745:INFO:epoch[6], iter[1], loss:165.965646, fps:379.24 imgs/sec, lr:1.0638297680998221e-05, per step time: 675.0264573604503ms
+2023-01-10 10:04:56,602:INFO:epoch[7], iter[1], loss:156.627475, fps:376.86 imgs/sec, lr:1.0638297680998221e-05, per step time: 679.3058578004228ms
+2023-01-10 10:06:17,864:INFO:epoch[8], iter[1], loss:148.234739, fps:296.15 imgs/sec, lr:1.0638297680998221e-05, per step time: 864.4382497097583ms
+2023-01-10 10:07:32,154:INFO:epoch[9], iter[1], loss:132.762795, fps:323.97 imgs/sec, lr:1.0638297680998221e-05, per step time: 790.1865446821172ms
+2023-01-10 10:09:01,570:INFO:epoch[10], iter[1], loss:129.663359, fps:269.14 imgs/sec, lr:1.0638297680998221e-05, per step time: 951.1866265154899ms
+2023-01-10 10:10:30,371:INFO:epoch[11], iter[1], loss:123.165611, fps:270.99 imgs/sec, lr:1.0638297680998221e-05, per step time: 944.6755825205053ms
+2023-01-10 10:11:53,113:INFO:epoch[12], iter[1], loss:116.817139, fps:290.87 imgs/sec, lr:1.0638297680998221e-05, per step time: 880.1102587517272ms
+2023-01-10 10:13:37,406:INFO:epoch[13], iter[1], loss:117.912854, fps:230.74 imgs/sec, lr:1.0638297680998221e-05, per step time: 1109.4729900360107ms
+2023-01-10 10:14:47,812:INFO:epoch[14], iter[1], loss:111.101374, fps:341.80 imgs/sec, lr:1.0638297680998221e-05, per step time: 748.9713227495234ms
+2023-01-10 10:15:49,435:INFO:epoch[15], iter[1], loss:110.097369, fps:390.51 imgs/sec, lr:1.0638297680998221e-05, per step time: 655.5450089434361ms
+2023-01-10 10:16:59,768:INFO:epoch[16], iter[1], loss:111.153800, fps:342.23 imgs/sec, lr:1.0638297680998221e-05, per step time: 748.0253082640628ms
+2023-01-10 10:18:08,135:INFO:epoch[17], iter[1], loss:106.099762, fps:351.99 imgs/sec, lr:1.0638297680998221e-05, per step time: 727.2863590970952ms
+2023-01-10 10:19:20,076:INFO:epoch[18], iter[1], loss:104.253934, fps:334.51 imgs/sec, lr:1.0638297680998221e-05, per step time: 765.3074188435331ms
+2023-01-10 10:20:24,615:INFO:epoch[19], iter[1], loss:102.442275, fps:372.93 imgs/sec, lr:1.0638297680998221e-05, per step time: 686.4470877545945ms
+2023-01-10 10:21:36,653:INFO:epoch[20], iter[1], loss:103.022457, fps:334.06 imgs/sec, lr:1.0638297680998221e-05, per step time: 766.3211061599407ms
+2023-01-10 10:22:47,720:INFO:epoch[21], iter[1], loss:97.687403, fps:338.64 imgs/sec, lr:1.0638297680998221e-05, per step time: 755.9685149091355ms
+2023-01-10 10:23:51,011:INFO:epoch[22], iter[1], loss:101.088018, fps:380.21 imgs/sec, lr:1.0638297680998221e-05, per step time: 673.3035178894692ms
+2023-01-10 10:24:52,399:INFO:epoch[23], iter[1], loss:98.779448, fps:392.04 imgs/sec, lr:1.0638297680998221e-05, per step time: 652.9936511465844ms
+2023-01-10 10:25:52,142:INFO:epoch[24], iter[1], loss:87.782818, fps:402.84 imgs/sec, lr:1.0638297680998221e-05, per step time: 635.4843606340124ms
+2023-01-10 10:26:53,306:INFO:epoch[25], iter[1], loss:94.954455, fps:393.46 imgs/sec, lr:1.0638297680998221e-05, per step time: 650.6389176591914ms
+2023-01-10 10:28:02,227:INFO:epoch[26], iter[1], loss:95.425490, fps:349.17 imgs/sec, lr:1.0638297680998221e-05, per step time: 733.1584692001343ms
+2023-01-10 10:29:12,684:INFO:epoch[27], iter[1], loss:90.994266, fps:341.60 imgs/sec, lr:1.0638297680998221e-05, per step time: 749.420997944284ms
+2023-01-10 10:30:23,768:INFO:epoch[28], iter[1], loss:85.573247, fps:338.56 imgs/sec, lr:1.0638297680998221e-05, per step time: 756.1434862461496ms
+2023-01-10 10:31:23,604:INFO:epoch[29], iter[1], loss:90.245999, fps:402.21 imgs/sec, lr:1.0638297680998221e-05, per step time: 636.4906290744213ms
+2023-01-10 10:32:25,646:INFO:epoch[30], iter[1], loss:85.087301, fps:388.05 imgs/sec, lr:1.0638297680998221e-05, per step time: 659.7049921116931ms
+2023-01-10 10:33:28,495:INFO:epoch[31], iter[1], loss:84.041290, fps:382.92 imgs/sec, lr:1.0638297680998221e-05, per step time: 668.5520080809898ms
+2023-01-10 10:34:38,971:INFO:epoch[32], iter[1], loss:82.766791, fps:341.47 imgs/sec, lr:1.0638297680998221e-05, per step time: 749.6962217574425ms
+2023-01-10 10:35:56,327:INFO:epoch[33], iter[1], loss:82.703818, fps:311.11 imgs/sec, lr:1.0638297680998221e-05, per step time: 822.854848618203ms
+2023-01-10 10:36:59,761:INFO:epoch[34], iter[1], loss:81.354863, fps:379.44 imgs/sec, lr:1.0638297680998221e-05, per step time: 674.6736282997942ms
+2023-01-10 10:37:59,935:INFO:epoch[35], iter[1], loss:84.222462, fps:400.02 imgs/sec, lr:1.0638297680998221e-05, per step time: 639.9725295127706ms
+2023-01-10 10:39:01,081:INFO:epoch[36], iter[1], loss:81.181665, fps:393.57 imgs/sec, lr:1.0638297680998221e-05, per step time: 650.4618690368977ms
+2023-01-10 10:40:05,004:INFO:epoch[37], iter[1], loss:80.735176, fps:376.56 imgs/sec, lr:1.0638297680998221e-05, per step time: 679.8344114993481ms
+2023-01-10 10:41:03,445:INFO:epoch[38], iter[1], loss:78.972045, fps:411.78 imgs/sec, lr:1.0638297680998221e-05, per step time: 621.6874249438023ms
+2023-01-10 10:42:08,339:INFO:epoch[39], iter[1], loss:79.069040, fps:370.83 imgs/sec, lr:1.0638297680998221e-05, per step time: 690.3353016427222ms
+2023-01-10 10:43:12,825:INFO:epoch[40], iter[1], loss:80.545181, fps:373.17 imgs/sec, lr:1.0638297680998221e-05, per step time: 686.0065916751294ms
+2023-01-10 10:44:15,803:INFO:epoch[41], iter[1], loss:81.322065, fps:382.21 imgs/sec, lr:1.0638297680998221e-05, per step time: 669.7870366116787ms
+2023-01-10 10:45:25,634:INFO:epoch[42], iter[1], loss:77.940424, fps:344.63 imgs/sec, lr:1.0638297680998221e-05, per step time: 742.8342408322274ms
+2023-01-10 10:46:33,619:INFO:epoch[43], iter[1], loss:77.448616, fps:353.99 imgs/sec, lr:1.0638297680998221e-05, per step time: 723.1883165684152ms
+2023-01-10 10:47:46,491:INFO:epoch[44], iter[1], loss:74.450647, fps:330.24 imgs/sec, lr:1.0638297680998221e-05, per step time: 775.2028018870252ms
+2023-01-10 10:48:56,404:INFO:epoch[45], iter[1], loss:75.622301, fps:344.22 imgs/sec, lr:1.0638297680998221e-05, per step time: 743.7055288477147ms
+2023-01-10 10:50:09,256:INFO:epoch[46], iter[1], loss:75.665521, fps:330.33 imgs/sec, lr:1.0638297680998221e-05, per step time: 774.9933613107559ms
+2023-01-10 10:51:21,151:INFO:epoch[47], iter[1], loss:75.308216, fps:334.72 imgs/sec, lr:1.0638297680998221e-05, per step time: 764.8235990646037ms
+2023-01-10 10:52:38,874:INFO:epoch[48], iter[1], loss:74.764195, fps:309.64 imgs/sec, lr:1.0638297680998221e-05, per step time: 826.779416266908ms
+2023-01-10 10:53:36,299:INFO:epoch[49], iter[1], loss:77.672396, fps:419.09 imgs/sec, lr:1.0638297680998221e-05, per step time: 610.8505599042202ms
+2023-01-10 10:54:35,818:INFO:epoch[50], iter[1], loss:77.161132, fps:404.42 imgs/sec, lr:1.0638297680998221e-05, per step time: 633.0116251681713ms
+2023-01-10 10:55:35,840:INFO:epoch[51], iter[1], loss:75.983551, fps:400.95 imgs/sec, lr:1.0638297680998221e-05, per step time: 638.4897713965559ms
+2023-01-10 10:56:38,173:INFO:epoch[52], iter[1], loss:75.152029, fps:386.08 imgs/sec, lr:1.0638297680998221e-05, per step time: 663.0726520051347ms
+2023-01-10 10:57:42,396:INFO:epoch[53], iter[1], loss:74.076737, fps:374.75 imgs/sec, lr:1.0638297680998221e-05, per step time: 683.1164486864781ms
+2023-01-10 10:58:52,825:INFO:epoch[54], iter[1], loss:72.600352, fps:341.71 imgs/sec, lr:1.0638297680998221e-05, per step time: 749.1643048347311ms
+2023-01-10 11:00:04,852:INFO:epoch[55], iter[1], loss:72.760724, fps:334.13 imgs/sec, lr:1.0638297680998221e-05, per step time: 766.1759244634751ms
+2023-01-10 11:01:15,415:INFO:epoch[56], iter[1], loss:71.673891, fps:341.08 imgs/sec, lr:1.0638297680998221e-05, per step time: 750.5624446463078ms
+2023-01-10 11:02:19,264:INFO:epoch[57], iter[1], loss:73.252218, fps:376.91 imgs/sec, lr:1.0638297680998221e-05, per step time: 679.2136202467249ms
+2023-01-10 11:03:23,940:INFO:epoch[58], iter[1], loss:72.962525, fps:372.10 imgs/sec, lr:1.0638297680998221e-05, per step time: 687.988040295053ms
+2023-01-10 11:04:40,117:INFO:epoch[59], iter[1], loss:72.990114, fps:315.91 imgs/sec, lr:1.0638297680998221e-05, per step time: 810.3599015702592ms
+2023-01-10 11:05:54,510:INFO:epoch[60], iter[1], loss:70.759252, fps:323.48 imgs/sec, lr:1.0638297680998221e-05, per step time: 791.4006608597775ms
+2023-01-10 11:07:23,170:INFO:epoch[61], iter[1], loss:71.476036, fps:271.53 imgs/sec, lr:1.0638297680998221e-05, per step time: 942.8146494195815ms
+2023-01-10 11:08:46,378:INFO:epoch[62], iter[1], loss:69.986818, fps:289.25 imgs/sec, lr:1.0638297680998221e-05, per step time: 885.041576750735ms
+2023-01-10 11:09:57,411:INFO:epoch[63], iter[1], loss:67.872528, fps:338.80 imgs/sec, lr:1.0638297680998221e-05, per step time: 755.6138444454112ms
+2023-01-10 11:11:07,103:INFO:epoch[64], iter[1], loss:71.967307, fps:345.30 imgs/sec, lr:1.0638297680998221e-05, per step time: 741.3823782129491ms
+2023-01-10 11:12:29,010:INFO:epoch[65], iter[1], loss:70.773204, fps:293.84 imgs/sec, lr:1.0638297680998221e-05, per step time: 871.2320961850754ms
+2023-01-10 11:13:42,830:INFO:epoch[66], iter[1], loss:70.858660, fps:326.03 imgs/sec, lr:1.0638297680998221e-05, per step time: 785.2095111887506ms
+2023-01-10 11:14:57,868:INFO:epoch[67], iter[1], loss:70.391686, fps:320.71 imgs/sec, lr:1.0638297680998221e-05, per step time: 798.2383966445923ms
+2023-01-10 11:16:11,274:INFO:epoch[68], iter[1], loss:69.844011, fps:327.85 imgs/sec, lr:1.0638297680998221e-05, per step time: 780.8351237723168ms
+2023-01-10 11:17:22,761:INFO:epoch[69], iter[1], loss:68.852936, fps:336.67 imgs/sec, lr:1.0638297680998221e-05, per step time: 760.3805268064458ms
+2023-01-10 11:18:39,771:INFO:epoch[70], iter[1], loss:70.515143, fps:312.49 imgs/sec, lr:1.0638297680998221e-05, per step time: 819.2347846132644ms
+2023-01-10 11:19:56,746:INFO:epoch[71], iter[1], loss:68.456353, fps:312.64 imgs/sec, lr:1.0638297680998221e-05, per step time: 818.834456991642ms
+2023-01-10 11:21:03,870:INFO:epoch[72], iter[1], loss:68.785124, fps:358.52 imgs/sec, lr:1.0638297680998221e-05, per step time: 714.0383162397019ms
+2023-01-10 11:21:59,464:INFO:epoch[73], iter[1], loss:68.468092, fps:432.98 imgs/sec, lr:1.0638297680998221e-05, per step time: 591.2524284200465ms
+2023-01-10 11:22:58,735:INFO:epoch[74], iter[1], loss:68.168681, fps:406.03 imgs/sec, lr:1.0638297680998221e-05, per step time: 630.4891261648625ms
+2023-01-10 11:24:03,993:INFO:epoch[75], iter[1], loss:65.430995, fps:368.78 imgs/sec, lr:1.0638297680998221e-05, per step time: 694.1825405080267ms
+2023-01-10 11:25:20,198:INFO:epoch[76], iter[1], loss:65.911810, fps:315.83 imgs/sec, lr:1.0638297680998221e-05, per step time: 810.5552348684757ms
+2023-01-10 11:26:34,602:INFO:epoch[77], iter[1], loss:64.543414, fps:323.43 imgs/sec, lr:1.0638297680998221e-05, per step time: 791.5062422448016ms
+2023-01-10 11:27:45,782:INFO:epoch[78], iter[1], loss:67.896446, fps:338.08 imgs/sec, lr:1.0638297680998221e-05, per step time: 757.2070867457288ms
+2023-01-10 11:28:42,323:INFO:epoch[79], iter[1], loss:65.631415, fps:425.64 imgs/sec, lr:1.0638297680998221e-05, per step time: 601.4520995160366ms
+2023-01-10 11:29:49,618:INFO:epoch[80], iter[1], loss:70.073274, fps:357.61 imgs/sec, lr:1.0638297680998221e-05, per step time: 715.8583453361024ms
+2023-01-10 11:30:52,459:INFO:epoch[81], iter[1], loss:69.053847, fps:382.94 imgs/sec, lr:1.0638297680998221e-05, per step time: 668.5057979948978ms
+2023-01-10 11:31:49,422:INFO:epoch[82], iter[1], loss:67.584700, fps:422.47 imgs/sec, lr:1.0638297680998221e-05, per step time: 605.960450273879ms
+2023-01-10 11:32:52,748:INFO:epoch[83], iter[1], loss:67.432942, fps:380.03 imgs/sec, lr:1.0638297680998221e-05, per step time: 673.6239118778959ms
+2023-01-10 11:33:53,514:INFO:epoch[84], iter[1], loss:68.128454, fps:396.05 imgs/sec, lr:1.0638297680998221e-05, per step time: 646.3897684787182ms
+2023-01-10 11:35:00,444:INFO:epoch[85], iter[1], loss:67.066597, fps:359.61 imgs/sec, lr:1.0638297680998221e-05, per step time: 711.8863247810526ms
+2023-01-10 11:36:15,409:INFO:epoch[86], iter[1], loss:66.967151, fps:321.07 imgs/sec, lr:1.0638297680998221e-05, per step time: 797.3355765038348ms
+2023-01-10 11:37:16,601:INFO:epoch[87], iter[1], loss:67.976266, fps:393.28 imgs/sec, lr:1.0638297680998221e-05, per step time: 650.9388304771261ms
+2023-01-10 11:38:10,544:INFO:epoch[88], iter[1], loss:66.491338, fps:446.11 imgs/sec, lr:1.0638297680998221e-05, per step time: 573.8522930348173ms
+2023-01-10 11:39:10,228:INFO:epoch[89], iter[1], loss:62.881662, fps:403.22 imgs/sec, lr:1.0638297680998221e-05, per step time: 634.8963722269586ms
+2023-01-10 11:40:09,333:INFO:epoch[90], iter[1], loss:62.645004, fps:407.17 imgs/sec, lr:1.0638297680998221e-05, per step time: 628.7341599768781ms
+2023-01-10 11:41:11,093:INFO:epoch[91], iter[1], loss:62.591028, fps:389.65 imgs/sec, lr:1.0638297680998221e-05, per step time: 657.0032556006249ms
+2023-01-10 11:42:24,911:INFO:epoch[92], iter[1], loss:63.249739, fps:326.00 imgs/sec, lr:1.0638297680998221e-05, per step time: 785.2710992731946ms
+2023-01-10 11:43:43,829:INFO:epoch[93], iter[1], loss:62.509419, fps:304.95 imgs/sec, lr:1.0638297680998221e-05, per step time: 839.4901727108245ms
+2023-01-10 11:44:57,982:INFO:epoch[94], iter[1], loss:65.765202, fps:324.53 imgs/sec, lr:1.0638297680998221e-05, per step time: 788.8224530727306ms
+2023-01-10 11:45:56,676:INFO:epoch[95], iter[1], loss:62.739941, fps:410.02 imgs/sec, lr:1.0638297680998221e-05, per step time: 624.3545882245327ms
+2023-01-10 11:46:59,417:INFO:epoch[96], iter[1], loss:63.836394, fps:383.65 imgs/sec, lr:1.0638297680998221e-05, per step time: 667.2774147480092ms
+2023-01-10 11:48:09,898:INFO:epoch[97], iter[1], loss:63.640024, fps:341.45 imgs/sec, lr:1.0638297680998221e-05, per step time: 749.7431369538002ms
+2023-01-10 11:49:26,374:INFO:epoch[98], iter[1], loss:63.766327, fps:314.76 imgs/sec, lr:1.0638297680998221e-05, per step time: 813.322457861393ms
+2023-01-10 11:50:37,941:INFO:epoch[99], iter[1], loss:62.880820, fps:336.26 imgs/sec, lr:1.0638297680998221e-05, per step time: 761.3153153277458ms
+2023-01-10 11:51:51,120:INFO:epoch[100], iter[1], loss:65.621951, fps:329.02 imgs/sec, lr:1.0638297680998221e-05, per step time: 778.0645451647171ms
+2023-01-10 11:52:54,719:INFO:epoch[101], iter[1], loss:63.815722, fps:378.39 imgs/sec, lr:1.0638297680998221e-05, per step time: 676.549107470411ms
+2023-01-10 11:53:54,369:INFO:epoch[102], iter[1], loss:62.732751, fps:403.55 imgs/sec, lr:1.0638297680998221e-05, per step time: 634.374570339284ms
+2023-01-10 11:54:54,722:INFO:epoch[103], iter[1], loss:61.989378, fps:398.75 imgs/sec, lr:1.0638297680998221e-05, per step time: 642.0029934416426ms
+2023-01-10 11:55:56,275:INFO:epoch[104], iter[1], loss:64.579785, fps:390.97 imgs/sec, lr:1.0638297680998221e-05, per step time: 654.7893082841914ms
+2023-01-10 11:57:22,844:INFO:epoch[105], iter[1], loss:62.169182, fps:278.00 imgs/sec, lr:1.0638297680998221e-05, per step time: 920.8779918386582ms
+2023-01-10 11:58:43,258:INFO:epoch[106], iter[1], loss:64.026526, fps:299.26 imgs/sec, lr:1.0638297680998221e-05, per step time: 855.43887919568ms
+2023-01-10 11:59:59,219:INFO:epoch[107], iter[1], loss:62.547004, fps:316.82 imgs/sec, lr:1.0638297680998221e-05, per step time: 808.0239955415117ms
+2023-01-10 12:01:03,605:INFO:epoch[108], iter[1], loss:61.858703, fps:373.80 imgs/sec, lr:1.0638297680998221e-05, per step time: 684.852029414887ms
+2023-01-10 12:02:14,502:INFO:epoch[109], iter[1], loss:63.073224, fps:339.43 imgs/sec, lr:1.0638297680998221e-05, per step time: 754.199317161073ms
+2023-01-10 12:03:25,325:INFO:epoch[110], iter[1], loss:62.182390, fps:339.79 imgs/sec, lr:1.0638297680998221e-05, per step time: 753.4027682973984ms
+2023-01-10 12:04:38,372:INFO:epoch[111], iter[1], loss:61.237459, fps:329.49 imgs/sec, lr:1.0638297680998221e-05, per step time: 776.9526674392375ms
+2023-01-10 12:05:54,405:INFO:epoch[112], iter[1], loss:59.623440, fps:316.51 imgs/sec, lr:1.0638297680998221e-05, per step time: 808.8208081874442ms
+2023-01-10 12:07:10,676:INFO:epoch[113], iter[1], loss:61.752045, fps:315.52 imgs/sec, lr:1.0638297680998221e-05, per step time: 811.3683284597194ms
+2023-01-10 12:08:23,680:INFO:epoch[114], iter[1], loss:63.804428, fps:329.63 imgs/sec, lr:1.0638297680998221e-05, per step time: 776.624415783172ms
+2023-01-10 12:09:31,468:INFO:epoch[115], iter[1], loss:59.590382, fps:355.02 imgs/sec, lr:1.0638297680998221e-05, per step time: 721.0763515310084ms
+2023-01-10 12:10:42,333:INFO:epoch[116], iter[1], loss:62.251033, fps:339.64 imgs/sec, lr:1.0638297680998221e-05, per step time: 753.7399403592373ms
+2023-01-10 12:11:59,175:INFO:epoch[117], iter[1], loss:59.886453, fps:313.17 imgs/sec, lr:1.0638297680998221e-05, per step time: 817.4354040876348ms
+2023-01-10 12:13:18,096:INFO:epoch[118], iter[1], loss:59.314971, fps:305.02 imgs/sec, lr:1.0638297680998221e-05, per step time: 839.2841613039058ms
+2023-01-10 12:14:43,107:INFO:epoch[119], iter[1], loss:57.579961, fps:283.08 imgs/sec, lr:1.0638297680998221e-05, per step time: 904.3380478595166ms
+2023-01-10 12:15:52,873:INFO:epoch[120], iter[1], loss:57.469898, fps:344.94 imgs/sec, lr:1.0638297680998221e-05, per step time: 742.15249051439ms
+2023-01-10 12:17:16,201:INFO:epoch[121], iter[1], loss:61.044464, fps:288.86 imgs/sec, lr:1.0638297680998221e-05, per step time: 886.2333500638921ms
+2023-01-10 12:18:20,684:INFO:epoch[122], iter[1], loss:58.972354, fps:373.19 imgs/sec, lr:1.0638297680998221e-05, per step time: 685.9729822645796ms
+2023-01-10 12:19:33,619:INFO:epoch[123], iter[1], loss:61.178397, fps:329.94 imgs/sec, lr:1.0638297680998221e-05, per step time: 775.8964021155175ms
+2023-01-10 12:20:50,020:INFO:epoch[124], iter[1], loss:58.477406, fps:314.98 imgs/sec, lr:1.0638297680998221e-05, per step time: 812.7473542030822ms
+2023-01-10 12:22:12,016:INFO:epoch[125], iter[1], loss:59.796474, fps:293.50 imgs/sec, lr:1.0638297680998221e-05, per step time: 872.2201129223438ms
+2023-01-10 12:23:34,086:INFO:epoch[126], iter[1], loss:57.841065, fps:293.25 imgs/sec, lr:1.0638297680998221e-05, per step time: 872.9739645694165ms
+2023-01-10 12:25:04,270:INFO:epoch[127], iter[1], loss:57.812942, fps:266.89 imgs/sec, lr:1.0638297680998221e-05, per step time: 959.206038333ms
+2023-01-10 12:26:18,358:INFO:epoch[128], iter[1], loss:58.946849, fps:324.97 imgs/sec, lr:1.0638297680998221e-05, per step time: 787.7541907290196ms
+2023-01-10 12:27:28,603:INFO:epoch[129], iter[1], loss:57.801048, fps:342.60 imgs/sec, lr:1.0638297680998221e-05, per step time: 747.2311207588683ms
+2023-01-10 12:28:37,918:INFO:epoch[130], iter[1], loss:59.342404, fps:347.28 imgs/sec, lr:1.0638297680998221e-05, per step time: 737.1489646586966ms
+2023-01-10 12:29:43,514:INFO:epoch[131], iter[1], loss:57.963001, fps:366.86 imgs/sec, lr:1.0638297680998221e-05, per step time: 697.806809810882ms
+2023-01-10 12:30:50,049:INFO:epoch[132], iter[1], loss:55.997551, fps:361.68 imgs/sec, lr:1.0638297680998221e-05, per step time: 707.8030007950803ms
+2023-01-10 12:31:55,336:INFO:epoch[133], iter[1], loss:57.062153, fps:368.62 imgs/sec, lr:1.0638297680998221e-05, per step time: 694.4898468382816ms
+2023-01-10 12:32:54,321:INFO:epoch[134], iter[1], loss:55.571237, fps:408.05 imgs/sec, lr:1.0638297680998221e-05, per step time: 627.3693176026039ms
+2023-01-10 12:34:00,918:INFO:epoch[135], iter[1], loss:57.637741, fps:361.35 imgs/sec, lr:1.0638297680998221e-05, per step time: 708.4466218948364ms
+2023-01-10 12:35:12,583:INFO:epoch[136], iter[1], loss:56.436091, fps:335.81 imgs/sec, lr:1.0638297680998221e-05, per step time: 762.3394753070588ms
+2023-01-10 12:36:34,782:INFO:epoch[137], iter[1], loss:59.040394, fps:292.77 imgs/sec, lr:1.0638297680998221e-05, per step time: 874.3929634702966ms
+2023-01-10 12:38:05,835:INFO:epoch[138], iter[1], loss:55.837137, fps:264.38 imgs/sec, lr:1.0638297680998221e-05, per step time: 968.291995373178ms
+2023-01-10 12:39:27,160:INFO:epoch[139], iter[1], loss:54.038386, fps:295.93 imgs/sec, lr:1.0638297680998221e-05, per step time: 865.0649912813877ms
+2023-01-10 12:40:40,764:INFO:epoch[140], iter[1], loss:58.302728, fps:326.96 imgs/sec, lr:1.0638297680998221e-05, per step time: 782.9818395858116ms
+2023-01-10 12:41:49,934:INFO:epoch[141], iter[1], loss:57.181660, fps:347.91 imgs/sec, lr:1.0638297680998221e-05, per step time: 735.8119995036024ms
+2023-01-10 12:43:09,463:INFO:epoch[142], iter[1], loss:58.810560, fps:302.60 imgs/sec, lr:1.0638297680998221e-05, per step time: 846.0091453917483ms
+2023-01-10 12:44:14,249:INFO:epoch[143], iter[1], loss:53.241430, fps:371.47 imgs/sec, lr:1.0638297680998221e-05, per step time: 689.1450450775471ms
+2023-01-10 12:45:12,237:INFO:epoch[144], iter[1], loss:54.373009, fps:415.01 imgs/sec, lr:1.0638297680998221e-05, per step time: 616.8464726590096ms
+2023-01-10 12:46:14,803:INFO:epoch[145], iter[1], loss:54.394519, fps:384.70 imgs/sec, lr:1.0638297680998221e-05, per step time: 665.459024145248ms
+2023-01-10 12:47:29,873:INFO:epoch[146], iter[1], loss:55.655482, fps:320.61 imgs/sec, lr:1.0638297680998221e-05, per step time: 798.483206870708ms
+2023-01-10 12:48:44,964:INFO:epoch[147], iter[1], loss:55.446104, fps:320.50 imgs/sec, lr:1.0638297680998221e-05, per step time: 798.7457919628063ms
+2023-01-10 12:49:58,326:INFO:epoch[148], iter[1], loss:54.585833, fps:328.07 imgs/sec, lr:1.0638297680998221e-05, per step time: 780.3136059578429ms
+2023-01-10 12:51:28,395:INFO:epoch[149], iter[1], loss:55.895919, fps:267.20 imgs/sec, lr:1.0638297680998221e-05, per step time: 958.0938460979056ms
+2023-01-10 12:52:57,094:INFO:epoch[150], iter[1], loss:56.844196, fps:271.30 imgs/sec, lr:1.0638297680998221e-05, per step time: 943.593276307938ms
+2023-01-10 12:54:21,443:INFO:epoch[151], iter[1], loss:56.870858, fps:285.31 imgs/sec, lr:1.0638297680998221e-05, per step time: 897.2710903654707ms
+2023-01-10 12:55:28,121:INFO:epoch[152], iter[1], loss:55.444680, fps:360.94 imgs/sec, lr:1.0638297680998221e-05, per step time: 709.2567251083699ms
+2023-01-10 12:56:38,415:INFO:epoch[153], iter[1], loss:55.718472, fps:342.35 imgs/sec, lr:1.0638297680998221e-05, per step time: 747.7784765527603ms
+2023-01-10 12:57:57,300:INFO:epoch[154], iter[1], loss:54.976532, fps:305.06 imgs/sec, lr:1.0638297680998221e-05, per step time: 839.1704178870992ms
+2023-01-10 12:59:06,747:INFO:epoch[155], iter[1], loss:55.015524, fps:346.64 imgs/sec, lr:1.0638297680998221e-05, per step time: 738.5124475397962ms
+2023-01-10 13:00:30,495:INFO:epoch[156], iter[1], loss:56.370188, fps:287.34 imgs/sec, lr:1.0638297680998221e-05, per step time: 890.9172250869426ms
+2023-01-10 13:01:53,825:INFO:epoch[157], iter[1], loss:55.313060, fps:288.81 imgs/sec, lr:1.0638297680998221e-05, per step time: 886.4103885407143ms
+2023-01-10 13:03:00,018:INFO:epoch[158], iter[1], loss:54.924161, fps:363.57 imgs/sec, lr:1.0638297680998221e-05, per step time: 704.1259699679435ms
+2023-01-10 13:04:13,808:INFO:epoch[159], iter[1], loss:55.286600, fps:326.14 imgs/sec, lr:1.0638297680998221e-05, per step time: 784.9438139732848ms
+2023-01-10 13:05:27,856:INFO:epoch[160], iter[1], loss:55.379221, fps:324.99 imgs/sec, lr:1.0638297680998221e-05, per step time: 787.7189225338875ms
+2023-01-10 13:06:42,286:INFO:epoch[161], iter[1], loss:57.446032, fps:323.35 imgs/sec, lr:1.0638297680998221e-05, per step time: 791.7214226215443ms
+2023-01-10 13:08:04,271:INFO:epoch[162], iter[1], loss:52.119285, fps:293.52 imgs/sec, lr:1.0638297680998221e-05, per step time: 872.1655759405583ms
+2023-01-10 13:09:35,006:INFO:epoch[163], iter[1], loss:51.577481, fps:265.22 imgs/sec, lr:1.0638297680998221e-05, per step time: 965.2252628448161ms
+2023-01-10 13:10:55,804:INFO:epoch[164], iter[1], loss:53.465627, fps:297.84 imgs/sec, lr:1.0638297680998221e-05, per step time: 859.5280469732081ms
+2023-01-10 13:12:07,676:INFO:epoch[165], iter[1], loss:51.746479, fps:334.84 imgs/sec, lr:1.0638297680998221e-05, per step time: 764.5416614857126ms
+2023-01-10 13:13:30,474:INFO:epoch[166], iter[1], loss:53.984042, fps:290.64 imgs/sec, lr:1.0638297680998221e-05, per step time: 880.8071714766483ms
+2023-01-10 13:14:55,822:INFO:epoch[167], iter[1], loss:51.442395, fps:281.99 imgs/sec, lr:1.0638297680998221e-05, per step time: 907.8479624809103ms
+2023-01-10 13:16:05,439:INFO:epoch[168], iter[1], loss:53.585561, fps:345.68 imgs/sec, lr:1.0638297680998221e-05, per step time: 740.5728304639775ms
+2023-01-10 13:17:20,416:INFO:epoch[169], iter[1], loss:52.406270, fps:321.03 imgs/sec, lr:1.0638297680998221e-05, per step time: 797.4324936562396ms
+2023-01-10 13:18:25,734:INFO:epoch[170], iter[1], loss:51.277559, fps:368.47 imgs/sec, lr:1.0638297680998221e-05, per step time: 694.7672417823304ms
+2023-01-10 13:19:29,549:INFO:epoch[171], iter[1], loss:51.341583, fps:377.14 imgs/sec, lr:1.0638297680998221e-05, per step time: 678.7991295469568ms
+2023-01-10 13:20:39,544:INFO:epoch[172], iter[1], loss:52.583054, fps:343.82 imgs/sec, lr:1.0638297680998221e-05, per step time: 744.5792796763968ms
+2023-01-10 13:21:56,979:INFO:epoch[173], iter[1], loss:54.609374, fps:310.79 imgs/sec, lr:1.0638297680998221e-05, per step time: 823.70732692962ms
+2023-01-10 13:23:16,947:INFO:epoch[174], iter[1], loss:53.713923, fps:300.94 imgs/sec, lr:1.0638297680998221e-05, per step time: 850.6589950399195ms
+2023-01-10 13:24:54,260:INFO:epoch[175], iter[1], loss:52.062449, fps:247.36 imgs/sec, lr:1.0638297680998221e-05, per step time: 1034.9174458929833ms
+2023-01-10 13:26:27,966:INFO:epoch[176], iter[1], loss:54.262179, fps:256.81 imgs/sec, lr:1.0638297680998221e-05, per step time: 996.8297785901009ms
+2023-01-10 13:27:44,644:INFO:epoch[177], iter[1], loss:52.323209, fps:313.87 imgs/sec, lr:1.0638297680998221e-05, per step time: 815.6123567134777ms
+2023-01-10 13:29:00,291:INFO:epoch[178], iter[1], loss:51.796117, fps:318.17 imgs/sec, lr:1.0638297680998221e-05, per step time: 804.6105542081467ms
+2023-01-10 13:30:18,605:INFO:epoch[179], iter[1], loss:52.186480, fps:307.31 imgs/sec, lr:1.0638297680998221e-05, per step time: 833.0456474994091ms
+2023-01-10 13:31:49,076:INFO:epoch[180], iter[1], loss:50.419860, fps:265.99 imgs/sec, lr:1.0638297680998221e-05, per step time: 962.427981356357ms
+2023-01-10 13:33:05,691:INFO:epoch[181], iter[1], loss:49.683681, fps:314.12 imgs/sec, lr:1.0638297680998221e-05, per step time: 814.9761265896736ms
+2023-01-10 13:34:18,512:INFO:epoch[182], iter[1], loss:51.826635, fps:330.54 imgs/sec, lr:1.0638297680998221e-05, per step time: 774.4913202651004ms
+2023-01-10 13:35:22,583:INFO:epoch[183], iter[1], loss:52.008966, fps:375.68 imgs/sec, lr:1.0638297680998221e-05, per step time: 681.4283842736102ms
+2023-01-10 13:36:19,713:INFO:epoch[184], iter[1], loss:51.675187, fps:421.23 imgs/sec, lr:1.0638297680998221e-05, per step time: 607.7392050560485ms
+2023-01-10 13:37:24,309:INFO:epoch[185], iter[1], loss:51.497716, fps:372.57 imgs/sec, lr:1.0638297680998221e-05, per step time: 687.1207419862138ms
+2023-01-10 13:38:46,027:INFO:epoch[186], iter[1], loss:49.988557, fps:294.49 imgs/sec, lr:1.0638297680998221e-05, per step time: 869.3131436692908ms
+2023-01-10 13:40:08,849:INFO:epoch[187], iter[1], loss:50.370685, fps:290.57 imgs/sec, lr:1.0638297680998221e-05, per step time: 881.0389016536956ms
+2023-01-10 13:41:30,564:INFO:epoch[188], iter[1], loss:49.718787, fps:294.51 imgs/sec, lr:1.0638297680998221e-05, per step time: 869.2285963829528ms
+2023-01-10 13:42:45,061:INFO:epoch[189], iter[1], loss:51.396227, fps:323.06 imgs/sec, lr:1.0638297680998221e-05, per step time: 792.4233852548803ms
+2023-01-10 13:43:59,577:INFO:epoch[190], iter[1], loss:50.163147, fps:322.96 imgs/sec, lr:1.0638297680998221e-05, per step time: 792.6618418794998ms
+2023-01-10 13:45:18,243:INFO:epoch[191], iter[1], loss:50.811397, fps:305.91 imgs/sec, lr:1.0638297680998221e-05, per step time: 836.8337610934643ms
+2023-01-10 13:46:32,112:INFO:epoch[192], iter[1], loss:49.013915, fps:325.79 imgs/sec, lr:1.0638297680998221e-05, per step time: 785.7933551707166ms
+2023-01-10 13:47:55,605:INFO:epoch[193], iter[1], loss:52.558559, fps:288.27 imgs/sec, lr:1.0638297680998221e-05, per step time: 888.0605722995515ms
+2023-01-10 13:49:12,672:INFO:epoch[194], iter[1], loss:49.143490, fps:312.26 imgs/sec, lr:1.0638297680998221e-05, per step time: 819.8349780224739ms
+2023-01-10 13:50:25,872:INFO:epoch[195], iter[1], loss:51.486996, fps:328.76 imgs/sec, lr:1.0638297680998221e-05, per step time: 778.6893489512992ms
+2023-01-10 13:51:28,167:INFO:epoch[196], iter[1], loss:51.557522, fps:386.32 imgs/sec, lr:1.0638297680998221e-05, per step time: 662.6564771571058ms
+2023-01-10 13:52:30,992:INFO:epoch[197], iter[1], loss:48.245366, fps:383.05 imgs/sec, lr:1.0638297680998221e-05, per step time: 668.3211757781658ms
+2023-01-10 13:53:36,097:INFO:epoch[198], iter[1], loss:49.530187, fps:369.63 imgs/sec, lr:1.0638297680998221e-05, per step time: 692.5918979847685ms
+2023-01-10 13:54:40,258:INFO:epoch[199], iter[1], loss:47.961899, fps:375.08 imgs/sec, lr:1.0638297680998221e-05, per step time: 682.5257996295361ms
+2023-01-10 13:55:55,395:INFO:epoch[200], iter[1], loss:49.656679, fps:320.29 imgs/sec, lr:1.0638297680998221e-05, per step time: 799.2847878882226ms
+2023-01-10 13:57:12,021:INFO:epoch[201], iter[1], loss:49.442635, fps:314.08 imgs/sec, lr:1.0638297680998221e-05, per step time: 815.0705961470909ms
+2023-01-10 13:58:44,813:INFO:epoch[202], iter[1], loss:49.991151, fps:259.36 imgs/sec, lr:1.0638297680998221e-05, per step time: 987.0548831655625ms
+2023-01-10 13:59:56,695:INFO:epoch[203], iter[1], loss:46.866547, fps:334.78 imgs/sec, lr:1.0638297680998221e-05, per step time: 764.6793685060867ms
+2023-01-10 14:01:01,606:INFO:epoch[204], iter[1], loss:48.649503, fps:370.74 imgs/sec, lr:1.0638297680998221e-05, per step time: 690.5118455278113ms
+2023-01-10 14:02:05,816:INFO:epoch[205], iter[1], loss:49.713464, fps:374.81 imgs/sec, lr:1.0638297680998221e-05, per step time: 683.0109611470648ms
+2023-01-10 14:03:10,771:INFO:epoch[206], iter[1], loss:47.312119, fps:370.49 imgs/sec, lr:1.0638297680998221e-05, per step time: 690.9749939086589ms
+2023-01-10 14:04:28,151:INFO:epoch[207], iter[1], loss:49.138816, fps:311.00 imgs/sec, lr:1.0638297680998221e-05, per step time: 823.142112569606ms
+2023-01-10 14:05:33,559:INFO:epoch[208], iter[1], loss:50.411794, fps:367.99 imgs/sec, lr:1.0638297680998221e-05, per step time: 695.6745969488267ms
+2023-01-10 14:06:51,252:INFO:epoch[209], iter[1], loss:48.218263, fps:309.75 imgs/sec, lr:1.0638297680998221e-05, per step time: 826.4688151947995ms
+2023-01-10 14:08:03,517:INFO:epoch[210], iter[1], loss:48.545605, fps:333.03 imgs/sec, lr:1.0638297680998221e-05, per step time: 768.6941826597173ms
+2023-01-10 14:09:11,587:INFO:epoch[211], iter[1], loss:47.966299, fps:353.61 imgs/sec, lr:1.0638297680998221e-05, per step time: 723.9535184616738ms
+2023-01-10 14:10:22,013:INFO:epoch[212], iter[1], loss:46.115284, fps:341.71 imgs/sec, lr:1.0638297680998221e-05, per step time: 749.1823561648106ms
+2023-01-10 14:11:37,575:INFO:epoch[213], iter[1], loss:49.756978, fps:318.48 imgs/sec, lr:1.0638297680998221e-05, per step time: 803.807258605957ms
+2023-01-10 14:13:14,143:INFO:epoch[214], iter[1], loss:46.778762, fps:249.21 imgs/sec, lr:1.0638297680998221e-05, per step time: 1027.2444588072756ms
+2023-01-10 14:14:43,260:INFO:epoch[215], iter[1], loss:46.433033, fps:270.05 imgs/sec, lr:1.0638297680998221e-05, per step time: 947.9783874876956ms
+2023-01-10 14:15:56,782:INFO:epoch[216], iter[1], loss:47.702001, fps:327.37 imgs/sec, lr:1.0638297680998221e-05, per step time: 781.9851129613024ms
+2023-01-10 14:17:18,670:INFO:epoch[217], iter[1], loss:47.567082, fps:293.87 imgs/sec, lr:1.0638297680998221e-05, per step time: 871.1215942463976ms
+2023-01-10 14:18:54,383:INFO:epoch[218], iter[1], loss:47.952990, fps:251.43 imgs/sec, lr:1.0638297680998221e-05, per step time: 1018.1906476933906ms
+2023-01-10 14:20:19,862:INFO:epoch[219], iter[1], loss:48.183535, fps:281.54 imgs/sec, lr:1.0638297680998221e-05, per step time: 909.2944429275838ms
+2023-01-10 14:21:38,255:INFO:epoch[220], iter[1], loss:44.908406, fps:306.97 imgs/sec, lr:1.0638297680998221e-05, per step time: 833.9482317579553ms
+2023-01-10 14:22:59,165:INFO:epoch[221], iter[1], loss:47.821590, fps:297.43 imgs/sec, lr:1.0638297680998221e-05, per step time: 860.7161298711248ms
+2023-01-10 14:24:22,256:INFO:epoch[222], iter[1], loss:46.001779, fps:289.62 imgs/sec, lr:1.0638297680998221e-05, per step time: 883.9078253888069ms
+2023-01-10 14:25:41,066:INFO:epoch[223], iter[1], loss:48.073116, fps:305.35 imgs/sec, lr:1.0638297680998221e-05, per step time: 838.3800780519526ms
+2023-01-10 14:26:48,413:INFO:epoch[224], iter[1], loss:47.544849, fps:357.35 imgs/sec, lr:1.0638297680998221e-05, per step time: 716.3891208932754ms
+2023-01-10 14:28:03,194:INFO:epoch[225], iter[1], loss:46.424378, fps:321.82 imgs/sec, lr:1.0638297680998221e-05, per step time: 795.4644725677815ms
+2023-01-10 14:29:27,457:INFO:epoch[226], iter[1], loss:44.792834, fps:285.61 imgs/sec, lr:1.0638297680998221e-05, per step time: 896.3261411545125ms
+2023-01-10 14:30:51,760:INFO:epoch[227], iter[1], loss:48.486976, fps:285.46 imgs/sec, lr:1.0638297680998221e-05, per step time: 896.7872300046555ms
+2023-01-10 14:32:07,547:INFO:epoch[228], iter[1], loss:48.914601, fps:317.56 imgs/sec, lr:1.0638297680998221e-05, per step time: 806.1489627716389ms
+2023-01-10 14:33:21,377:INFO:epoch[229], iter[1], loss:44.781703, fps:325.95 imgs/sec, lr:1.0638297680998221e-05, per step time: 785.398653213014ms
+2023-01-10 14:34:39,129:INFO:epoch[230], iter[1], loss:44.110255, fps:309.54 imgs/sec, lr:1.0638297680998221e-05, per step time: 827.0443474992793ms
+2023-01-10 14:35:58,914:INFO:epoch[231], iter[1], loss:45.401713, fps:301.65 imgs/sec, lr:1.0638297680998221e-05, per step time: 848.6670204933654ms
+2023-01-10 14:37:27,938:INFO:epoch[232], iter[1], loss:46.892769, fps:270.32 imgs/sec, lr:1.0638297680998221e-05, per step time: 947.0387595765134ms
+2023-01-10 14:39:02,156:INFO:epoch[233], iter[1], loss:45.751407, fps:255.42 imgs/sec, lr:1.0638297680998221e-05, per step time: 1002.2881259309484ms
+2023-01-10 14:40:23,809:INFO:epoch[234], iter[1], loss:44.711617, fps:294.72 imgs/sec, lr:1.0638297680998221e-05, per step time: 868.6340742922844ms
+2023-01-10 14:41:48,985:INFO:epoch[235], iter[1], loss:44.477507, fps:282.53 imgs/sec, lr:1.0638297680998221e-05, per step time: 906.1102993944859ms
+2023-01-10 14:43:06,995:INFO:epoch[236], iter[1], loss:45.294962, fps:308.56 imgs/sec, lr:1.0638297680998221e-05, per step time: 829.6487661118202ms
+2023-01-10 14:44:24,001:INFO:epoch[237], iter[1], loss:44.789212, fps:312.51 imgs/sec, lr:1.0638297680998221e-05, per step time: 819.1674288283003ms
+2023-01-10 14:45:28,769:INFO:epoch[238], iter[1], loss:44.841607, fps:371.57 imgs/sec, lr:1.0638297680998221e-05, per step time: 688.9712125697034ms
+2023-01-10 14:46:32,282:INFO:epoch[239], iter[1], loss:45.359331, fps:378.93 imgs/sec, lr:1.0638297680998221e-05, per step time: 675.5894904441022ms
+2023-01-10 14:47:53,932:INFO:epoch[240], iter[1], loss:46.001924, fps:294.74 imgs/sec, lr:1.0638297680998221e-05, per step time: 868.5537424493343ms
+2023-01-10 14:49:06,674:INFO:epoch[241], iter[1], loss:45.567133, fps:330.84 imgs/sec, lr:1.0638297680998221e-05, per step time: 773.7836330494982ms
+2023-01-10 14:50:15,838:INFO:epoch[242], iter[1], loss:46.614136, fps:348.03 imgs/sec, lr:1.0638297680998221e-05, per step time: 735.5667504858463ms
+2023-01-10 14:51:29,583:INFO:epoch[243], iter[1], loss:44.069850, fps:326.32 imgs/sec, lr:1.0638297680998221e-05, per step time: 784.5064021171407ms
+2023-01-10 14:52:50,007:INFO:epoch[244], iter[1], loss:43.166241, fps:299.22 imgs/sec, lr:1.0638297680998221e-05, per step time: 855.54845282372ms
+2023-01-10 14:54:03,294:INFO:epoch[245], iter[1], loss:46.059652, fps:328.38 imgs/sec, lr:1.0638297680998221e-05, per step time: 779.5903048616775ms
+2023-01-10 14:55:20,025:INFO:epoch[246], iter[1], loss:43.592763, fps:313.66 imgs/sec, lr:1.0638297680998221e-05, per step time: 816.1717805456608ms
+2023-01-10 14:56:51,868:INFO:epoch[247], iter[1], loss:43.175161, fps:262.02 imgs/sec, lr:1.0638297680998221e-05, per step time: 977.0189117878041ms
+2023-01-10 14:58:14,582:INFO:epoch[248], iter[1], loss:43.331121, fps:290.95 imgs/sec, lr:1.0638297680998221e-05, per step time: 879.8827465544356ms
+2023-01-10 14:59:33,751:INFO:epoch[249], iter[1], loss:44.730027, fps:303.97 imgs/sec, lr:1.0638297680998221e-05, per step time: 842.1823141422677ms
+2023-01-10 15:00:54,630:INFO:epoch[250], iter[1], loss:43.394961, fps:297.58 imgs/sec, lr:1.0638297680998221e-05, per step time: 860.2606311757513ms
+2023-01-10 15:02:13,537:INFO:epoch[251], iter[1], loss:43.975907, fps:304.99 imgs/sec, lr:1.0638297680998221e-05, per step time: 839.370773193684ms
+2023-01-10 15:03:33,685:INFO:epoch[252], iter[1], loss:44.457034, fps:300.30 imgs/sec, lr:1.0638297680998221e-05, per step time: 852.4924719587285ms
+2023-01-10 15:04:50,787:INFO:epoch[253], iter[1], loss:45.300849, fps:312.12 imgs/sec, lr:1.0638297680998221e-05, per step time: 820.1883321112775ms
+2023-01-10 15:06:20,471:INFO:epoch[254], iter[1], loss:45.063222, fps:268.33 imgs/sec, lr:1.0638297680998221e-05, per step time: 954.05368855659ms
+2023-01-10 15:07:56,042:INFO:epoch[255], iter[1], loss:44.527084, fps:251.80 imgs/sec, lr:1.0638297680998221e-05, per step time: 1016.6745693125623ms
+2023-01-10 15:09:19,212:INFO:epoch[256], iter[1], loss:44.127977, fps:289.36 imgs/sec, lr:1.0638297680998221e-05, per step time: 884.7149813428838ms
+2023-01-10 15:10:50,346:INFO:epoch[257], iter[1], loss:42.510431, fps:264.08 imgs/sec, lr:1.0638297680998221e-05, per step time: 969.4022422141218ms
+2023-01-10 15:12:10,414:INFO:epoch[258], iter[1], loss:44.591943, fps:300.57 imgs/sec, lr:1.0638297680998221e-05, per step time: 851.7070729681786ms
+2023-01-10 15:13:33,253:INFO:epoch[259], iter[1], loss:42.153669, fps:290.50 imgs/sec, lr:1.0638297680998221e-05, per step time: 881.2475458104559ms
+2023-01-10 15:14:59,664:INFO:epoch[260], iter[1], loss:44.007362, fps:278.55 imgs/sec, lr:1.0638297680998221e-05, per step time: 919.0615517027835ms
+2023-01-10 15:16:29,069:INFO:epoch[261], iter[1], loss:42.368833, fps:269.18 imgs/sec, lr:1.0638297680998221e-05, per step time: 951.0226021421716ms
+2023-01-10 15:17:52,454:INFO:epoch[262], iter[1], loss:43.032791, fps:288.63 imgs/sec, lr:1.0638297680998221e-05, per step time: 886.9541173285627ms
+2023-01-10 15:19:09,061:INFO:epoch[263], iter[1], loss:42.727392, fps:314.13 imgs/sec, lr:1.0638297680998221e-05, per step time: 814.9431182983074ms
+2023-01-10 15:20:13,368:INFO:epoch[264], iter[1], loss:42.782238, fps:374.22 imgs/sec, lr:1.0638297680998221e-05, per step time: 684.085802829012ms
+2023-01-10 15:21:14,668:INFO:epoch[265], iter[1], loss:42.085411, fps:392.58 imgs/sec, lr:1.0638297680998221e-05, per step time: 652.0889972118621ms
+2023-01-10 15:22:24,292:INFO:epoch[266], iter[1], loss:44.173773, fps:345.64 imgs/sec, lr:1.0638297680998221e-05, per step time: 740.6493881915478ms
+2023-01-10 15:23:41,704:INFO:epoch[267], iter[1], loss:42.880481, fps:310.88 imgs/sec, lr:1.0638297680998221e-05, per step time: 823.4694232331946ms
+2023-01-10 15:25:03,888:INFO:epoch[268], iter[1], loss:42.948637, fps:292.81 imgs/sec, lr:1.0638297680998221e-05, per step time: 874.2791617170293ms
+2023-01-10 15:26:32,981:INFO:epoch[269], iter[1], loss:43.941663, fps:270.11 imgs/sec, lr:1.0638297680998221e-05, per step time: 947.7532138215735ms
+2023-01-10 15:27:53,375:INFO:epoch[270], iter[1], loss:42.451423, fps:299.34 imgs/sec, lr:1.0638297680998221e-05, per step time: 855.2016425640026ms
+2023-01-10 15:29:19,697:INFO:epoch[271], iter[1], loss:42.843970, fps:278.78 imgs/sec, lr:1.0638297680998221e-05, per step time: 918.2963675640999ms
+2023-01-10 15:30:38,560:INFO:epoch[272], iter[1], loss:42.011754, fps:305.15 imgs/sec, lr:1.0638297680998221e-05, per step time: 838.929460403767ms
+2023-01-10 15:32:09,244:INFO:epoch[273], iter[1], loss:42.974342, fps:265.37 imgs/sec, lr:1.0638297680998221e-05, per step time: 964.6896732614395ms
+2023-01-10 15:33:32,604:INFO:epoch[274], iter[1], loss:42.077318, fps:288.69 imgs/sec, lr:1.0638297680998221e-05, per step time: 886.7490164777065ms
+2023-01-10 15:34:52,355:INFO:epoch[275], iter[1], loss:43.066550, fps:301.75 imgs/sec, lr:1.0638297680998221e-05, per step time: 848.3759037991787ms
+2023-01-10 15:36:17,742:INFO:epoch[276], iter[1], loss:41.253029, fps:281.83 imgs/sec, lr:1.0638297680998221e-05, per step time: 908.3405986745306ms
+2023-01-10 15:37:35,810:INFO:epoch[277], iter[1], loss:42.498909, fps:308.27 imgs/sec, lr:1.0638297680998221e-05, per step time: 830.4485386990486ms
+2023-01-10 15:39:03,139:INFO:epoch[278], iter[1], loss:40.941764, fps:275.58 imgs/sec, lr:1.0638297680998221e-05, per step time: 928.9561712995488ms
+2023-01-10 15:40:23,488:INFO:epoch[279], iter[1], loss:40.340797, fps:299.51 imgs/sec, lr:1.0638297680998221e-05, per step time: 854.725107233575ms
+2023-01-10 15:41:52,958:INFO:epoch[280], iter[1], loss:41.086335, fps:268.98 imgs/sec, lr:1.0638297680998221e-05, per step time: 951.7347026378551ms
+2023-01-10 15:43:13,747:INFO:epoch[281], iter[1], loss:41.145202, fps:297.91 imgs/sec, lr:1.0638297680998221e-05, per step time: 859.3111824482045ms
+2023-01-10 15:44:33,501:INFO:epoch[282], iter[1], loss:41.599283, fps:301.74 imgs/sec, lr:1.0638297680998221e-05, per step time: 848.4081638620254ms
+2023-01-10 15:45:56,902:INFO:epoch[283], iter[1], loss:43.122020, fps:288.58 imgs/sec, lr:1.0638297680998221e-05, per step time: 887.0937012611552ms
+2023-01-10 15:47:16,298:INFO:epoch[284], iter[1], loss:41.780642, fps:303.13 imgs/sec, lr:1.0638297680998221e-05, per step time: 844.5356450182327ms
+2023-01-10 15:48:42,690:INFO:epoch[285], iter[1], loss:42.398561, fps:278.55 imgs/sec, lr:1.0638297680998221e-05, per step time: 919.0504195842337ms
+2023-01-10 15:49:57,306:INFO:epoch[286], iter[1], loss:42.035794, fps:322.53 imgs/sec, lr:1.0638297680998221e-05, per step time: 793.7123775482178ms
+2023-01-10 15:51:08,135:INFO:epoch[287], iter[1], loss:41.977604, fps:339.84 imgs/sec, lr:1.0638297680998221e-05, per step time: 753.3015393196268ms
+2023-01-10 15:52:24,247:INFO:epoch[288], iter[1], loss:42.973371, fps:316.17 imgs/sec, lr:1.0638297680998221e-05, per step time: 809.6888471156993ms
+2023-01-10 15:53:53,683:INFO:epoch[289], iter[1], loss:42.716059, fps:269.07 imgs/sec, lr:1.0638297680998221e-05, per step time: 951.4237591560851ms
+2023-01-10 15:55:13,763:INFO:epoch[290], iter[1], loss:40.875437, fps:300.53 imgs/sec, lr:1.0638297680998221e-05, per step time: 851.841482710331ms
+2023-01-10 15:56:27,605:INFO:epoch[291], iter[1], loss:41.555168, fps:325.91 imgs/sec, lr:1.0638297680998221e-05, per step time: 785.4963490303527ms
+2023-01-10 15:57:37,681:INFO:epoch[292], iter[1], loss:41.294592, fps:343.42 imgs/sec, lr:1.0638297680998221e-05, per step time: 745.4432046159785ms
+2023-01-10 15:58:53,224:INFO:epoch[293], iter[1], loss:42.427933, fps:318.55 imgs/sec, lr:1.0638297680998221e-05, per step time: 803.6321426959748ms
+2023-01-10 16:00:26,452:INFO:epoch[294], iter[1], loss:42.980249, fps:258.13 imgs/sec, lr:1.0638297680998221e-05, per step time: 991.7583211939386ms
+2023-01-10 16:01:58,678:INFO:epoch[295], iter[1], loss:40.833582, fps:260.95 imgs/sec, lr:1.0638297680998221e-05, per step time: 981.0290767791423ms
+2023-01-10 16:03:11,404:INFO:epoch[296], iter[1], loss:43.184852, fps:330.92 imgs/sec, lr:1.0638297680998221e-05, per step time: 773.5985060955616ms
+2023-01-10 16:04:20,732:INFO:epoch[297], iter[1], loss:41.885986, fps:347.11 imgs/sec, lr:1.0638297680998221e-05, per step time: 737.507959629627ms
+2023-01-10 16:05:27,800:INFO:epoch[298], iter[1], loss:42.276488, fps:358.85 imgs/sec, lr:1.0638297680998221e-05, per step time: 713.3825510106188ms
+2023-01-10 16:06:31,620:INFO:epoch[299], iter[1], loss:40.159578, fps:377.07 imgs/sec, lr:1.0638297680998221e-05, per step time: 678.9227647984281ms
+2023-01-10 16:07:50,572:INFO:epoch[300], iter[1], loss:42.134015, fps:304.80 imgs/sec, lr:1.0638297680998221e-05, per step time: 839.9039151820731ms
+2023-01-10 16:09:23,371:INFO:epoch[301], iter[1], loss:40.876493, fps:259.33 imgs/sec, lr:1.0638297680998221e-05, per step time: 987.1519753273498ms
+2023-01-10 16:10:52,706:INFO:epoch[302], iter[1], loss:40.635939, fps:269.40 imgs/sec, lr:1.0638297680998221e-05, per step time: 950.2492737262806ms
+2023-01-10 16:12:19,229:INFO:epoch[303], iter[1], loss:40.822191, fps:278.13 imgs/sec, lr:1.0638297680998221e-05, per step time: 920.4442323522364ms
+2023-01-10 16:13:41,285:INFO:epoch[304], iter[1], loss:42.575473, fps:293.28 imgs/sec, lr:1.0638297680998221e-05, per step time: 872.8858486134955ms
+2023-01-10 16:15:06,361:INFO:epoch[305], iter[1], loss:40.627291, fps:282.86 imgs/sec, lr:1.0638297680998221e-05, per step time: 905.0413877406019ms
+2023-01-10 16:16:24,856:INFO:epoch[306], iter[1], loss:39.339636, fps:306.60 imgs/sec, lr:1.0638297680998221e-05, per step time: 834.9563289195934ms
+2023-01-10 16:17:38,026:INFO:epoch[307], iter[1], loss:42.328994, fps:329.00 imgs/sec, lr:1.0638297680998221e-05, per step time: 778.121902587566ms
+2023-01-10 16:18:45,168:INFO:epoch[308], iter[1], loss:41.050297, fps:358.42 imgs/sec, lr:1.0638297680998221e-05, per step time: 714.2453447301336ms
+2023-01-10 16:20:14,829:INFO:epoch[309], iter[1], loss:40.284474, fps:268.41 imgs/sec, lr:1.0638297680998221e-05, per step time: 953.760489504388ms
+2023-01-10 16:21:37,540:INFO:epoch[310], iter[1], loss:41.356310, fps:290.97 imgs/sec, lr:1.0638297680998221e-05, per step time: 879.8246206121241ms
+2023-01-10 16:22:59,910:INFO:epoch[311], iter[1], loss:42.165454, fps:292.15 imgs/sec, lr:1.0638297680998221e-05, per step time: 876.2639634152675ms
+2023-01-10 16:24:20,258:INFO:epoch[312], iter[1], loss:43.581009, fps:299.51 imgs/sec, lr:1.0638297680998221e-05, per step time: 854.7423266349955ms
+2023-01-10 16:25:43,084:INFO:epoch[313], iter[1], loss:41.586129, fps:290.60 imgs/sec, lr:1.0638297680998221e-05, per step time: 880.9337463784725ms
+2023-01-10 16:26:58,312:INFO:epoch[314], iter[1], loss:39.524206, fps:319.89 imgs/sec, lr:1.0638297680998221e-05, per step time: 800.272951734827ms
+2023-01-10 16:28:37,908:INFO:epoch[315], iter[1], loss:40.488049, fps:241.63 imgs/sec, lr:1.0638297680998221e-05, per step time: 1059.4805200049218ms
+2023-01-10 16:30:00,286:INFO:epoch[316], iter[1], loss:40.997321, fps:292.14 imgs/sec, lr:1.0638297680998221e-05, per step time: 876.2895629761067ms
+2023-01-10 16:31:11,751:INFO:epoch[317], iter[1], loss:40.813815, fps:336.76 imgs/sec, lr:1.0638297680998221e-05, per step time: 760.1893100332707ms
+2023-01-10 16:32:29,156:INFO:epoch[318], iter[1], loss:40.061290, fps:310.90 imgs/sec, lr:1.0638297680998221e-05, per step time: 823.4282072554244ms
+2023-01-10 16:34:05,651:INFO:epoch[319], iter[1], loss:39.815698, fps:249.39 imgs/sec, lr:1.0638297680998221e-05, per step time: 1026.4980260362015ms
+2023-01-10 16:35:25,614:INFO:epoch[320], iter[1], loss:38.812224, fps:300.95 imgs/sec, lr:1.0638297680998221e-05, per step time: 850.650391680129ms
+2023-01-10 16:36:45,413:INFO:==========end training===============
+
