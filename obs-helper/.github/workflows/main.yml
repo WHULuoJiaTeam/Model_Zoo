@@ -1,0 +1,44 @@
+on: [push]
+
+jobs:
+  obs_helper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # 创建桶
+      - name: Create Bucket on Huawei Cloud OBS
+        uses: ./
+        with:
+          # Access key id
+          access_key: WVUDBYHSMVDN5FYPUVWF
+          # Secret access key
+          secret_key: DRNqZ7zopA7QerFIYuMoJcLAqMOivC2HWVzWyfh5
+          endpoint: https://obs.cn-central-221.ovaijisuan.com
+          region: 'cn-central-221'
+          bucket_name: new-bucket
+          operation_type: createBucket
+          public_read: true
+      # 上传文件至桶
+      - name: Upload File to Huawei Cloud OBS
+        uses: ./
+        with:
+          bucket_name: new-bucket
+          local_file_path: README.md
+          obs_file_path: src/README.md
+          operation_type: upload
+      # 从桶内下载文件
+      - name: Download from Huawei Cloud OBS
+        uses: ./
+        with:
+          bucket_name: new-bucket
+          local_file_path: ${{ github.workspace }}/
+          obs_file_path: src/README.md
+          operation_type: download
+      # 删除桶
+      - name: Delete Bucket on Huawei Cloud OBS
+        uses: ./
+        with:
+          bucket_name: new-bucket
+          operation_type: deleteBucket
