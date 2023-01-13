@@ -1,0 +1,40 @@
+on:
+  push:
+    paths-ignore:
+      - '.github/**'
+
+jobs:
+  Mirror_to_Gitee:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Hub Mirror Action.
+        # You may pin to the exact commit or the version.
+        # uses: Yikun/hub-mirror-action@c00a1ea60dd818bf68f1f5a523b0e362de743229
+        uses: Yikun/hub-mirror-action@v1.2
+        with:
+          # The private SSH key which is used to to push code in destination hub.
+          dst_key: ${{ secrets.GITEE_OPENSSH_PRIVATE_KEY}}
+          # The app token which is used to  create repo in destination hub.
+          dst_token: ${{ secrets.GITEE_TOKEN}}
+          # Destination name. Such as `gitee/kunpengcompute`.
+          dst: gitee/ADHuan
+          # Source name. Such as `github/kunpengcompute`.
+          src: github
+          # The src account type. Such as org, user.
+          src_account_type: org # optional, default is 
+          # The dst account type. Such as org, user.
+          dst_account_type: user # optional, default is 
+          # The git clone style, https or ssh.
+          clone_style: https # optional, default is https
+          # The path to cache the source repos code.
+          cache_path: /github/workspace/hub-mirror-cache # optional, default is /github/workspace/hub-mirror-cache
+          # Only mirror repo in the static list, but don't get from repo api (the white/black list is still available). like 'repo1,repo2,repo3'
+          static_list: 'Model_Zoo' # optional, default is 
+          # Force to update the destination repo, use '-f' flag do 'git push'
+          force_update: true # optional
+          # Enable the debug flag to show detail log
+          debug: true # optional
+ 
