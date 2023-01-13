@@ -33,8 +33,10 @@ jobs:
           region: 'cn-central-221'
           bucket_name: github-test
           local_file_path: ./Scene_Classification
-          obs_file_path: src
+          obs_file_path: /
           operation_type: upload
+          include_self_folder: true
+          
       # 上传目标检测文件至桶
       - name: Upload Object_Detection File to Huawei Cloud OBS
         uses: ./utils/obs-helper
@@ -47,8 +49,10 @@ jobs:
           region: 'cn-central-221'
           bucket_name: github-test
           local_file_path: ./Object_Detection
-          obs_file_path: src
+          obs_file_path: /
           operation_type: upload
+          include_self_folder: true
+          
         # 上传变化检测文件至桶
       - name: Upload Change_Detection File to Huawei Cloud OBS
         uses: ./utils/obs-helper
@@ -61,8 +65,9 @@ jobs:
           region: 'cn-central-221'
           bucket_name: github-test
           local_file_path: ./Change_Detection
-          obs_file_path: src
+          obs_file_path: /
           operation_type: upload
+          include_self_folder: true
         
         # 上传语义分割文件至桶
       - name: Upload Semantic_Segmentation File to Huawei Cloud OBS
@@ -76,8 +81,9 @@ jobs:
           region: 'cn-central-221'
           bucket_name: github-test
           local_file_path: ./Semantic_Segmentation
-          obs_file_path: src
+          obs_file_path: /
           operation_type: upload 
+          include_self_folder: true
           
         # 上传三维重建文件至桶
       - name: Upload Multi_View_Reconstruction File to Huawei Cloud OBS
@@ -91,20 +97,21 @@ jobs:
           region: 'cn-central-221'
           bucket_name: github-test
           local_file_path: ./Multi_View_Reconstruction
-          obs_file_path: src
+          obs_file_path: /
           operation_type: upload 
+          include_self_folder: true
           
       # 从桶内下载文件
       - name: Download from Huawei Cloud OBS
         uses: ./
         with:
-          bucket_name: new-bucket
+          bucket_name: github-test
           local_file_path: ${{ github.workspace }}/
-          obs_file_path: src/README.md
+          obs_file_path: Change_Detection/LEVIR-CD/DSIFN_v3/Ascend/1chip/code/README.md
           operation_type: download
       # 删除桶
-      - name: Delete Bucket on Huawei Cloud OBS
-        uses: ./
-        with:
-          bucket_name: new-bucket
-          operation_type: deleteBucket
+      #- name: Delete Bucket on Huawei Cloud OBS
+      #  uses: ./
+      #  with:
+      #    bucket_name: new-bucket
+      #    operation_type: deleteBucket
