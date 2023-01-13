@@ -9,7 +9,7 @@ jobs:
 
       # 创建桶
       - name: Create Bucket on Huawei Cloud OBS
-        uses: ./
+        uses: ./obs-helper
         with:
           # Access key id
           access_key: ${{ secrets.OBS_ACCESS_KEY }}
