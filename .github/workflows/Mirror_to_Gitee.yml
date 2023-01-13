@@ -22,7 +22,7 @@ jobs:
           # Destination name. Such as `gitee/kunpengcompute`.
           dst: gitee/ADHuan
           # Source name. Such as `github/kunpengcompute`.
-          src: github
+          src: github/WHULuoJiaTeam
           # The src account type. Such as org, user.
           src_account_type: org # optional, default is 
           # The dst account type. Such as org, user.
