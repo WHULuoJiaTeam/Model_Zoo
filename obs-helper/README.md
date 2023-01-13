@@ -5,27 +5,27 @@
 2、下载文件/文件夹  
 3、创建桶  
 4、删除桶  
-本项目说明文件仅做基础功能示例，具体不同场景下的使用样例及其参数使用请访问[OBS Helper Workflow Sample](https://github.com/huaweicloud/obs-helper-workflow-sample)  
+本项目说明文件仅做基础功能示例，具体不同场景下的使用样例及其参数使用请访问[OBS Helper Workflow Sample](https://github.com/huaweicloud/obs-helper-workflow-sample) 
+
+
+> **本项目代码与[OBS Helper action](https://github.com/marketplace/actions/huaweicloud-obs-helper)并不完全一致**
+> 
+> **添加了endpoint相关**
+
+
 ## **前置工作**
 1、需要开通华为云的OBS服务，进行对象操作时需要建好桶。[OBS主页](https://www.huaweicloud.com/product/obs.html)，[OBS文档](https://support.huaweicloud.com/obs/)；  
 2、action调用华为云接口需要华为云鉴权，建议将您华为云账户的ak/sk配置于您GitHub工程中的settting-Secret-Actions，分别添加为ACCESSKEY、SECRETACCESSKEY以加密使用，[获取ak/sk方式](https://support.huaweicloud.com/api-obs/obs_04_0116.html)； 
-3、注意替换参数region为自己OBS服务的地区，方便插件配置终端节点 *obs.'\<region\>'.myhuaweicloud.com* 来访问您的OBS服务；   
+3、注意替换参数region为自己OBS服务的地区；  
+4、注意替换参数endpoint为自己OBS服务的接入点，类似 *obs.'\<region\>'.myhuaweicloud.com*   
 4、注意替换参数bucket_name为自己OBS服务的桶名（创建桶时为要创建的桶名）  
-## **华为云统一鉴权认证**
-推荐使用[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)进行OBS操作的鉴权认证。
-```yaml
-    - name: Authenticate to Huawei Cloud
-      uses: huaweicloud/auth-action@v1.0.0
-      with: 
-          access_key_id: ${{ secrets.ACCESSKEY }} 
-          secret_access_key: ${{ secrets.SECRETACCESSKEY }}
-          region: '<region>'
-```
+
 ## **上传下载对象参数说明**
 |  参数名称  |  参数说明  |  默认值  |  是否必填  |
 |  :----:  |  ----  |  :----: |  :----:  |
 | access_key  | 访问密钥ID。与私有访问密钥关联的唯一标识符，和私有访问密钥(secret_key)一起使用，对请求进行加密签名。建议参照**前置工作**中的步骤2进行设置以加密使用。如果使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)可以不填写此参数 |  无  |  否  |
 | secret_key  | 与访问密钥ID(access_key)结合使用的私有访问密钥，对请求进行加密签名，可标识发送方，并防止请求被修改。建议参照**前置工作**中的步骤2进行设置以加密使用。如果使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)可以不填写此参数 |  无  |  否  |
+| endpoint  | OBS服务接入点。用于配置OBS终端节点。如果使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)可以不填写此参数 |  'https://obs.cn-central-221.ovaijisuan.com'  |  否  |
 | region  | OBS服务所在区域。用于配置OBS终端节点。如果使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)可以不填写此参数 |  'cn-north-4'  |  否  |
 | bucket_name  | OBS的目标桶名 |  无  |  是  |
 | operation_type  | 要进行的操作，上传请使用*upload*，下载请使用*download* |  无  |  是  |
@@ -59,6 +59,7 @@ jobs:
 |  :----:  |  ----  |  :----: |  :----:  |
 | access_key  | 访问密钥ID。与私有访问密钥关联的唯一标识符，和私有访问密钥(secret_key)一起使用，对请求进行加密签名。建议参照**前置工作**中的步骤2进行设置以加密使用。如果使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)可以不填写此参数 |  无  |  否  |
 | secret_key  | 与访问密钥ID(access_key)结合使用的私有访问密钥，对请求进行加密签名，可标识发送方，并防止请求被修改。建议参照**前置工作**中的步骤2进行设置以加密使用。如果使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)可以不填写此参数 |  无  |  否  |
+| endpoint  | OBS服务接入点。用于配置OBS终端节点。如果使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)可以不填写此参数 |  'https://obs.cn-central-221.ovaijisuan.com'  |  否  |
 | region  | OBS服务所在区域。用于配置OBS终端节点。如果使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)可以不填写此参数 |  'cn-north-4'  |  否  |
 | bucket_name  | OBS的目标桶名 |  无  |  是  |
 | operation_type  | 要进行的操作，创建桶请使用*createbucket*，删除桶请使用*deletebucket* |  无  |  是  |
@@ -66,25 +67,6 @@ jobs:
 | storage_class  | 创建桶时，桶的存储类型，不填时默认为*标准存储*|  无  |  否  |
 | clear_bucket  | 删除桶时，是否清空桶内全部对象/碎片，不填时默认清空 |  true  |  否  |
 
-## **参数支持列表**
-目前OBS支持的区域名称和对应region(区域)、终端节点请见[对象存储服务 OBS](https://developer.huaweicloud.com/endpoint?OBS)  
-  
-目前OBS支持的存储类型(storage_class)如下
-```text
-  标准存储： standard
-  低频访问存储： infrequent
-  归档存储： archive
-```
-## **action代码示例片段**
-以下action示例片段若无特别说明，均默认使用了华为云统一鉴权[huaweicloud/auth-action](https://github.com/huaweicloud/auth-action)。
-```yaml
-- name: Authenticate to Huawei Cloud
-  uses: huaweicloud/auth-action@v1.0.0
-  with: 
-    access_key_id: ${{ secrets.ACCESSKEY }} 
-    secret_access_key: ${{ secrets.SECRETACCESSKEY }}
-    region: 'cn-north-4'
-```
 ### **上传文件示例**
 > 注意：上传单个文件时，在使用参数obs_file_path的时候，请使用是否以'/'作为结尾来区分是上传为文件，还是上传至文件夹。
 
@@ -103,6 +85,10 @@ jobs:
 - name: Upload to Huawei Cloud OBS
   uses: huaweicloud/obs-helper@v1.4.0
   with:
+    access_key: ${{ secrets.ACCESSKEY }}
+    secret_key: ${{ secrets.SECRETACCESSKEY }}：
+    region: 'cn-north-4'
+    endpoint: 'https://obs.cn-central-221.ovaijisuan.com'
     bucket_name: 'bucket-test'
     local_file_path: 'src1/src2/test1.txt'
     obs_file_path: 'test1.txt'
@@ -118,6 +104,10 @@ test1.txt
 - name: Upload to Huawei Cloud OBS
   uses: huaweicloud/obs-helper@v1.4.0
   with:
+    access_key: ${{ secrets.ACCESSKEY }}
+    secret_key: ${{ secrets.SECRETACCESSKEY }}：
+    region: 'cn-north-4'
+    endpoint: 'https://obs.cn-central-221.ovaijisuan.com'
     bucket_name: 'bucket-test'
     local_file_path: 'src1'
     obs_file_path: 'src'
@@ -140,6 +130,10 @@ test1.txt
 - name: Upload to Huawei Cloud OBS
   uses: huaweicloud/obs-helper@v1.4.0
   with:
+    access_key: ${{ secrets.ACCESSKEY }}
+    secret_key: ${{ secrets.SECRETACCESSKEY }}：
+    region: 'cn-north-4'
+    endpoint: 'https://obs.cn-central-221.ovaijisuan.com'
     bucket_name: 'bucket-test'
     local_file_path: |
       'src1/src2/test1.txt'
@@ -174,6 +168,10 @@ src1
 - name: Download File from Huawei Cloud OBS
   uses: huaweicloud/obs-helper@v1.4.0
   with:
+    access_key: ${{ secrets.ACCESSKEY }}
+    secret_key: ${{ secrets.SECRETACCESSKEY }}：
+    region: 'cn-north-4'
+    endpoint: 'https://obs.cn-central-221.ovaijisuan.com'
     bucket_name: 'bucket-test'
     local_file_path: 'src1/'
     obs_file_path: 'test1.txt'
@@ -190,6 +188,10 @@ src1
 - name: Download from Huawei Cloud OBS
   uses: huaweicloud/obs-helper@v1.4.0
   with:
+    access_key: ${{ secrets.ACCESSKEY }}
+    secret_key: ${{ secrets.SECRETACCESSKEY }}：
+    region: 'cn-north-4'
+    endpoint: 'https://obs.cn-central-221.ovaijisuan.com'
     bucket_name: 'bucket-test'
     local_file_path: 'src'
     obs_file_path: 'src1'
@@ -212,6 +214,10 @@ src
 - name: Download from Huawei Cloud OBS
   uses: huaweicloud/obs-helper@v1.4.0
   with:
+    access_key: ${{ secrets.ACCESSKEY }}
+    secret_key: ${{ secrets.SECRETACCESSKEY }}：
+    region: 'cn-north-4'
+    endpoint: 'https://obs.cn-central-221.ovaijisuan.com'
     bucket_name: 'bucket-test'
     local_file_path: 'src'
     obs_file_path: 'src1'
@@ -237,8 +243,9 @@ src
   uses: huaweicloud/obs-helper@v1.4.0
   with:
     access_key: ${{ secrets.ACCESSKEY }}
-    secret_key: ${{ secrets.SECRETACCESSKEY }}
+    secret_key: ${{ secrets.SECRETACCESSKEY }}：
     region: 'cn-north-4'
+    endpoint: 'https://obs.cn-central-221.ovaijisuan.com'
     bucket_name: 'new-bucket'
     operation_type: 'createBucket'
     public_read: true
@@ -254,6 +261,10 @@ src
 - name: Delete bucket on Huawei Cloud OBS
   uses: huaweicloud/obs-helper@v1.4.0
   with:
+    access_key: ${{ secrets.ACCESSKEY }}
+    secret_key: ${{ secrets.SECRETACCESSKEY }}：
+    region: 'cn-north-4'
+    endpoint: 'https://obs.cn-central-221.ovaijisuan.com'
     bucket_name: 'new-bucket'
     operation_type: 'deleteBucket'
 ```
