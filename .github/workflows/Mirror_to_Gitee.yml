@@ -13,9 +13,9 @@ jobs:
         uses: Yikun/hub-mirror-action@v1.2
         with:
           # The private SSH key which is used to to push code in destination hub.
-          dst_key: ${{ secrets.GITEE_OPENSSH_PRIVATE_KEY}}
+          dst_key: ${{ secrets.GITEE_OPENSSH_PRIVATE_KEY }}
           # The app token which is used to  create repo in destination hub.
-          dst_token: ${{ secrets.GITEE_TOKEN}}
+          dst_token: ${{ secrets.GITEE_TOKEN }}
           # Destination name. Such as `gitee/kunpengcompute`.
           dst: gitee/ADHuan
           # Source name. Such as `github/kunpengcompute`.
