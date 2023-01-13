@@ -17,12 +17,12 @@ jobs:
           secret_key: ${{ secrets.OBS_SECRET_KEY }}
           endpoint: https://obs.cn-central-221.ovaijisuan.com
           region: 'cn-central-221'
-          bucket_name: new-bucket
+          bucket_name: github-test
           operation_type: createBucket
           public_read: true
       # 上传文件至桶
       - name: Upload File to Huawei Cloud OBS
-        uses: ./
+        uses: ./utils/obs-helper
         with:
           bucket_name: new-bucket
           local_file_path: README.md
