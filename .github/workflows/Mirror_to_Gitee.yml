@@ -7,7 +7,7 @@ jobs:
   Mirror_to_Gitee:
     runs-on: ubuntu-latest
     steps:
-      - name: Hub Mirror Action.
+      - name: Hub Mirror Action
         # You may pin to the exact commit or the version.
         # uses: Yikun/hub-mirror-action@c00a1ea60dd818bf68f1f5a523b0e362de743229
         uses: Yikun/hub-mirror-action@v1.2
