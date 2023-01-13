@@ -31,6 +31,6 @@ jobs:
           # Force to update the destination repo, use '-f' flag do 'git push'
           force_update: true # optional
           # Enable the debug flag to show detail log
-          debug: true # optional
+          debug: false # optional
           cache_path: ''
  
