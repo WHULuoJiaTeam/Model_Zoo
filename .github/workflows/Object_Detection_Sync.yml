@@ -1,0 +1,28 @@
+on: 
+  push:
+    paths:
+      - 'Object_Detection/**'
+
+jobs:
+  Object_Detection_Sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # 上传目标检测文件至桶
+      - name: Upload Object_Detection File to Huawei Cloud OBS
+        uses: ./utils/obs-helper
+        with:
+          # Access key id
+          access_key: ${{ secrets.OBS_ACCESS_KEY }}
+          # Secret access key
+          secret_key: ${{ secrets.OBS_SECRET_KEY }}
+          endpoint: https://obs.cn-central-221.ovaijisuan.com
+          region: 'cn-central-221'
+          bucket_name: luojianet-benchmark-public
+          local_file_path: ./Object_Detection
+          obs_file_path: /public-model/
+          operation_type: upload
+          include_self_folder: true
+          
