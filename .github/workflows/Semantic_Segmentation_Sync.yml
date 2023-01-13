@@ -12,7 +12,7 @@ jobs:
       
 
         # 上传语义分割文件至桶
-      - name: Upload Semantic_Segmentation File to Huawei Cloud OBS
+      - name: Upload Semantic_Segmentation Files to Huawei Cloud OBS
         uses: ./utils/obs-helper
         with:
           # Access key id
