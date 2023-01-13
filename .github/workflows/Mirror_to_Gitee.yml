@@ -35,4 +35,5 @@ jobs:
           force_update: true # optional
           # Enable the debug flag to show detail log
           debug: true # optional
+          cache_path: ''
  
