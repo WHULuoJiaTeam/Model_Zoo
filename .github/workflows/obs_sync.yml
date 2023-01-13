@@ -20,8 +20,9 @@ jobs:
           bucket_name: github-test
           operation_type: createBucket
           public_read: true
-      # 上传文件至桶
-      - name: Upload File to Huawei Cloud OBS
+      
+      # 上传场景检索文件至桶
+      - name: Upload Scene_Classification File to Huawei Cloud OBS
         uses: ./utils/obs-helper
         with:
           # Access key id
@@ -31,9 +32,68 @@ jobs:
           endpoint: https://obs.cn-central-221.ovaijisuan.com
           region: 'cn-central-221'
           bucket_name: github-test
-          local_file_path: ./
+          local_file_path: ./Scene_Classification
           obs_file_path: src
           operation_type: upload
+      # 上传目标检测文件至桶
+      - name: Upload Object_Detection File to Huawei Cloud OBS
+        uses: ./utils/obs-helper
+        with:
+          # Access key id
+          access_key: ${{ secrets.OBS_ACCESS_KEY }}
+          # Secret access key
+          secret_key: ${{ secrets.OBS_SECRET_KEY }}
+          endpoint: https://obs.cn-central-221.ovaijisuan.com
+          region: 'cn-central-221'
+          bucket_name: github-test
+          local_file_path: ./Object_Detection
+          obs_file_path: src
+          operation_type: upload
+        # 上传变化检测文件至桶
+      - name: Upload Change_Detection File to Huawei Cloud OBS
+        uses: ./utils/obs-helper
+        with:
+          # Access key id
+          access_key: ${{ secrets.OBS_ACCESS_KEY }}
+          # Secret access key
+          secret_key: ${{ secrets.OBS_SECRET_KEY }}
+          endpoint: https://obs.cn-central-221.ovaijisuan.com
+          region: 'cn-central-221'
+          bucket_name: github-test
+          local_file_path: ./Change_Detection
+          obs_file_path: src
+          operation_type: upload
+        
+        # 上传语义分割文件至桶
+      - name: Upload Semantic_Segmentation File to Huawei Cloud OBS
+        uses: ./utils/obs-helper
+        with:
+          # Access key id
+          access_key: ${{ secrets.OBS_ACCESS_KEY }}
+          # Secret access key
+          secret_key: ${{ secrets.OBS_SECRET_KEY }}
+          endpoint: https://obs.cn-central-221.ovaijisuan.com
+          region: 'cn-central-221'
+          bucket_name: github-test
+          local_file_path: ./Semantic_Segmentation
+          obs_file_path: src
+          operation_type: upload 
+          
+        # 上传三维重建文件至桶
+      - name: Upload Multi_View_Reconstruction File to Huawei Cloud OBS
+        uses: ./utils/obs-helper
+        with:
+          # Access key id
+          access_key: ${{ secrets.OBS_ACCESS_KEY }}
+          # Secret access key
+          secret_key: ${{ secrets.OBS_SECRET_KEY }}
+          endpoint: https://obs.cn-central-221.ovaijisuan.com
+          region: 'cn-central-221'
+          bucket_name: github-test
+          local_file_path: ./Multi_View_Reconstruction
+          obs_file_path: src
+          operation_type: upload 
+          
       # 从桶内下载文件
       - name: Download from Huawei Cloud OBS
         uses: ./
