@@ -24,9 +24,15 @@ jobs:
       - name: Upload File to Huawei Cloud OBS
         uses: ./utils/obs-helper
         with:
-          bucket_name: new-bucket
-          local_file_path: README.md
-          obs_file_path: src/README.md
+          # Access key id
+          access_key: ${{ secrets.OBS_ACCESS_KEY }}
+          # Secret access key
+          secret_key: ${{ secrets.OBS_SECRET_KEY }}
+          endpoint: https://obs.cn-central-221.ovaijisuan.com
+          region: 'cn-central-221'
+          bucket_name: github-test
+          local_file_path: ./
+          obs_file_path: src
           operation_type: upload
       # 从桶内下载文件
       - name: Download from Huawei Cloud OBS
