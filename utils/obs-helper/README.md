@@ -83,7 +83,7 @@ jobs:
 #### 上传文件src1/src2/test1.txt至obs根目录
 ```yaml
 - name: Upload to Huawei Cloud OBS
-  uses: huaweicloud/obs-helper@v1.4.0
+  uses: ./utils/obs-helper
   with:
     access_key: ${{ secrets.ACCESSKEY }}
     secret_key: ${{ secrets.SECRETACCESSKEY }}：
@@ -102,7 +102,7 @@ test1.txt
 #### 上传文件夹src1(包含文件夹自身)至src文件夹
 ```yaml
 - name: Upload to Huawei Cloud OBS
-  uses: huaweicloud/obs-helper@v1.4.0
+  uses: ./utils/obs-helper
   with:
     access_key: ${{ secrets.ACCESSKEY }}
     secret_key: ${{ secrets.SECRETACCESSKEY }}：
@@ -128,7 +128,7 @@ test1.txt
 #### 上传多个文件和文件夹(不包含文件夹自身)至src文件夹
 ```yaml
 - name: Upload to Huawei Cloud OBS
-  uses: huaweicloud/obs-helper@v1.4.0
+  uses: ./utils/obs-helper
   with:
     access_key: ${{ secrets.ACCESSKEY }}
     secret_key: ${{ secrets.SECRETACCESSKEY }}：
@@ -166,7 +166,7 @@ src1
 #### 下载文件test1.txt至文件夹src1中
 ```yaml
 - name: Download File from Huawei Cloud OBS
-  uses: huaweicloud/obs-helper@v1.4.0
+  uses: ./utils/obs-helper
   with:
     access_key: ${{ secrets.ACCESSKEY }}
     secret_key: ${{ secrets.SECRETACCESSKEY }}：
@@ -186,7 +186,7 @@ src1
 #### 下载文件夹src1(包含文件夹自身)至文件夹src中
 ```yaml
 - name: Download from Huawei Cloud OBS
-  uses: huaweicloud/obs-helper@v1.4.0
+  uses: ./utils/obs-helper
   with:
     access_key: ${{ secrets.ACCESSKEY }}
     secret_key: ${{ secrets.SECRETACCESSKEY }}：
@@ -212,7 +212,7 @@ src
 #### 下载文件夹src1(不包含文件夹自身，排除下载桶内src1/sr2/test3.txt和src1/src3目录下的所有文件)到src文件夹下
 ```yaml
 - name: Download from Huawei Cloud OBS
-  uses: huaweicloud/obs-helper@v1.4.0
+  uses: ./utils/obs-helper
   with:
     access_key: ${{ secrets.ACCESSKEY }}
     secret_key: ${{ secrets.SECRETACCESSKEY }}：
@@ -240,7 +240,7 @@ src
 假设您的OBS中不存在名为'new-bucket'的桶
 ```yaml
 - name: Create Bucket on Huawei Cloud OBS
-  uses: huaweicloud/obs-helper@v1.4.0
+  uses: ./utils/obs-helper
   with:
     access_key: ${{ secrets.ACCESSKEY }}
     secret_key: ${{ secrets.SECRETACCESSKEY }}：
@@ -259,7 +259,7 @@ src
 假设您的obs中存在名为'new-bucket'的桶
 ```yaml
 - name: Delete bucket on Huawei Cloud OBS
-  uses: huaweicloud/obs-helper@v1.4.0
+  uses: ./utils/obs-helper
   with:
     access_key: ${{ secrets.ACCESSKEY }}
     secret_key: ${{ secrets.SECRETACCESSKEY }}：
