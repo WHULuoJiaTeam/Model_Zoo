@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # CKPT files
-.ckpt
+*.ckpt
 
 # VSCode settings
 .vscode
