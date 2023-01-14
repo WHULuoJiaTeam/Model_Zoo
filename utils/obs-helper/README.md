@@ -1,4 +1,9 @@
 # Huawei Cloud OBS Helper
+
+> **在[OBS Helper action](https://github.com/marketplace/actions/huaweicloud-obs-helper)的基础上适配武汉华为AICC进行了修改**
+> 
+> **添加了endpoint相关参数:** 由于华为武汉AICC并没有加入[地区和终端节点 - 对象存储服务 OBS](https://developer.huaweicloud.com/endpoint?OBS)列表中，添加了endpoint使本工具能够访问AICC的OBS资源
+
 [对象存储服务（Object Storage Service，OBS）](https://www.huaweicloud.com/product/obs.html)是一个基于对象的海量存储服务，为客户提供海量、安全、高可靠、低成本的数据存储能力。
 您可以使用[OBS Helper action](https://github.com/marketplace/actions/huaweicloud-obs-helper)实现如下对OBS的操作：  
 1、上传文件/文件夹  
@@ -8,9 +13,7 @@
 本项目说明文件仅做基础功能示例，具体不同场景下的使用样例及其参数使用请访问[OBS Helper Workflow Sample](https://github.com/huaweicloud/obs-helper-workflow-sample) 
 
 
-> **本项目代码与[OBS Helper action](https://github.com/marketplace/actions/huaweicloud-obs-helper)并不完全一致**
-> 
-> **添加了endpoint相关**
+
 
 
 ## **前置工作**
@@ -271,5 +274,5 @@ src
 执行成功后，您在obs的桶'new-bucket'以及其中所有对象和碎片将被删除
 
 ## Action中使用的公网地址说明
-- 本action在使用过程会调用OBS服务，涉及到的公网域名可到[地区和终端节点 - 对象存储服务 OBS](https://developer.huaweicloud.com/endpoint?OBS)查看。  
+- 本action在使用过程会调用OBS服务，涉及到的公网域名可到[地区和终端节点 - 对象存储服务 OBS](https://developer.hua查看。  
 - [Linux AMD64 OBSUtil下载链接](https://obs-community.obs.cn-north-1.myhuaweicloud.com/obsutil/current/obsutil_linux_amd64.tar.gz)
