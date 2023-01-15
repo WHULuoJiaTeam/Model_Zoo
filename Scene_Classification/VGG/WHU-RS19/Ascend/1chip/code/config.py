@@ -26,14 +26,14 @@ config = ed({
     "dataset_path": "obs://sktest/WHU-RS19-train/",  #数据存放位置
     "dataset_eval_path": "obs://sktest/WHU-RS19-test/",  #验证数据存放位置
     "save_checkpoint_path": "/cache/training/",  #保存的参数存放位置
-    "obs_checkpoint_path":"obs://luojianet-benchmark/Scene_Classification/VGG-16/WHU-RS19/1chip/ckpt/",# obs ckpt存放位置
+    "obs_checkpoint_path":"obs://luojianet-benchmark/Scene_Classification/VGG-16/WHURS-19/1chip/ckpt/",# obs ckpt存放位置
     "resume":False,   #是否载入模型训练
     "class_num": 19,  #数据集中包含的种类
     "batch_size": 64,
     "loss_scale": 1024,
     "momentum": 0.9,
     "weight_decay": 1e-5,
-    "epoch_size": 350, #训练次数
+    "epoch_size": 200, #训练次数
     "save_checkpoint": True, #是否保存模型
     "save_checkpoint_epochs": 1, #多少次迭代保存一次模型
     "keep_checkpoint_max": 100, #文件内保存模型的最大个数，超过则删掉最开始的
