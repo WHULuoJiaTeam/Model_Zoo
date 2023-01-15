@@ -130,7 +130,7 @@ def infer(model_path, data_path):
 
 if __name__ == '__main__':
     ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/DSIFN_v3/LEVIR-CD/1chip/code/best.ckpt'
-    # ckpt_obs_2 = 'obs://luojianet-benchmark/Change_Detection/DSIFN_v2/LEVIR-CD/200epoch/ckpt/model/DSFIN-200_27.ckpt'
+    # ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/DSIFN_v3/LEVIR-CD/1chip/ckpt/model/DSFIN-200_159.ckpt'
     ckpt_cache = '/cache/ckpt/test.ckpt'
     mox.file.copy_parallel(ckpt_obs, ckpt_cache)
     mox.file.copy_parallel('obs://change-detection/LEVIR-CD/',

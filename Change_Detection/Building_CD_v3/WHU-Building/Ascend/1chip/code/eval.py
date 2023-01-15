@@ -138,8 +138,12 @@ if __name__ == '__main__':
     ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/code/best.ckpt'
     ckpt_cache = '/cache/ckpt/test.ckpt'
     mox.file.copy_parallel(ckpt_obs, ckpt_cache)
-    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU-CD/', config.dataset_path)
-
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/A_test/', config.dataset_path+'A/')
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/B_test/', config.dataset_path+'B/')
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/building_A_test/', config.dataset_path+'building_A/')
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/building_B_test/', config.dataset_path+'building_B/')
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/label_test/', config.dataset_path+'label/')
+    
     parser = argparse.ArgumentParser(description = 'Change Detection')
     parser.add_argument('--checkpoint_path', type = str, default = ckpt_cache, help = 'Saved checkpoint file path')
     parser.add_argument('--dataset_path', type = str, default = config.dataset_path, help = 'Eval dataset path')
