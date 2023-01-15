@@ -10,14 +10,16 @@ from luojianet_ms.communication.management import init
 from luojianet_ms.train.loss_scale_manager import FixedLossScaleManager
 from luojianet_ms.common import dtype as mstype
 from luojianet_ms.common import set_seed
+import luojianet_ms.nn as nn
 import os
 
 from utils import get_lr,create_dataset,CrossEntropySmooth
 from config import config
-
+from benchmark_callback import *
 from Resnet_se import *
 set_seed(1)
 CACHE = "/cache/data/"
+CACHE_eval = "/cache/data_eval/"
 import moxing as mox
 
 
@@ -54,6 +56,13 @@ if __name__ == '__main__':
                              batch_size=config.batch_size, num_shards=device_num, shard_id=config.rank)
     step_size = dataset.get_dataset_size()
 
+    # define dataset_eval
+    mox.file.copy_parallel(src_url=config.dataset_eval_path, dst_url=CACHE_eval)
+    dataset_eval = create_dataset(dataset_path=CACHE_eval,
+                             do_train=True,
+                             batch_size=config.batch_size, num_shards=device_num, shard_id=config.rank)
+    step_size = dataset.get_dataset_size()
+
     # resume
     if config.resume:
         ckpt = load_checkpoint(config.resume)
@@ -79,10 +88,10 @@ if __name__ == '__main__':
 
     # define model
     model = Model(net, loss_fn=loss, optimizer=optimizer, loss_scale_manager=loss_scale,
-                  metrics={'acc'})
-
+                  metrics={'0': nn.Loss(), '1': nn.Accuracy()})
     callbacks = [LossMonitor(per_print_times=10),
-                 TimeMonitor(data_size=step_size)]
+                 TimeMonitor(data_size=step_size),
+                 BenchmarkTraining(model, dataset_eval)]
     if config.rank == 0:
         time_cb = TimeMonitor(data_size=dataset.get_dataset_size())
         config_ck = CheckpointConfig(save_checkpoint_steps=config.save_checkpoint_epochs,
@@ -95,4 +104,4 @@ if __name__ == '__main__':
     print("============== Starting Training ==============")
     model.train(config.epoch_size, dataset, callbacks=callbacks)
     mox.file.copy_parallel(src_url=config.save_checkpoint_path, dst_url=config.obs_checkpoint_path)
-
+    mox.file.copy_parallel('/cache/eval/', 'obs://luojianet-benchmark/Scene_Classification/SENet/WHURS-19/1chip/other/')
