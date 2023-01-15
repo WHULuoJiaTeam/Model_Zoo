@@ -97,7 +97,7 @@ def infer(model_path,data_path):
     print('load test weights from %s', str(model_path))
     load_param_into_net(model, load_checkpoint(model_path))
     print('loaded test weights from %s', str(model_path))
-    model = luojianet_ms.Model(model)
+    # model = luojianet_ms.Model(model)
     img1_path=os.path.join(data_path,"A")
     img2_path=os.path.join(data_path,"B")
     label_path=os.path.join(data_path,"label")
@@ -107,13 +107,14 @@ def infer(model_path,data_path):
     F1_scores = AverageMeter()
     IoUs = AverageMeter()
     Kappas = AverageMeter()  
-    for i, img in tqdm.tqdm(enumerate(labels),ncols=100):
+    for _, img in enumerate(labels):
         img1 = os.path.join(img1_path, img)
         img2 = os.path.join(img2_path, img)
         label=os.path.join(label_path,img)
         input,target = img2ten.forward(img1, img2,label)
-        output = model.predict(luojianet_ms.Tensor(input))
-        output = np.array(output.squeeze(0))
+        in_tensor=luojianet_ms.Tensor(input)
+        output = model(in_tensor)
+        output = output.squeeze(0).asnumpy()
         pd = output[2, :, :]
         pd = ((pd > 0.5)*255).astype('uint8')
         pd2=pd/255
@@ -135,7 +136,9 @@ def infer(model_path,data_path):
     print("Final Kappas: "+ str(Kappas.avg))
 
 if __name__ == '__main__':
-    ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/code/best.ckpt'
+    # ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/code/best.ckpt'
+    ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/ckpt/CD-200_168.ckpt'
+
     ckpt_cache = '/cache/ckpt/test.ckpt'
     mox.file.copy_parallel(ckpt_obs, ckpt_cache)
     mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/A_test/', config.dataset_path+'A/')

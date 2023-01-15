@@ -112,7 +112,7 @@ def infer(model_path, data_path):
 
 if __name__ == '__main__':
     ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/DSIFN_v3/WHU-BCD/1chip/code/best.ckpt'
-    # ckpt_obs='obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/ckpt/CD-200_168.ckpt'
+    # ckpt_obs='obs://luojianet-benchmark/Change_Detection/DSIFN_v3/WHU-BCD/1chip/ckpt/model/DSFIN-200_168.ckpt'
     ckpt_cache = '/cache/ckpt/test.ckpt'
     mox.file.copy_parallel(ckpt_obs, ckpt_cache)
     mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/A_test/', config.dataset_path+'A/')
