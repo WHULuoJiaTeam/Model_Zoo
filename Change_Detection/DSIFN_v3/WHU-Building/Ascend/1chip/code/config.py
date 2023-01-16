@@ -27,7 +27,7 @@ config = ed({
     "dataset_path": "/cache/data/",  # 数据存放位置
     "save_checkpoint_path": "/cache/checkpoint/",  # 保存的参数存放位置
     "resume": False,  # 是否载入模型训练
-    "batch_size": 8,
+    "batch_size": 4,
     "aug": True,
     "steps_per_epoch": 200,
     "epoch_size": 200,  # 训练次数
