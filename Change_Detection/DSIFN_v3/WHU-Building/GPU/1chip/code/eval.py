@@ -1,23 +1,11 @@
-from turtle import forward
+
 from IFN import *
-import luojianet_ms
-import numpy as np
-from PIL import Image
-import cv2
-from luojianet_ms import Tensor, load_checkpoint, load_param_into_net
-import os
-import tqdm
-import luojianet_ms.dataset.vision.c_transforms as c_vision
-import luojianet_ms.dataset.vision.py_transforms as py_vision
-from luojianet_ms import context
-import luojianet_ms.ops as ops
 from luojianet_ms import context
 from luojianet_ms.common import set_seed
 from luojianet_ms import load_checkpoint, load_param_into_net
 from dataset import create_Dataset
 from config import config 
 import argparse
-import moxing as mox
 
 # caculate precision between output and target
 def precision(output, target):
@@ -111,20 +99,12 @@ def infer(model_path, data_path):
     print("Final Kappas: "+ str(Kappas.avg))
 
 if __name__ == '__main__':
-    ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/DSIFN_v3/WHU-BCD/1chip/code/best.ckpt'
-    # ckpt_obs='obs://luojianet-benchmark/Change_Detection/DSIFN_v3/WHU-BCD/1chip/ckpt/model/DSFIN-200_168.ckpt'
-    ckpt_cache = '/cache/ckpt/test.ckpt'
-    mox.file.copy_parallel(ckpt_obs, ckpt_cache)
-    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/A_test/', config.dataset_path+'A/')
-    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/B_test/', config.dataset_path+'B/')
-    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/label_test/', config.dataset_path+'label/')
-
 
     parser = argparse.ArgumentParser(description='Change Detection')
-    parser.add_argument('--checkpoint_path', type=str, default=ckpt_cache, help='Saved checkpoint file path')
+    parser.add_argument('--checkpoint_path', type=str, default='./checkpoint/model/DSFIN_1-200_480.ckpt', help='Saved checkpoint file path')
     parser.add_argument('--dataset_path', type=str, default=config.dataset_path, help='Eval dataset path')
     parser.add_argument('--device_target', type=str, default=config.device_target, help='Device target')
-    parser.add_argument('--device_id', type=int, default=config.device_id, help='Device id')
+    parser.add_argument('--device_id', type=int, default=1, help='Device id')
     args = parser.parse_args()
     set_seed(1)
 
