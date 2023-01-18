@@ -23,7 +23,7 @@ class Isprs_Dataset:
         return len(self.ids)
 
     def __getitem__(self, i):
-        idx = self.ids[i]
+        idx = self.ids[i].split('/')[-1]
         img_path=os.path.join(self.img_dir, idx)
         img=io.imread(img_path)[:,:,0:3]
         label_path = os.path.join(self.label_dir, idx)

@@ -8,15 +8,26 @@ from dataset.isprs_dataset import Isprs_Dataset
 import dataset.isprs_transform as transform
 from model import SegModel
 from luojianet_ms import context
-context.set_context(mode=context.PYNATIVE_MODE,device_id=0, device_target='GPU')
+import moxing as mox
+
 
 def get_argparse():
     parser = argparse.ArgumentParser(description='Training')
-    parser.add_argument('-c', '--config', type=str, default='train_config', help='Configuration File')
+    parser.add_argument('-c', '--config', type=str, default='Deepv3p', help='Configuration File')
     return parser.parse_args()
+
+config_name=get_argparse().config
+param = importlib.import_module("." + get_argparse().config, package='config').param
+
+context.set_context(mode=context.PYNATIVE_MODE,device_id=param['device_id'], device_target=param['device_target'])
+
 
 
 if __name__ == "__main__":
+    # load data from obs
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Semantic_Segmentation/Vaihingen_split/', param['data_dir'])
+    
+
     # set random seed
     config_name=get_argparse().config
     param = importlib.import_module("." + get_argparse().config, package='config').param
@@ -24,12 +35,13 @@ if __name__ == "__main__":
 
     # data path
     data_dir = param['data_dir']#'./data'
-    train_img_dir_path = os.path.join(data_dir, "img_dir/train")
-    train_label_dir_path = os.path.join(data_dir, "ann_dir/train")
-    val_img_dir_path = os.path.join(data_dir, "img_dir/val")
-    val_label_dir_path = os.path.join(data_dir, "ann_dir/val")
+    train_img_dir_path = os.path.join(data_dir, "cropped512/img")
+    train_label_dir_path = os.path.join(data_dir, "cropped512/label")
+    val_img_dir_path = os.path.join(data_dir, "cropped512/img")
+    val_label_dir_path = os.path.join(data_dir, "cropped512/label")
     train_image_id_txt_path = param['train_image_id_txt_path']
     val_image_id_txt_path = param['val_image_id_txt_path']
+
 
 
     # dataset
@@ -45,17 +57,21 @@ if __name__ == "__main__":
                      in_channels=param['in_channels'], n_class=param['n_class'])
 
     # model save path
-    save_ckpt_dir = os.path.join('./checkpoint', param['save_dir'], 'ckpt')
-    save_log_dir = os.path.join('./checkpoint', param['save_dir'])
+    save_ckpt_dir = os.path.join('/cache/checkpoint', param['save_dir'], 'ckpt')
+    save_log_dir = os.path.join('/cache/checkpoint', param['save_dir'])
     if not os.path.exists(save_ckpt_dir):
         os.makedirs(save_ckpt_dir)
     if not os.path.exists(save_log_dir):
         os.makedirs(save_log_dir)
     param['save_log_dir'] = save_log_dir
-    old_config_name_path='./config'+'/'+config_name+'.py'
+    old_config_name_path='/home/ma-user/modelarts/user-job-dir/code/config'+'/'+config_name+'.py'
     new_config_name_path = param['save_log_dir'] + '/' + config_name + '.py'
     shutil.copyfile(src=old_config_name_path,dst=new_config_name_path)
     param['save_ckpt_dir'] = save_ckpt_dir
 
     # training
     train_net(param=param, model=model, train_dataset=train_dataset, valid_dataset=valid_dataset)
+
+    # upload opt to obs
+    mox.file.copy_parallel('/cache/checkpoint', 'obs://luojianet-benchmark/Semantic_Segmentation/DeepLabv3plus/ISPRS_Vaihingen/Ascend/1chip/ckpt/')
+

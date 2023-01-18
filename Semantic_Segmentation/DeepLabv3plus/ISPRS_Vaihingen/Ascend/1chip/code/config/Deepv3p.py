@@ -1,17 +1,18 @@
 param = {}
 param['random_seed']=10000
+param['device_target']='Ascend'
+param['device_id']=0
 # dataset
-param['data_dir'] = '/home/luojianet/py21/isprs_data/vaihingen/valihingen_patch/'
-param['train_image_id_txt_path']=param['data_dir']+'/train_image_id_patch_512_stride_256.txt'
-param['val_image_id_txt_path']=param['data_dir']+'/val_image_id_patch_512_stride_256.txt'
+param['data_dir'] = '/cache/dataset'
+param['train_image_id_txt_path']=param['data_dir']+'/train_512.txt'
+param['val_image_id_txt_path']=param['data_dir']+'/val_512.txt'
 param['train_transform']='train_transform'
 param['val_transform']='val_transform'
 param['num_workers']=2
-# Model configuration
 param['in_channels'] = 3
-param['model_network'] = "DeepLabV3"
+param['model_network'] = "DeepLabV3Plus"
 # Training parameters
-param['epochs'] = 200
+param['epochs'] = 500
 param['train_batch_size'] = 8
 param['test_batch_size'] = 1
 param['lr'] = 0.0001
@@ -26,4 +27,4 @@ param['load_ckpt_dir'] = None
 
 # Save path
 param['extra_log'] = 'vaihingen_6_classes'
-param['save_dir'] = (param['encoder_name'] + '_' + param['model_network'] + '_' + param['extra_log']).strip('_')
+param['save_dir'] = (param['model_network'] + '_' + param['extra_log']).strip('_')
