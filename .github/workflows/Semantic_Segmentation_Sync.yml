@@ -26,34 +26,3 @@ jobs:
           obs_file_path: /public-model/
           operation_type: upload 
           include_self_folder: true
-          
-        # 上传三维重建文件至桶
-      - name: Upload Multi_View_Reconstruction File to Huawei Cloud OBS
-        uses: ./utils/obs-helper
-        with:
-          # Access key id
-          access_key: ${{ secrets.OBS_ACCESS_KEY }}
-          # Secret access key
-          secret_key: ${{ secrets.OBS_SECRET_KEY }}
-          endpoint: https://obs.cn-central-221.ovaijisuan.com
-          region: 'cn-central-221'
-          bucket_name: luojianet-benchmark-public
-          local_file_path: ./Multi_View_Reconstruction
-          obs_file_path: /public-model/
-          operation_type: upload 
-          include_self_folder: true
-          
-      # 从桶内下载文件
-      - name: Download from Huawei Cloud OBS
-        uses: ./utils/obs-helper
-        with:
-          bucket_name: luojianet-benchmark-public
-          local_file_path: ${{ github.workspace }}/
-          obs_file_path: /public-model/Change_Detection/LEVIR-CD/DSIFN_v3/Ascend/1chip/code/README.md
-          operation_type: download
-      # 删除桶
-      #- name: Delete Bucket on Huawei Cloud OBS
-      #  uses: ./
-      #  with:
-      #    bucket_name: new-bucket
-      #    operation_type: deleteBucket
