@@ -17,12 +17,12 @@ def compress(path, target_path, method="LZW"):
 
 def get_isprs_labels():
     return np.array([
-        [255, 255, 255],    # 0 : Impervious surfaces (white)
-        [0, 0, 255],        # 1 : Buildings (blue)
-        [0, 255, 255],      # 2 : Low vegetation (cyan)
-        [0, 255, 0],        # 3 : Trees (green)
-        [255, 255, 0],      # 4 : Cars (yellow)
-        [255, 0, 0]])       # 5 : Clutter (red)
+        [255, 255, 255],  # 0 : Impervious surfaces (white)
+        [0, 0, 255],  # 1 : Buildings (blue)
+        [0, 255, 255],  # 2 : Low vegetation (cyan)
+        [0, 255, 0],  # 3 : Trees (green)
+        [255, 255, 0],  # 4 : Cars (yellow)
+        [255, 0, 0]])  # 5 : Clutter (red)
 
 
 def decode_label(encode_label_path, decode_label_path):
@@ -46,7 +46,6 @@ def decode_label(encode_label_path, decode_label_path):
 
 
 def encode_label(orign_label_path, encode_label_path):
-
     if not os.path.exists(encode_label_path):
         os.makedirs(encode_label_path)
     for filename in os.listdir(orign_label_path):
@@ -184,7 +183,7 @@ def grouper(n, iterable):
 
 
 # Slide for GDAL-data array
-def sliding_window(image, step=10, window_size=(20,20)):
+def sliding_window(image, step=10, window_size=(20, 20)):
     """ Slide a window_shape window across the image with a stride of step """
     for x in range(0, image.shape[1], step):
         if x + window_size[0] > image.shape[1]:
@@ -278,7 +277,8 @@ def make_crop_and_gendatalist(train_all_datalist, val_all_datalist,
         label, label_geotrans = read_data(right_label_name)
 
         # Get a sequence patch
-        for data_number, coords in enumerate(grouper(1, sliding_window(image, step=patch_size[0], window_size=patch_size))):
+        for data_number, coords in enumerate(
+                grouper(1, sliding_window(image, step=patch_size[0], window_size=patch_size))):
             for x, y, h, w in coords:
                 image_patches = image[:, x:x + h, y:y + w]
                 label_pathces = label[x:x + h, y:y + w]
@@ -315,7 +315,6 @@ def make_crop_and_gendatalist(train_all_datalist, val_all_datalist,
                 write_data(image_patches, image_geotrans, img_train_patch_fullname)
                 write_data(label_pathces, label_geotrans, label_train_patch_fullname)
 
-
     # 从val_all.txt大幅面数据列表中生成切分的数据
     for index, line in enumerate(open(val_all_datalist, 'r', encoding='gbk')):
         name = line.split()
@@ -334,7 +333,8 @@ def make_crop_and_gendatalist(train_all_datalist, val_all_datalist,
         label, label_geotrans = read_data(right_label_name)
 
         # Get a sequence patch
-        for data_number, coords in enumerate(grouper(1, sliding_window(image, step=patch_size[0], window_size=patch_size))):
+        for data_number, coords in enumerate(
+                grouper(1, sliding_window(image, step=patch_size[0], window_size=patch_size))):
             for x, y, h, w in coords:
                 image_patches = image[:, x:x + h, y:y + w]
                 label_pathces = label[x:x + h, y:y + w]
@@ -373,24 +373,25 @@ def make_crop_and_gendatalist(train_all_datalist, val_all_datalist,
     trainF.close()
     valF.close()
 
+
 if __name__ == '__main__':
     # PreStep(If need): encode and decode color-labels
-    # orign_label_path = 'D:/Vaihingen/color_label_one'
-    # encode_label_path = 'D:/Vaihingen/encoded_label_one'
-    # encode_label(orign_label_path, encode_label_path)
-    #
-    # decode_label_path = 'D:/Vaihingen/decoded_label_one'
+    orign_label_path = '/zhdata/Vaihingen_dataset/train'
+    encode_label_path = '/zhdata/Vaihingen_dataset/label_one'
+    encode_label(orign_label_path, encode_label_path)
+
+    # decode_label_path = '/zhdata/Vaihingen_dataset/label_one'
     # decode_label(encode_label_path, decode_label_path)
 
 
-    # LandCoverAI settings
-    img_folder = '/data01/SegDataset/LandCoverAI/images'
-    label_folder = '/data01/SegDataset/LandCoverAI/masks'
-    target_dir = '/data01/SegDataset/LargeFrameData/LandCoverAI'
+    # Vaihingen settings
+    img_folder = '/zhdata/Vaihingen_dataset/train'
+    label_folder = '/zhdata/Vaihingen_dataset/label_one'
+    target_dir = '/zhdata/Vaihingen_dataset/Vaihingen_split'
     # Step1: Generate datalist for large RS data.
     generate_datalist(img_folder, label_folder, target_dir)
     # Step2: Crop large RS data from datalist and generate corresponding datalist
-    cropsize_list = [2048, 1024, 512]
+    cropsize_list = [1024, 512]
     ignore_label = 0  # Do not change easily
     data_info_threshold = 0
 
