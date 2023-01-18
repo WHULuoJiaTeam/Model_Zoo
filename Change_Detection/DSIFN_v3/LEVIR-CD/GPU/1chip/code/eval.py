@@ -119,7 +119,7 @@ def infer(model_path, data_path):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description = 'Change Detection')
-    parser.add_argument('--checkpoint_path', type = str, default = './best.ckpt', help = 'Saved checkpoint file path')
+    parser.add_argument('--checkpoint_path', type = str, default = './checkpoint/model/DSFIN-200_111.ckpt', help = 'Saved checkpoint file path')
     parser.add_argument('--dataset_path', type = str, default = config.dataset_path, help = 'Eval dataset path')
     parser.add_argument('--device_target', type = str, default = config.device_target, help = 'Device target')
     parser.add_argument('--device_id', type = int, default = 1, help = 'Device id')
