@@ -1,6 +1,6 @@
 import os
-from PIL import Image, ImageFile
 import multiprocessing
+from PIL import Image, ImageFile
 from luojianet_ms.common import dtype as mstype
 import luojianet_ms.dataset as de
 import luojianet_ms.dataset.transforms.c_transforms as C2
@@ -119,10 +119,9 @@ def create_dataset(dataset_path, do_train, batch_size=16, num_shards=1, shard_id
     """
     # if device_num == 1:
     cores = multiprocessing.cpu_count()
-    # num_parallel_workers = int(cores / device_num)
+    #num_parallel_workers = int(cores / device_num)
     num_parallel_workers = int(cores / 1)
-    ds = de.ImageFolderDataset(dataset_path, num_parallel_workers=min(8, num_parallel_workers), shuffle=True,
-                               num_shards=num_shards, shard_id=shard_id)
+    ds = de.ImageFolderDataset(dataset_path, num_parallel_workers=min(8, num_parallel_workers), shuffle=True,num_shards=num_shards, shard_id=shard_id)
     # else:
     #     ds = de.ImageFolderDataset(dataset_path, num_parallel_workers=8, shuffle=True,
     #                                num_shards=device_num, shard_id=rank)

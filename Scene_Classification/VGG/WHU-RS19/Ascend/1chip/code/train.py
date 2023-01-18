@@ -21,6 +21,7 @@ from vgg import *
 # from Resnet_se import *
 set_seed(1)
 CACHE = "/cache/data/"
+CACHE_eval = "/cache/data_eval/"
 import moxing as mox
 
 def get_device_id():
@@ -61,8 +62,8 @@ if __name__ == '__main__':
     step_size = dataset.get_dataset_size()
 
     # define dataset_eval
-    mox.file.copy_parallel(src_url=config.dataset_eval_path, dst_url=CACHE)
-    dataset_eval = create_dataset(dataset_path=CACHE,
+    mox.file.copy_parallel(src_url=config.dataset_eval_path, dst_url=CACHE_eval)
+    dataset_eval = create_dataset(dataset_path=CACHE_eval,
                              do_train=True,
                              batch_size=config.batch_size, num_shards=device_num, shard_id=config.rank)
     step_size = dataset.get_dataset_size()
@@ -92,7 +93,7 @@ if __name__ == '__main__':
 
     # define model
     model = Model(net, loss_fn=loss, optimizer=optimizer, loss_scale_manager=loss_scale,
-                  metrics={'acc':nn.Accuracy()})
+                  metrics={'0': nn.Loss(), '1': nn.Accuracy()})
     callbacks = [LossMonitor(per_print_times=10),
                  TimeMonitor(data_size=step_size),
                  BenchmarkTraining(model, dataset_eval)]
@@ -107,4 +108,4 @@ if __name__ == '__main__':
     print("============== Starting Training ==============")
     model.train(config.epoch_size, dataset, callbacks=callbacks)
     mox.file.copy_parallel(src_url=config.save_checkpoint_path, dst_url=config.obs_checkpoint_path)
-    mox.file.copy_parallel('/cache/eval/', 'obs://luojianet-benchmark/Scene_Classification/VGG-16/WHU-RS19/1chip/other/')
+    mox.file.copy_parallel('/cache/eval/', 'obs://luojianet-benchmark/Scene_Classification/VGG-16/WHURS-19/1chip/other/')

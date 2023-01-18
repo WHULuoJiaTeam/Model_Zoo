@@ -15,11 +15,11 @@ class Dataset:
     '''Dataset'''
     def __init__(self, data_path, aug=True):
         super(Dataset, self).__init__()
-        self.img1_paths = glob.glob(os.path.join(data_path, "A_train", "*"))
-        self.img2_paths = glob.glob(os.path.join(data_path, "B_train", "*"))
-        self.img1_label_path = glob.glob(os.path.join(data_path, "building_A_train", "*"))
-        self.img2_label_path = glob.glob(os.path.join(data_path, "building_B_train", "*"))
-        self.mask_paths = glob.glob(os.path.join(data_path, "label_train", "*"))
+        self.img1_paths = glob.glob(os.path.join(data_path, "A", "*"))
+        self.img2_paths = glob.glob(os.path.join(data_path, "B", "*"))
+        self.img1_label_path = glob.glob(os.path.join(data_path, "building_A", "*"))
+        self.img2_label_path = glob.glob(os.path.join(data_path, "building_B", "*"))
+        self.mask_paths = glob.glob(os.path.join(data_path, "label", "*"))
         self.aug = aug
         self.toTensor = py_vision.ToTensor()
 

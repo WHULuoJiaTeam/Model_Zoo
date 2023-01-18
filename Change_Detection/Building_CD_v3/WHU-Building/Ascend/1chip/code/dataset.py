@@ -14,12 +14,12 @@ import glob
 
 class changeDatasets:
     def __init__(self, data_path, is_Transforms: True):
-        self.image1_dir = os.path.join(data_path, "A_train")
-        self.image2_dir = os.path.join(data_path, "B_train")
+        self.image1_dir = os.path.join(data_path, "A")
+        self.image2_dir = os.path.join(data_path, "B")
 
-        self.label1_dir = os.path.join(data_path, "building_A_train")
-        self.label2_dir = os.path.join(data_path, "building_B_train")
-        self.label3_dir = os.path.join(data_path, "label_train")
+        self.label1_dir = os.path.join(data_path, "building_A")
+        self.label2_dir = os.path.join(data_path, "building_B")
+        self.label3_dir = os.path.join(data_path, "label")
 
         if is_Transforms:
             self.toTensor = py_vision.ToTensor()

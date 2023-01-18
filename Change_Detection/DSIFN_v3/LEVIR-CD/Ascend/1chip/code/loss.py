@@ -31,7 +31,7 @@ class loss_fusion(LossBase):
         super(loss_fusion,self).__init__()
         self.rb = nn.ResizeBilinear()
 
-    def call(self, logit, label):
+    def forward(self, logit, label):
         batch_loss1 = cd_loss(logit[0], label) #labe 512,512
         label_rz_branch_out2 = self.rb(label,size=(256,256), align_corners=True )
         # logit bs,1,512,512

@@ -32,7 +32,7 @@ class VGG(nn.Module):
             nn.Dense(4096, num_classes)
         )
 
-    def call(self, x):
+    def forward(self, x):
         output = self.features(x)
         output = ops.Reshape()(output,(output.shape[0], -1))
         output = self.classifier(output)

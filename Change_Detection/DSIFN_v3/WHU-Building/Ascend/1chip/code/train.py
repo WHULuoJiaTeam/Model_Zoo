@@ -18,8 +18,12 @@ import warnings
 warnings.filterwarnings("ignore")
 if __name__ == '__main__':
     # obs download
-    mox.file.copy_parallel(config.obs_dataset_path,
-                           config.dataset_path)
+    mox.file.copy_parallel(config.obs_dataset_path+'A_train/',
+                           config.dataset_path+'A/')
+    mox.file.copy_parallel(config.obs_dataset_path+'B_train/',
+                           config.dataset_path+'B/')  
+    mox.file.copy_parallel(config.obs_dataset_path+'label_train/',
+                           config.dataset_path+'label/')                            
 
     '''trian'''
     context.set_context(mode = context.GRAPH_MODE, device_target = config.device_target, device_id = config.device_id)
