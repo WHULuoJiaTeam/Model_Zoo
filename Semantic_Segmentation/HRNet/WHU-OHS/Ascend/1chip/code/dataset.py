@@ -2,8 +2,6 @@ import luojianet_ms.context as context
 import numpy as np
 from osgeo import gdal
 
-context.set_context(mode=context.GRAPH_MODE, device_target="GPU")
-
 IMG_EXTENSIONS = [
     '.jpg', '.JPG', '.jpeg', '.JPEG',
     '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP','.tif'

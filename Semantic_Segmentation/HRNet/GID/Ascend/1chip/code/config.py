@@ -1,5 +1,4 @@
 from easydict import EasyDict as ed
-
 config = ed({
     "device_target":"Ascend",      #GPU \ CPU \ Ascend
     "device_id":0,  #显卡ID

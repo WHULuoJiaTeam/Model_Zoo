@@ -36,8 +36,8 @@ config = dict(
             )
         ),
 
-    save_model_dir='./saved_ckpts/FreeNet_HC.ckpt',
+    save_model_dir='/cache/saved_ckpts/FreeNet_HC.ckpt',
     num_class=16,
     image_shape=(1217, 303),
-    picture_save_dir='./saved_ckpts/FreeNet_HC.jpg',
+    picture_save_dir='/cache/saved_ckpts/FreeNet_HC.jpg',
 )

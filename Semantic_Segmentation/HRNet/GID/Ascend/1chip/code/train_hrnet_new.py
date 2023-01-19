@@ -11,6 +11,8 @@ import luojianet_ms.common.dtype as mstype
 from metrics import SegmentationMetric
 import luojianet_ms.ops.operations as P
 from luojianet_ms.common import initializer
+import moxing as mox
+from config import config
 
 
 def run_Gid(ClassN):
@@ -24,8 +26,11 @@ def run_Gid(ClassN):
     mioubest = 0
 
 
-    dataset_train = r'/media/vhr/0D7A09740D7A0974/zz/GID/LCC5C/LCC5C_b512_woOverlap.json'
-    dataset_test = r'/media/vhr/0D7A09740D7A0974/zz/GID/LCC5C/LCC5C_b512_woOverlap_test.json'
+    # dataset_train = r'./LCC5C_b512_woOverlap.json'
+    dataset_train = r'/home/ma-user/modelarts/user-job-dir/code/LCC5C_b512_woOverlap.json'
+    # dataset_test = r'./LCC5C_b512_woOverlap_test.json'
+    dataset_test = r'/home/ma-user/modelarts/user-job-dir/code/LCC5C_b512_woOverlap_test.json'
+
     ##################### load data ###################################################################
     train_dataset_generator = Dataset_RealUD(json_path=dataset_train, train=True)
     train_loader = dataset.GeneratorDataset(train_dataset_generator, ["data", "label"], shuffle=True)
@@ -90,7 +95,7 @@ def run_Gid(ClassN):
         MIOU = sum(validate_result)/len(validate_result)
         print('Epoch:', epoch,'MIOU-target:', MIOU_target, 'MIOU:', MIOU)
 
-        luojianet_ms.save_checkpoint(model, '/media/vhr/0D7A09740D7A0974/zz/Luojianet_ckpt/hrnet/hrnet_'+str(epoch)+'.ckpt')
+        luojianet_ms.save_checkpoint(model, f'{config.save_checkpoint_path}/hrnet_' + str(epoch) + '.ckpt')
         # if MIOU_target > mioubest:
         #     mioubest = MIOU_target
         #     luojianet_ms.save_checkpoint(model, '/media/vhr/0D7A09740D7A0974/zz/Luojianet_ckpt/hrnet/hrnet_best.ckpt')
@@ -101,10 +106,21 @@ def run_Gid(ClassN):
 if __name__ == '__main__':
     import luojianet_ms.context as context
 
+    # load data from obs
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Semantic_Segmentation/GID/LSC5C/', config.dataset_path)
+
+    if not os.path.exists(config.save_checkpoint_path):
+        os.makedirs(config.save_checkpoint_path)
+
+
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-    context.set_context(mode=context.GRAPH_MODE, device_target="GPU")
+    context.set_context(mode = context.GRAPH_MODE, device_target = config.device_target)
     run_Gid(6)
+
+    # Obs Upload
+    mox.file.copy_parallel(config.save_checkpoint_path,
+                           'obs://luojianet-benchmark/Semantic_Segmentation/HRNet/GID/Ascend/1chip/ckpt/')
 
 
 

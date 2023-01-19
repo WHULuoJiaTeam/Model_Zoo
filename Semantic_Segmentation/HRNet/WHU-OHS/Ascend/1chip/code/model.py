@@ -10,7 +10,6 @@ import luojianet_ms.nn as nn
 import luojianet_ms.ops as ops
 from luojianet_ms import Tensor
 
-context.set_context(device_target="GPU")
 
 BN_MOMENTUM = 0.99
 

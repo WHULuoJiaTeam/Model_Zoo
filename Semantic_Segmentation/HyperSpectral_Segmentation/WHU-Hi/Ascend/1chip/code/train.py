@@ -15,16 +15,21 @@ from extra_modules import LossCell, TrainStep
 import time
 import argparse
 import importlib
-
+import moxing as mox
 
 def get_argparse():
     parser = argparse.ArgumentParser(description='Hyper-Image training')
-    parser.add_argument('-c', '--config', type=str, default='train_config', help='Configuration File')
-    parser.add_argument('-t','--device_target', type=str, default="GPU", help='Device target')
+    parser.add_argument('-c', '--config', type=str, default='FreeNet_HC_config', help='Configuration File')
+    parser.add_argument('-t','--device_target', type=str, default="Ascend", help='Device target')
     return parser.parse_args()
 
 
 if __name__ == "__main__":
+    dataset_path = r"/cache/dataset"
+    # load dataset from obs
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Semantic_Segmentation/WHU-Hi/', dataset_path)
+
+    
     config_name=get_argparse().config
     config = importlib.import_module("." + get_argparse().config, package='configs').config
     
@@ -35,7 +40,7 @@ if __name__ == "__main__":
     else:
         net = FreeNet(config['model']['params'])
 
-    dataset_path = r"/home/luojianet"
+   
     config['dataset']['params']['train_gt_dir'] = os.path.join(dataset_path, config['dataset']['params']['train_gt_dir'])
     config['dataset']['params']['train_data_dir'] = os.path.join(dataset_path, config['dataset']['params']['train_data_dir'])
     config['test']['params']['test_gt_dir'] = os.path.join(dataset_path, config['test']['params']['test_gt_dir'])
@@ -71,3 +76,8 @@ if __name__ == "__main__":
         print('第%d次loss: %.4f' % (epoch, train_loss.asnumpy() / num))
 
     ms.save_checkpoint(net, config['save_model_dir'])
+
+    # upload to obs
+    mox.file.copy_parallel(config['save_model_dir'],
+                           'obs://luojianet-benchmark/Semantic_Segmentation/HyperSpectral_Segmentation/WHU-Hi/Ascend/1chip/ckpt/')
+

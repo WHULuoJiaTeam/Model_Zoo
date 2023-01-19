@@ -4,8 +4,6 @@ import luojianet_ms.context as context
 import luojianet_ms.nn as nn
 import luojianet_ms.ops as ops
 
-context.set_context(mode=context.GRAPH_MODE, device_target="GPU")
-
 # 光谱注意力机制 SE-Block
 class SEBlock(nn.Module):
     def __init__(self, in_channels, reduction_ratio):

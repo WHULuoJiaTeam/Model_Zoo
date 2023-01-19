@@ -115,6 +115,7 @@ if __name__ == '__main__':
     print('******start training!******')
     run_Gid(6)
 
+    # upload to obs
     mox.file.copy_parallel(config.save_checkpoint_path,
                            'obs://luojianet-benchmark/Semantic_Segmentation/UNet/GID/Ascend/1chip/ckpt/')
 

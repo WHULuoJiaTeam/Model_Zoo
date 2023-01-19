@@ -9,6 +9,7 @@ import luojianet_ms.dataset.vision.py_transforms as p_vision
 from luojianet_ms.dataset.transforms import c_transforms
 from luojianet_ms.dataset.transforms import py_transforms
 import luojianet_ms
+from config import config
 
 class Dataset_RealUD:
     def __init__(self, json_path, blocksize=512, return_save_info=False, train=False):
@@ -36,8 +37,12 @@ class Dataset_RealUD:
 
     def __getitem__(self, index):
         Dict_i = self.dict_dataset[str(index)]
-        image_path = Dict_i['imagePath'].replace('D:\zz\GID\LCC5C\\', '/media/vhr/0D7A09740D7A0974/zz/GID/LCC5C/').replace("\\","/")
-        label_path = Dict_i['labelPath'].replace('D:\zz\GID\LCC5C\\', '/media/vhr/0D7A09740D7A0974/zz/GID/LCC5C/').replace("\\","/")
+        image_path = Dict_i['imagePath'].replace('D:\zz\GID\LCC5C\\',
+                                                 config.dataset_path+'/' ).replace(
+                "\\", "/")
+        label_path = Dict_i['labelPath'].replace('D:\zz\GID\LCC5C\\',
+                                                 config.dataset_path+'/').replace(
+                "\\", "/")
         # print(image_path)
         # print(label_path)
 

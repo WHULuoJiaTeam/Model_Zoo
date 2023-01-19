@@ -14,6 +14,10 @@ from luojianet_ms.common import initializer
 
 from geobject import get_objects
 import os
+import moxing as mox
+from config import config
+
+
 
 
 def run_Gid(ClassN):
@@ -123,7 +127,8 @@ def run_Gid(ClassN):
         MIOU = sum(validate_result)/len(validate_result)
         print('Epoch:', epoch, 'MIOU-target:', MIOU_target, 'MIOU:', MIOU)
 
-        luojianet_ms.save_checkpoint(model, '/media/xx/PortableSSD/QuadSearch/ckpt/hrnet_'+str(epoch)+'.ckpt')
+        luojianet_ms.save_checkpoint(model, f'{config.save_checkpoint_path}/hrnet_' + str(epoch) + '.ckpt')
+
         #if MIOU_target > mioubest:
         #     mioubest = MIOU_target
         #luojianet_ms.save_checkpoint(model, '/data02/zz/QuadSearch/ckpt/hrnet_best.ckpt')
@@ -134,10 +139,24 @@ def run_Gid(ClassN):
 if __name__ == '__main__':
     import luojianet_ms.context as context
 
+    # load data from obs
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Semantic_Segmentation/GID/LSC5C/', config.dataset_path)
+
+    if not os.path.exists(config.save_checkpoint_path):
+        os.makedirs(config.save_checkpoint_path)
+
+
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-    context.set_context(mode=context.GRAPH_MODE, device_target="GPU")
+    context.set_context(mode = context.GRAPH_MODE, device_target = config.device_target)
+
     run_Gid(6)
+
+
+    # Obs Upload
+    mox.file.copy_parallel(config.save_checkpoint_path,
+                           'obs://luojianet-benchmark/Semantic_Segmentation/HRNet/GID/Ascend/1chip/ckpt/')
+
 
 
 

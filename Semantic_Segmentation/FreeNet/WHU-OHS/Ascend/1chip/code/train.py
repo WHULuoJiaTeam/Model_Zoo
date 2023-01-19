@@ -1,4 +1,4 @@
-# HRNet-3D网络训练
+# FreeNet网络的训练
 
 import os
 import numpy as np
@@ -9,23 +9,23 @@ import luojianet_ms.dataset as ds
 import luojianet_ms.nn as nn
 import luojianet_ms.ops as ops
 from dataset import OHS_DatasetGenerator
-from model import HigherHRNet_Binary
+from model import FreeNet
 from osgeo import gdal
-import time
 from config import config
+import time
+import moxing as mox
 
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 context.set_context(mode=context.GRAPH_MODE, device_target=config['device_target'])
 
-# 加权交叉熵损失函数定义
+# 加权交叉熵损失函数的定义
 class WeightedCrossEntropyLoss(nn.Module):
     def __init__(self, weight, ignore_index=None):
         super(WeightedCrossEntropyLoss, self).__init__()
         self.weight = weight
         self.ignore_index = ignore_index
-
         self.logsoftmax = ops.LogSoftmax(axis=1)
         self.gather = ops.GatherD()
         self.nllloss = ops.NLLLoss(reduction='none')
@@ -68,10 +68,20 @@ def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
 def main():
+    # FreeNet网络超参数定义
+    config_net = dict(
+            in_channels=config['in_channels'],
+            num_classes=config['classnum'],
+            block_channels=(96, 128, 192, 256),
+            num_blocks=(1, 1, 1, 1),
+            inner_dim=128,
+            reduction_ratio=1.0,
+        )
+
     batch_size = config['batch_size']
     num_epochs = config['num_epochs']
 
-    # 读取训练数据并定义数据集
+    # 读取训练数据并构建数据集
     print('Load data ...')
 
     data_path = config['dataset_path']
@@ -85,6 +95,7 @@ def main():
             if is_image_file(fname):
                 label_path = os.path.join(data_path_train, fname)
                 image_path = label_path.replace('train', 'image')
+                print(image_path)
                 assert os.path.exists(label_path)
                 assert os.path.exists(image_path)
                 train_image_list.append(image_path)
@@ -92,7 +103,7 @@ def main():
 
     assert len(train_image_list) == len(train_label_list)
 
-    if (config['weight'] is not None):
+    if(config['weight'] is not None):
         weight = np.array(config['weight'])
     else:
         weight = np.ones(config['classnum'])
@@ -101,17 +112,17 @@ def main():
 
     print('Weights for each class:', weight)
 
-    dataset_generator = OHS_DatasetGenerator(train_image_list, train_label_list, use_3D_input=True, normalize=config['normalize'])
+    dataset_generator = OHS_DatasetGenerator(train_image_list, train_label_list, normalize=config['normalize'])
     train_dataset = ds.GeneratorDataset(dataset_generator, column_names=['image', 'label'], shuffle=True)
     train_dataset = train_dataset.batch(batch_size, drop_remainder=True)
 
     step_size = train_dataset.get_dataset_size()
 
-    net = HigherHRNet_Binary(num_classes=config['classnum'], hr_cfg='w18_3d2d_at')
+    net = FreeNet(config=config_net)
 
     loss = WeightedCrossEntropyLoss(weight=weight, ignore_index=config['nodata_value']-1)
 
-    # 定义学习率衰减
+    # 设置学习率衰减
     initial_learning_rate = config['learning_rate']
     learning_rate = []
     for i in range(num_epochs):
@@ -150,15 +161,23 @@ def main():
                 print('Epoch [{}/{}], Batch [{}/{}], Loss {}'.format(epoch + 1, num_epochs, batch_idx, step_size,
                                                                      loss_avg))
 
-        luojianet_ms.save_checkpoint(net, model_path + '/HRNet3D_{}.ckpt'.format(epoch))
+        luojianet_ms.save_checkpoint(net, model_path + '/FreeNet_{}.ckpt'.format(epoch))
 
         time_end = time.time()
         print('Time:', time_end - time_start)
     
-    # 训练模型保存
-    luojianet_ms.save_checkpoint(net, model_path + '/HRNet3D_final.ckpt')
+    # 保存最终模型
+    luojianet_ms.save_checkpoint(net, model_path + '/FreeNet_final.ckpt')
 
 if __name__ == '__main__':
+    # load data from obs
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Semantic_Segmentation/WHU-OHS/train/image/', config['dataset_path']+'image/')
+    mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Semantic_Segmentation/WHU-OHS/train/label/', config['dataset_path']+'train/')
+
+
     main()
 
+    # Obs Upload
+    mox.file.copy_parallel(config['save_model_path'],
+                           'obs://luojianet-benchmark/Semantic_Segmentation/FreeNet/WHU-OHS/Ascend/1chip/ckpt/')
 
