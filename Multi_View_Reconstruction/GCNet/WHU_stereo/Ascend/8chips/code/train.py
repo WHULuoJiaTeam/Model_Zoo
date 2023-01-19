@@ -8,14 +8,20 @@ from luojianet_ms import dtype as mstype
 from luojianet_ms import Model
 from luojianet_ms.nn import Metric, rearrange_inputs
 from luojianet_ms.train.callback import Callback, ModelCheckpoint, CheckpointConfig, LossMonitor, TimeMonitor
+from luojianet_ms.communication.management import init,get_rank,get_group_size
+from luojianet_ms.train.loss_scale_manager import FixedLossScaleManager
+from luojianet_ms.nn import learning_rate_schedule
+from src.benchmark_callback import *
+
 import numpy as np
 import argparse
 
-from luojianet_ms.communication.management import init,get_rank,get_group_size
 
 # gpu setting
 #os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
+# Set graph mode and target device
+context.set_context(mode=context.GRAPH_MODE, device_target='Ascend', device_id=int(os.environ["DEVICE_ID"]))
 
 parser = argparse.ArgumentParser(description='LuoJiaNET GCNet Implement')
 parser.add_argument("--train_list", type=str, default="list/whu_training.txt", help="the list for training")
@@ -26,8 +32,11 @@ parser.add_argument("--crop_w", type=int, default=512, help="crop width")
 parser.add_argument("--max_disp", type=int, default=160, help="max disparity")
 parser.add_argument("--batch", type=int, default=1, help="batch size")
 parser.add_argument("--epochs", type=int, default=30, help="the number of epoch")
+parser.add_argument("--dataset_type", type=str, default="whu", help="dataset")
 parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
 parser.add_argument("--amp_level", type=str, default='O0', help="amp level")
+parser.add_argument('--save_ckpt_epochs', type=int, default=5, help='number of epochs to save ckpt')
+parser.add_argument('--keep_checkpoint_max', type=int, default=100, help='number of epochs to keep ckpt')
 opt = parser.parse_args()
 
 def read_list(list_path):
@@ -38,18 +47,11 @@ def read_list(list_path):
 
     return data
 
-def create_dataset(list_file, batch_size, crop_w, crop_h):
-    # get rank_id and rank_size
-    rank_id = get_rank()
-    rank_size = get_group_size()
-
+def create_dataset(list_file, batch_size, crop_w, crop_h, dataset):
     # define dataset
     ds.config.set_seed(1)
-    dataset_generator = DatasetGenerator(list_file, crop_h, crop_w)
-    input_data = ds.GeneratorDataset(dataset_generator, ["data", "label"],
-                                     shuffle=True,
-                                     num_shards=rank_size,
-                                     shard_id=rank_id)
+    dataset_generator = DatasetGenerator(list_file, crop_h, crop_w, dataset=dataset)
+    input_data = ds.GeneratorDataset(dataset_generator, ["data", "label"], shuffle=True)
     input_data = input_data.batch(batch_size=batch_size)
 
     return input_data
@@ -104,51 +106,58 @@ class PixelErrorPercentage(Metric):
 if __name__ == "__main__":
     print("training GCNet...")
     print(opt)
-
-    # Set graph mode and target device
-    context.set_context(mode=context.GRAPH_MODE, device_target='Ascend', device_id=int(os.environ["DEVICE_ID"]))
-
     init()
+    rank_id = get_rank()
+    rank_size = get_group_size()
     # model
     net = GCNet(max_disp=opt.max_disp)
 
     # loss
     loss_func = L1Loss()
+    loss_scale = FixedLossScaleManager(1024, drop_overflow_update=False)
+
     # optimizer
     net_opt = nn.RMSProp(net.trainable_params(), learning_rate=opt.lr)
 
+
+
     # 执行训练
     model = Model(net, loss_func, net_opt,
-                  metrics={"PEP(1 pixel)": PixelErrorPercentage(1.0),
-                           "PEP(2 pixel)": PixelErrorPercentage(2.0),
-                           "PEP(3 pixel)": PixelErrorPercentage(3.0)},
-                  amp_level=opt.amp_level)
+                  metrics={'0':nn.Loss(), '1':nn.Accuracy()},
+                  amp_level=opt.amp_level,
+                  loss_scale_manager=loss_scale)
 
     data_list = read_list(opt.train_list)
-    val_data_list = read_list(opt.valid_list)
+
     data_path = []
-    val_data_path = []
-    
+
     for item_list in data_list:
         tmp_data_path = []
         for item in item_list:
             tmp_data_path.append(opt.data_root + item)
         data_path.append(tmp_data_path)
 
-    for item_list in val_data_list:
-        tmp_data_path = []
-        for item in item_list:
-            tmp_data_path.append(opt.data_root + item)
-        val_data_path.append(tmp_data_path)
+    ds_train = create_dataset(data_path, opt.batch, opt.crop_w, opt.crop_h, opt.dataset_type)
+    ds_val = create_dataset(opt.valid_list, opt.batch, opt.crop_w, opt.crop_h, opt.dataset_type)
 
-    ds_train = create_dataset(data_path, opt.batch, opt.crop_w, opt.crop_h)
-    ds_val = create_dataset(val_data_path, opt.batch, opt.crop_w, opt.crop_h)
+    train_data_size = ds_train.get_dataset_size()
 
     # save checkpoint of the model
     config_ck = CheckpointConfig(save_checkpoint_steps=ds_train.get_dataset_size(), keep_checkpoint_max=opt.epochs)
     ckpoint_cb = ModelCheckpoint(prefix="checkpoint_gcnet_whu", directory="checkpoint", config=config_ck)
     time_cb = TimeMonitor()
 
-    output = model.train(opt.epochs, ds_train, callbacks=[ckpoint_cb, LossMonitor(1), time_cb],
+    callbacks = [LossMonitor(per_print_times=10),
+                 TimeMonitor(data_size=train_data_size),
+                 BenchmarkTraining(model, ds_val)]
+
+    if rank_id == 0:
+        time_cb = TimeMonitor(data_size=ds_train.get_dataset_size())
+        config_ck = CheckpointConfig(save_checkpoint_steps=opt.save_ckpt_epochs,
+                                     keep_checkpoint_max=opt.keep_checkpoint_max)
+        ckpoint_cb = ModelCheckpoint(prefix="checkpoint_mvsnet_whu", directory=opt.logdir, config=config_ck)
+        callbacks.append(ckpoint_cb)
+
+    output = model.train(opt.epochs, ds_train, callbacks=callbacks,
                          dataset_sink_mode=False)
     accuracy = model.eval(ds_val, dataset_sink_mode=False)
