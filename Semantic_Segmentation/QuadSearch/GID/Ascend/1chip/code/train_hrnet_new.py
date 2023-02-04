@@ -19,7 +19,6 @@ from config import config
 
 
 
-
 def run_Gid(ClassN):
     ##################### define parameters #############################################################
     epochs = 120
@@ -148,8 +147,7 @@ if __name__ == '__main__':
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-    context.set_context(mode = context.GRAPH_MODE, device_target = config.device_target)
-
+    context.set_context(mode=context.GRAPH_MODE, device_target="GPU")
     run_Gid(6)
 
 
