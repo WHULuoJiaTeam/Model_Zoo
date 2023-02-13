@@ -17,8 +17,8 @@
 from functools import reduce
 import numpy as np
 import math
-import mindspore.nn as nn
-from mindspore.common import initializer as init
+import luojianet_ms.nn as nn
+from luojianet_ms.common import initializer as init
 
 
 def _calculate_gain(nonlinearity, param=None):

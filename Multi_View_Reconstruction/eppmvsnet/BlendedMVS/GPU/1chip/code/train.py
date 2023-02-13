@@ -22,13 +22,13 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
-import mindspore.dataset as ds
-from mindspore import context
-from mindspore.ops import operations as P
-from mindspore import nn
-from mindspore import dtype as mstype
-from mindspore import Model
-from mindspore.train.callback import Callback, ModelCheckpoint, CheckpointConfig, LossMonitor, TimeMonitor
+import luojianet_ms.dataset as ds
+from luojianet_ms import context
+from luojianet_ms.ops import operations as P
+from luojianet_ms import nn
+from luojianet_ms import dtype as mstype
+from luojianet_ms import Model
+from luojianet_ms.train.callback import Callback, ModelCheckpoint, CheckpointConfig, LossMonitor, TimeMonitor
 
 from src.eppmvsnet import EPPMVSNet
 from src.blendedmvs import BlendedMVSDataset
@@ -40,7 +40,7 @@ class L1Loss(nn.LossBase):
         self.abs = P.Abs()
         self.mask_thre = mask_thre
 
-    def construct(self, predict, label):
+    def forward(self, predict, label):
         mask = (label >= self.mask_thre).astype(mstype.float32)
         num = mask.shape[0] * mask.shape[1] * mask.shape[2]
         x = self.abs(predict * mask - label * mask)

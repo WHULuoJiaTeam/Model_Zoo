@@ -14,16 +14,16 @@
 # ============================================================================
 """main architecture of EPP-MVSNet"""
 
-import mindspore.nn as nn
-import mindspore.common as mstype
-from mindspore import Tensor
-from mindspore.ops import operations as P
+import luojianet_ms.nn as nn
+import luojianet_ms.common as mstype
+from luojianet_ms import Tensor
+from luojianet_ms.ops import operations as P
 from src.modules import get_depth_values, determine_center_pixel_interval, groupwise_correlation, entropy_num_based, \
     HomoWarp
 from src.networks import UNet2D, CostCompression, CoarseStageRegPair, CoarseStageRegFuse, StageRegFuse
 from src.utils_init import NetInitTool
 
-class SingleStage(nn.Cell):
+class SingleStage(nn.Module):
     """single stage"""
 
     def __init__(self, fuse_reg, height, width, entropy_range=False):
@@ -41,9 +41,9 @@ class SingleStage(nn.Cell):
         self.tile = P.Tile()
         self.homo_warp = HomoWarp(height, width)
 
-    def construct(self, sample, depth_num, depth_start_override=None, depth_interval_override=None,
+    def forward(self, sample, depth_num, depth_start_override=None, depth_interval_override=None,
                   uncertainty_maps=None):
-        """construct function of single stage"""
+        """forward function of single stage"""
         ref_feat, src_feats, proj_mats = sample
         depth_start = depth_start_override  # n111 or n1hw
         depth_interval = depth_interval_override  # n111
@@ -91,7 +91,7 @@ class SingleStage(nn.Cell):
         return est_depth, prob_map, pair_results  # MVS
 
 
-class SingleStageP1(nn.Cell):
+class SingleStageP1(nn.Module):
     """part1 of single stage 1"""
 
     def __init__(self, depth_number=32):
@@ -109,8 +109,8 @@ class SingleStageP1(nn.Cell):
         self.depth_number = depth_number - self.compression_ratio + 1
         self.D = Tensor(self.depth_number - 1, mstype.float32)
 
-    def construct(self, sample, depth_num, depth_start_override=None, depth_interval_override=None, timing=True):
-        """construct function of part1 of single stage 1"""
+    def forward(self, sample, depth_num, depth_start_override=None, depth_interval_override=None, timing=True):
+        """forward function of part1 of single stage 1"""
         ref_feat, _, _ = sample
         depth_start = depth_start_override  # n111 or n1hw
         depth_interval = depth_interval_override  # n111
@@ -137,7 +137,7 @@ class SingleStageP1(nn.Cell):
         return depth_values, single_depth_value
 
 
-class SingleStageP3(nn.Cell):
+class SingleStageP3(nn.Module):
     """part3 of single stage 1"""
 
     def __init__(self, entropy_range=False, compression_ratio=5):
@@ -157,8 +157,8 @@ class SingleStageP3(nn.Cell):
         self.exp = P.Exp()
         self.pow = P.Pow()
 
-    def construct(self, cost_volume_list, depth_values, sample, depth_num):
-        """construct function"""
+    def forward(self, cost_volume_list, depth_values, sample, depth_num):
+        """forward function"""
         ref_feat, _, _ = sample
 
         B, _, _, _ = ref_feat.shape
@@ -194,7 +194,7 @@ class SingleStageP3(nn.Cell):
         return est_depth, prob_map, pair_results  # MVS
 
 
-class SingleStageP2_S1(nn.Cell):
+class SingleStageP2_S1(nn.Module):
     """0 interpolation, part2 of single stage 1"""
 
     def __init__(self, cost_compression, height=32, width=40):
@@ -211,9 +211,9 @@ class SingleStageP2_S1(nn.Cell):
         self.homo_warp = HomoWarp(height, width)
         self.stack = P.Stack(1)
 
-    def construct(self, sample, depth_num, depth_start_override=None, depth_interval_override=None, depth_values=None,
+    def forward(self, sample, depth_num, depth_start_override=None, depth_interval_override=None, depth_values=None,
                   idx=None):
-        """construct function"""
+        """forward function"""
         ref_feat, src_feats, proj_mats = sample
 
         compression_ratio = 1
@@ -235,7 +235,7 @@ class SingleStageP2_S1(nn.Cell):
         return cost_volume
 
 
-class SingleStageP2_S3(nn.Cell):
+class SingleStageP2_S3(nn.Module):
     """2 interpolation, part2 of single stage 1"""
 
     def __init__(self, cost_compression, height=64, width=80, depth_number=96, depth_ratio=3, compression_ratio=5):
@@ -262,9 +262,9 @@ class SingleStageP2_S3(nn.Cell):
         self.src_D = Tensor(self.depth_number, mstype.float32)
         self.compression_ratio = compression_ratio
 
-    def construct(self, sample, depth_num, depth_start_override=None, depth_interval_override=None, depth_values=None,
+    def forward(self, sample, depth_num, depth_start_override=None, depth_interval_override=None, depth_values=None,
                   idx=None):
-        """construct function"""
+        """forward function"""
         ref_feat, src_feats, proj_mats = sample
         depth_start = depth_start_override  # n111 or n1hw
         depth_interval = depth_interval_override  # n111
@@ -310,7 +310,7 @@ class SingleStageP2_S3(nn.Cell):
         return cost_volume
 
 
-class EPPMVSNet(nn.Cell):
+class EPPMVSNet(nn.Module):
     """EPP-MVSNet"""
 
     def __init__(self, n_depths, interval_ratios, entropy_range=False, shrink_ratio=1,
@@ -349,8 +349,8 @@ class EPPMVSNet(nn.Cell):
                                         interval_ratios=interval_ratios, height=height, width=width,
                                         entropy_range=self.entropy_range, shrink_ratio=self.shrink_ratio)
 
-    def construct(self, imgs, proj_mats=None, depth_start=None, depth_interval=None, scan=None, vid=None, depth_0=None, mask_0=None, fix_depth_interval=None):
-        """construct function"""
+    def forward(self, imgs, proj_mats=None, depth_start=None, depth_interval=None, scan=None, vid=None, depth_0=None, mask_0=None, fix_depth_interval=None):
+        """forward function"""
         feat_pack_1, feat_pack_2, feat_pack_3, depth_values_stage1, pixel_distances \
             = self.eppmvsnet_p1(imgs, proj_mats, depth_start, depth_interval)
 
@@ -379,7 +379,7 @@ class EPPMVSNet(nn.Cell):
         return results
 
 
-class EPPMVSNetP1(nn.Cell):
+class EPPMVSNetP1(nn.Module):
     """EPPMVSNet part1"""
 
     def __init__(self, feat_ext, stage1_p1, n_depths, interval_ratios, entropy_range=False):
@@ -396,8 +396,8 @@ class EPPMVSNetP1(nn.Cell):
         self.tile = P.Tile()
         self.expand_dims = P.ExpandDims()
 
-    def construct(self, imgs, proj_mats=None, depth_start=None, depth_interval=None):
-        """construct function"""
+    def forward(self, imgs, proj_mats=None, depth_start=None, depth_interval=None):
+        """forward function"""
         B, V, _, H, W = imgs.shape
         imgs = imgs.reshape(B * V, 3, H, W)
         feat_pack_1, feat_pack_2, feat_pack_3 = self.feat_ext(imgs)
@@ -423,7 +423,7 @@ class EPPMVSNetP1(nn.Cell):
         return feat_pack_1, feat_pack_2, feat_pack_3, depth_values_stage1, pixel_distances
 
 
-class EPPMVSNetP3(nn.Cell):
+class EPPMVSNetP3(nn.Module):
     """EPPMVSNet part3"""
 
     def __init__(self, stage1_p3, stage2, stage3, n_depths, interval_ratios, entropy_range=False,
@@ -441,9 +441,9 @@ class EPPMVSNetP3(nn.Cell):
         self.height = height
         self.width = width
 
-    def construct(self, feat_pack_1, feat_pack_2, feat_pack_3, depth_values_stage1, cost_volume_list_stage1,
+    def forward(self, feat_pack_1, feat_pack_2, feat_pack_3, depth_values_stage1, cost_volume_list_stage1,
                   proj_mats=None, depth_start=None, depth_interval=None):
-        """construct function"""
+        """forward function"""
         H = self.height
         W = self.width
 

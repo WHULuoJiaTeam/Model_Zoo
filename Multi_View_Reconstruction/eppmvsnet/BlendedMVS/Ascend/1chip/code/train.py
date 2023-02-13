@@ -42,7 +42,7 @@ class L1Loss(nn.LossBase):
         self.abs = P.Abs()
         self.mask_thre = mask_thre
 
-    def construct(self, predict, label):
+    def forward(self, predict, label):
         mask = (label >= self.mask_thre).astype(mstype.float32)
         num = mask.shape[0] * mask.shape[1] * mask.shape[2]
         x = self.abs(predict * mask - label * mask)
