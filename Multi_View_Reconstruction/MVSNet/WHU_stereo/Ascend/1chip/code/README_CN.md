@@ -285,6 +285,10 @@ train.py中主要参数如下：
 
 在Ascend设备上，使用命令行语句执行单机训练示例（1卡）
 
+```bash
+sh train.sh
+```
+或
 ```
 python train.py --data_root='/mnt/gj/stereo' --view_num=3 --ndepths=200 --max_w=768 --max_h=384 --epochs=50 --lr=0.001
 ```
@@ -306,15 +310,16 @@ INFO:epoch[1], iter[500], loss:0.010647434741258621
 
 ## [评估过程](#目录)
 
-### 验证
+### 评估
+
+在LuoJiaNet环境下执行以下命令进行评估
 
 ```bash
-python eval.py \
-    --data_dir=./dataset/coco2017 \
-    --pretrained=yolov4.ckpt \
-    --testing_shape=608 > log.txt 2>&1 &
-OR
-bash run_eval.sh dataset/coco2017 checkpoint/yolov4.ckpt
+sh eval.sh
+```
+或
+```
+python eval.py --data_root='/mnt/gj/stereo' --loadckpt='./checkpoint_mvsnet/checkpoint_mvsnet_whu-30_3600.ckpt' --view_num=3 --ndepths=200
 ```
 
 上述python命令将在后台运行。 您可以通过log.txt文件查看结果。 测试数据集的mAP如下：
