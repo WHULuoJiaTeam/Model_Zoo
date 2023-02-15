@@ -22,6 +22,7 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          add: "--all -- ':!.github/workflows/*'"
           author_name: License Bot
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
           message: 'Automatic application of license header'
