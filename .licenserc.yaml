@@ -24,6 +24,8 @@ header:
     - '/utils/obs-helper/'
     - 'dist'
     - 'licenses'
+    - '**/*.json'
+    - '**/*.txt'
     - '**/*.md'
     - 'LICENSE'
     - 'NOTICE'
