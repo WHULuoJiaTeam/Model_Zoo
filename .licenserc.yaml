@@ -32,6 +32,8 @@ header:
     - '**/*.gitkeep'
     - '**/*.prettierrc'
     - '**/*.js.map'
+    - '**/*.key'
+    - '**/*.names'
     - '**/*.md'
     - 'LICENSE'
     - 'NOTICE'
