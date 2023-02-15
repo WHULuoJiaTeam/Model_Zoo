@@ -3,10 +3,12 @@ on:
     branches:
     - main
     
+permissions: write-all
+    
 jobs:
   ADD_COPYRIGHT_HEADER:
     runs-on: ubuntu-latest
-    permissions: write-all
+
     steps:
       - uses: actions/checkout@v2
       
