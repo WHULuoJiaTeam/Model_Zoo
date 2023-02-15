@@ -1,9 +1,27 @@
 on:
-  push:
-    paths-ignore:
-      - '.github/**'
-
+  push
+    
 jobs:
+  Fix_Copyright_Header:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Fix License Header
+        uses: apache/skywalking-eyes/header@main
+        with:
+          mode: fix
+          
+      - name: Apply Changes
+        uses: EndBug/add-and-commit@v9
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          add: "--all -- ':!.github/workflows/*'"
+          author_name: github-actions[bot]
+          committer_email: github-actions[bot]@users.noreply.github.com
+          message: 'Automatic application of license header'
+
   Mirror_to_Gitee:
     runs-on: ubuntu-latest
     steps:
@@ -33,4 +51,3 @@ jobs:
           # Enable the debug flag to show detail log
           debug: false # optional
           cache_path: ''
- 
