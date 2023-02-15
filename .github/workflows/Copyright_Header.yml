@@ -4,7 +4,7 @@ on:
     - main
     
 jobs:
-  ADD_LICENSE:
+  ADD_COPYRIGHT_HEADER:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,7 +12,6 @@ jobs:
       - name: Fix License Header
         uses: apache/skywalking-eyes/header@main
         with:
-          log: log
           mode: fix
           
       - name: Apply Changes
