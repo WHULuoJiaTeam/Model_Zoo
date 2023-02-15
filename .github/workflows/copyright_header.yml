@@ -1,0 +1,22 @@
+on:
+  push:
+    branches:
+    - main
+    
+jobs:
+  ADD_LICENSE:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fix License Header
+        uses: apache/skywalking-eyes/header@main
+        with:
+          log: debug
+          mode: fix
+      - name: Apply Changes
+        uses: EndBug/add-and-commit@v4
+        env:
+            GITHUB_TOKEN: ${{ secrets.ADHUAN_MODEL_ZOO_ADD_LICENSE_GITHUB_TOKEN }}
+        with:
+          author_name: License Bot
+          author_email: license_bot@github.com
+          message: 'Automatic application of license header'
