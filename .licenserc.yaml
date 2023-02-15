@@ -21,7 +21,8 @@ header:
       ============================================================================
 
   paths-ignore:
-    - './utils/obs-helper/'
+    - '/utils/obs-helper/**'
+    - '/.github/workflows/**'
     - 'dist'
     - 'licenses'
     - '**/*.json'
