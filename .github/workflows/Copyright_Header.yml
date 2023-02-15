@@ -12,7 +12,7 @@ jobs:
       - name: Fix License Header
         uses: apache/skywalking-eyes/header@main
         with:
-          log: debug
+          log: log
           mode: fix
           
       - name: Apply Changes
