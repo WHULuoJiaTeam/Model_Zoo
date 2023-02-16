@@ -2,33 +2,9 @@ from luojianet_ms.train.callback import Callback
 import time
 from luojianet_ms.communication.management import get_rank
 import os
-from luojianet_ms import nn
 
-class MyMAE(nn.Metric):
-    def __init__(self):
-        super(MyMAE, self).__init__()
-        self.clear()
 
-    def clear(self):
-        """初始化变量_abs_error_sum和_samples_num"""
-        self._abs_error_sum = 0  # 保存误差和
-        self._samples_num = 0    # 累计数据量
 
-    def update(self, *inputs):
-        """更新_abs_error_sum和_samples_num"""
-        y_pred = inputs[0].asnumpy()
-        y = inputs[1].asnumpy()
-
-        # 计算预测值与真实值的绝对误差
-        abs_error_sum = np.abs(y - y_pred)
-        self._abs_error_sum += abs_error_sum.sum()
-
-        # 样本的总数
-        self._samples_num += y.shape[0]
-
-    def eval(self):
-        """计算最终评估结果"""
-        return self._abs_error_sum / self._samples_num
 
 class BenchmarkTraining(Callback):
     """BenchmarkTraining callback util"""

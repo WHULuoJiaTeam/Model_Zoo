@@ -3,6 +3,7 @@ import luojianet_ms.dataset as ds
 from luojianet_ms import nn, ops
 from src.GCNet import GCNet
 import os
+import luojianet_ms as ms
 import luojianet_ms.context as context
 from luojianet_ms import dtype as mstype
 from luojianet_ms import Model
@@ -21,7 +22,7 @@ import argparse
 #os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
 # Set graph mode and target device
-context.set_context(mode=context.GRAPH_MODE, device_target='Ascend', device_id=int(os.environ["DEVICE_ID"]))
+context.set_context(mode=context.PYNATIVE_MODE, device_target='Ascend', device_id=int(os.environ["DEVICE_ID"]))
 
 parser = argparse.ArgumentParser(description='LuoJiaNET GCNet Implement')
 parser.add_argument("--train_list", type=str, default="list/whu_training.txt", help="the list for training")
@@ -37,6 +38,7 @@ parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
 parser.add_argument("--amp_level", type=str, default='O0', help="amp level")
 parser.add_argument('--save_ckpt_epochs', type=int, default=5, help='number of epochs to save ckpt')
 parser.add_argument('--keep_checkpoint_max', type=int, default=100, help='number of epochs to keep ckpt')
+parser.add_argument("--logdir", type=str, default="logdir", help="the directory for ckpt")
 opt = parser.parse_args()
 
 def read_list(list_path):
@@ -50,7 +52,7 @@ def read_list(list_path):
 def create_dataset(list_file, batch_size, crop_w, crop_h, dataset):
     # define dataset
     ds.config.set_seed(1)
-    dataset_generator = DatasetGenerator(list_file, crop_h, crop_w, dataset=dataset)
+    dataset_generator = DatasetGenerator(list_file, crop_h, crop_w)
     input_data = ds.GeneratorDataset(dataset_generator, ["data", "label"], shuffle=True)
     input_data = input_data.batch(batch_size=batch_size)
 
@@ -123,7 +125,7 @@ if __name__ == "__main__":
 
     # 执行训练
     model = Model(net, loss_func, net_opt,
-                  metrics={'0':nn.Loss(), '1':nn.Accuracy()},
+                  metrics={'loss':nn.Loss(), 'mae':MyMAE()},
                   amp_level=opt.amp_level,
                   loss_scale_manager=loss_scale)
 
@@ -143,9 +145,9 @@ if __name__ == "__main__":
     train_data_size = ds_train.get_dataset_size()
 
     # save checkpoint of the model
-    config_ck = CheckpointConfig(save_checkpoint_steps=ds_train.get_dataset_size(), keep_checkpoint_max=opt.epochs)
-    ckpoint_cb = ModelCheckpoint(prefix="checkpoint_gcnet_whu", directory="checkpoint", config=config_ck)
-    time_cb = TimeMonitor()
+    # config_ck = CheckpointConfig(save_checkpoint_steps=train_data_size, keep_checkpoint_max=opt.epochs)
+    # ckpoint_cb = ModelCheckpoint(prefix="checkpoint_gcnet_whu", directory="checkpoint", config=config_ck)
+    # time_cb = TimeMonitor()
 
     callbacks = [LossMonitor(per_print_times=10),
                  TimeMonitor(data_size=train_data_size),
@@ -155,9 +157,8 @@ if __name__ == "__main__":
         time_cb = TimeMonitor(data_size=ds_train.get_dataset_size())
         config_ck = CheckpointConfig(save_checkpoint_steps=opt.save_ckpt_epochs,
                                      keep_checkpoint_max=opt.keep_checkpoint_max)
-        ckpoint_cb = ModelCheckpoint(prefix="checkpoint_mvsnet_whu", directory=opt.logdir, config=config_ck)
+        ckpoint_cb = ModelCheckpoint(prefix="checkpoint_gcnet_whu", directory=opt.logdir, config=config_ck)
         callbacks.append(ckpoint_cb)
 
-    output = model.train(opt.epochs, ds_train, callbacks=callbacks,
-                         dataset_sink_mode=False)
-    accuracy = model.eval(ds_val, dataset_sink_mode=False)
+    output = model.train(opt.epochs, ds_train, callbacks=callbacks)
+    # accuracy = model.eval(ds_val, dataset_sink_mode=False)

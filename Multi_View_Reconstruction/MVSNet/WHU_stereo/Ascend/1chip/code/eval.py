@@ -20,6 +20,7 @@ parser.add_argument('--dataset', default='whu', help='select dataset')
 parser.add_argument('--data_root', default='/mnt/gj/stereo', help='train datapath')
 parser.add_argument('--loadckpt', default='./checkpoint55/checkpoint_mvsnet_whu-30_3600.ckpt', help='load a specific checkpoint')
 parser.add_argument('--normalize', type=str, default='mean', help='methods of center_image, mean[mean var] or standard[0-1].')
+parser.add_argument('--batch_size', type=int, default=1, help='train batch size')
 
 # input parameters
 parser.add_argument('--view_num', type=int, default=3, help='Number of images (1 ref image and view_num - 1 view images).')
@@ -65,7 +66,7 @@ def AbsDepthError_metrics(depth_est, depth_gt, mask, depth_threshold):
 
 
 if __name__== "__main__":
-    net = MVSNet(args.max_h, args.max_w, False)
+    net = MVSNet(args.max_h, args.max_w, args.batch_size, False)
     dataset_generator = MVSDatasetGenerator(args.data_root, "test", args.view_num, args.normalize, args)
     ds_eval = create_dataset("test", args)
 
