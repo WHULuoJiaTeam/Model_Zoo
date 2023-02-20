@@ -75,7 +75,7 @@ class DatasetGenerator:
         images.append(right_img)
         images = np.stack(images, axis=0)
 
-        return (images.astype(np.float32), disp.astype(np.float32))
+        return images.astype(np.float32), disp.astype(np.float32)
 
     def __len__(self):
         return len(self.list_info)
