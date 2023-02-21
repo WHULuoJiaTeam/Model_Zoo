@@ -6,6 +6,7 @@
 - [预训练模型](#预训练模型)
 - [数据集](#数据集)
 - [环境要求](#环境要求)
+- [CKPT](#ckpt)
 - [快速入门](#快速入门)
 - [脚本说明](#脚本说明)
   - [脚本和示例代码](#脚本和示例代码)
@@ -44,13 +45,17 @@ Bochkovskiy A, Wang C Y, Liao H Y M. YOLOv4: Optimal Speed and Accuracy of Objec
 
 # [预训练模型](#目录)
 
-YOLOv4需要CSPDarknet53主干来提取图像特征进行检测。 您可以从[这里](https://download.mindspore.cn/model_zoo/r1.2/cspdarknet53_ascend_v120_imagenet2012_official_cv_bs64_top1acc7854_top5acc9428/cspdarknet53_ascend_v120_imagenet2012_official_cv_bs64_top1acc7854_top5acc9428.ckpt)获取到在ImageNet2012上训练的预训练模型。
+YOLOv4需要CSPDarknet53主干来提取图像特征进行检测。 您可以从[这里](https://download.luojianet.cn/model_zoo/r1.2/cspdarknet53_ascend_v120_imagenet2012_official_cv_bs64_top1acc7854_top5acc9428/cspdarknet53_ascend_v120_imagenet2012_official_cv_bs64_top1acc7854_top5acc9428.ckpt)获取到在ImageNet2012上训练的预训练模型。
 
 # [数据集](#目录)
 
-使用的数据集：[COCO2017](https://cocodataset.org/#download)  
+使用的数据集：[DOTA-V1.5](https://captain-whu.github.io/DOTA/dataset.html)。数据集被切分为为600*600像素大小， overlap为20%。您可以从以下链接下载数据预处理（切分、coco格式转换等）代码及切分后的DOTA数据集。
+
 支持的数据集：[COCO2017]或与MS COCO格式相同的数据集  
 支持的标注：[COCO2017]或与MS COCO相同格式的标注
+
+* 数据集预处理：https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/preprocess.zip
+* 数据集：https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/DOTA.zip
 
 - 目录结构如下，由用户定义目录和文件的名称：
 
@@ -78,14 +83,20 @@ YOLOv4需要CSPDarknet53主干来提取图像特征进行检测。 您可以从[
 - 硬件 Ascend
     - 使用Ascend处理器准备硬件环境。
 - 框架
-    - [LuojiaNet](https://www.mindspore.cn/install)
+    - [LuojiaNet](https://www.luojianet.cn/install)
 - 更多关于LuojiaNet的信息，请查看以下资源：
-    - [LuojiaNet教程](https://www.mindspore.cn/tutorials/zh-CN/master/index.html)
-    - [LuojiaNet Python API](https://www.mindspore.cn/docs/zh-CN/master/index.html)
+    - [LuojiaNet教程](https://www.luojianet.cn/tutorials/zh-CN/master/index.html)
+    - [LuojiaNet Python API](https://www.luojianet.cn/docs/zh-CN/master/index.html)
+
+# [CKPT](#目录)
+
+此处提供在DOTA-V1.5上训练得到的ckpt文件，您可以将其用于微调、评估以及推理测试。下载链接为：
+
+* https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/OUTPUT/yolov4/DOTA/mult/test1_lr0.012_bs8/train/2023-01-10_time_16_40_38/ckpt_0/0-320_120960.ckpt
 
 # [快速入门](#目录)
 
-- 通过官方网站安装MindSpore后，您可以按照如下步骤进行训练和评估：
+- 通过官方网站安装luojianet后，您可以按照如下步骤进行训练和评估：
 - 在运行网络之前，准备CSPDarknet53.ckpt和hccl_8p.json文件。
     - 请参考[预训练模型]。
 
@@ -145,6 +156,13 @@ YOLOv4需要CSPDarknet53主干来提取图像特征进行检测。 您可以从[
 
   ```python
   # 在Ascend上训练8卡
+  # 此处给出两种方法，方法一在modelarts云平台中定义参数传入即可，方法二在config文件中进行配置。推荐方法一。
+  # 方法一
+  # (1) 在train.py中将get_args()函数的相关参数设置自己的数据路径及超参数等。
+  # (2) 将代码及数据集上传到obs桶中。
+  # (3) 在网页上将启动文件设置为train.py。
+  # (4) 在网页上设置对应的parser参数。可参考教程链接：https://support.huaweicloud.com/modelarts_faq/modelarts_05_0265.html
+  # 方法二
   # （1）执行a或b。
   #       a. 在base_config.yaml文件中设置“enable_modelarts=True”。
   #          在base_config.yaml文件中设置“data_dir='/cache/data/coco/'”。
@@ -247,7 +265,7 @@ YOLOv4需要CSPDarknet53主干来提取图像特征进行检测。 您可以从[
 └─yolov4
   ├─README.md
   ├─README_CN.md
-  ├─mindspore_hub_conf.py             # Mindspore Hub配置
+  ├─luojianet_hub_conf.py             # luojianet Hub配置
   ├─scripts
     ├─run_standalone_train.sh         # 在Ascend中启动单机训练（1卡）
     ├─run_distribute_train.sh         # 在Ascend中启动分布式训练（8卡）
@@ -258,7 +276,7 @@ YOLOv4需要CSPDarknet53主干来提取图像特征进行检测。 您可以从[
     ├─config.py                       # 参数配置
     ├─cspdarknet53.py                 # 网络主干
     ├─distributed_sampler.py          # 数据集迭代器
-    ├─export.py                       # 将MindSpore模型转换为MINDIR,AIR模型
+    ├─export.py                       # 将luojianet模型转换为MINDIR,AIR模型
     ├─initializer.py                  # 参数初始化器
     ├─logger.py                       # 日志函数
     ├─loss.py                         # 损失函数
@@ -342,7 +360,7 @@ train.py中主要参数如下：
 可以从头开始训练YLOv4，也可以使用cspdarknet53主干训练。
 Cspdarknet53是一个分类器，可以在ImageNet(ILSVRC2012)等数据集上训练。
 用户可轻松训练Cspdarknet53。 只需将分类器Resnet50的主干替换为cspdarknet53。
-可在MindSpore ModelZoo中轻松获取Resnet50。
+可在luojianet ModelZoo中轻松获取Resnet50。
 
 ### 训练
 
@@ -372,15 +390,10 @@ python train.py \
 ```text
 
 # grep "loss:" train/log.txt
-2020-10-16 15:00:37,483:INFO:epoch[0], iter[0], loss:8248.610352, 0.03 imgs/sec, lr:2.0466639227834094e-07
-2020-10-16 15:00:52,897:INFO:epoch[0], iter[100], loss:5058.681709, 51.91 imgs/sec, lr:2.067130662908312e-05
-2020-10-16 15:01:08,286:INFO:epoch[0], iter[200], loss:1583.772806, 51.99 imgs/sec, lr:4.1137944208458066e-05
-2020-10-16 15:01:23,457:INFO:epoch[0], iter[300], loss:1229.840823, 52.75 imgs/sec, lr:6.160458724480122e-05
-2020-10-16 15:01:39,046:INFO:epoch[0], iter[400], loss:1155.170310, 51.32 imgs/sec, lr:8.207122300518677e-05
-2020-10-16 15:01:54,138:INFO:epoch[0], iter[500], loss:920.922433, 53.02 imgs/sec, lr:0.00010253786604152992
-2020-10-16 15:02:09,209:INFO:epoch[0], iter[600], loss:808.610681, 53.09 imgs/sec, lr:0.00012300450180191547
-2020-10-16 15:02:24,240:INFO:epoch[0], iter[700], loss:621.931513, 53.23 imgs/sec, lr:0.00014347114483825862
-2020-10-16 15:02:39,280:INFO:epoch[0], iter[800], loss:527.155985, 53.20 imgs/sec, lr:0.00016393778787460178
+2023-01-10 17:29:07,004:INFO:epoch[1], iter[377], loss:1280.677487, per step time: 7642.25 ms, fps: 8.37, lr:0.003000000026077032
+2023-01-10 17:32:11,619:INFO:epoch[2], iter[755], loss:681.348236, per step time: 488.40 ms, fps: 131.04, lr:0.006000000052154064
+2023-01-10 17:35:15,484:INFO:epoch[3], iter[1133], loss:595.682223, per step time: 486.41 ms, fps: 131.58, lr:0.008999999612569809
+2023-01-10 17:38:18,124:INFO:epoch[4], iter[1511], loss:566.903601, per step time: 483.17 ms, fps: 132.46, lr:0.012000000104308128
 ...
 ```
 
@@ -397,19 +410,14 @@ bash run_distribute_train.sh dataset/coco2017 cspdarknet53_backbone.ckpt rank_ta
 ```text
 # 分布式训练结果(8卡，动态形状)
 ...
-2020-10-16 20:40:17,148:INFO:epoch[0], iter[800], loss:283.765033, 248.93 imgs/sec, lr:0.00026233625249005854
-2020-10-16 20:40:43,576:INFO:epoch[0], iter[900], loss:257.549973, 242.18 imgs/sec, lr:0.00029508734587579966
-2020-10-16 20:41:12,743:INFO:epoch[0], iter[1000], loss:252.426355, 219.43 imgs/sec, lr:0.00032783843926154077
-2020-10-16 20:41:43,153:INFO:epoch[0], iter[1100], loss:232.104760, 210.46 imgs/sec, lr:0.0003605895326472819
-2020-10-16 20:42:12,583:INFO:epoch[0], iter[1200], loss:236.973975, 217.47 imgs/sec, lr:0.00039334059692919254
-2020-10-16 20:42:39,004:INFO:epoch[0], iter[1300], loss:228.881298, 242.24 imgs/sec, lr:0.00042609169031493366
-2020-10-16 20:43:07,811:INFO:epoch[0], iter[1400], loss:255.025714, 222.19 imgs/sec, lr:0.00045884278370067477
-2020-10-16 20:43:38,177:INFO:epoch[0], iter[1500], loss:223.847151, 210.76 imgs/sec, lr:0.0004915939061902463
-2020-10-16 20:44:07,766:INFO:epoch[0], iter[1600], loss:222.302487, 216.30 imgs/sec, lr:0.000524344970472157
-2020-10-16 20:44:37,411:INFO:epoch[0], iter[1700], loss:211.063779, 215.89 imgs/sec, lr:0.0005570960929617286
-2020-10-16 20:45:03,092:INFO:epoch[0], iter[1800], loss:210.425542, 249.21 imgs/sec, lr:0.0005898471572436392
-2020-10-16 20:45:32,767:INFO:epoch[1], iter[1900], loss:208.449521, 215.67 imgs/sec, lr:0.0006225982797332108
-2020-10-16 20:45:59,163:INFO:epoch[1], iter[2000], loss:209.700071, 242.48 imgs/sec, lr:0.0006553493440151215
+2023-01-10 17:29:07, 004: INF0:epoch[1], iter[377]， loss:1280. 677487，per step time: 7642. 25 ms, fps: 8. 37,
+1r:0. 0000000026077032
+2023-01-10 17:32:11, 619: INF0:epoch[2]，iter[755]， loss:681. 348236, per step time: 488. 40 ms, fps: 131. 04,
+1r:0. 0000000052154064
+2023-01-10 17:35:15, 484: INF0:epoch[3]，iter[1133]， loss:595. 682223, per step time: 486. 41 ms, fps: 131. 58,
+1r :0.008999999612569809
+2023-01-10 17:38:18, 124: INFO:epoch[4]，iter[1511]， loss:566. 903601, per step time: 483. 17 ms, fps: 132. 46,
+1r:0. 012000000104308128
 ...
 ```
 
@@ -442,51 +450,21 @@ bash run_eval.sh dataset/coco2017 checkpoint/yolov4.ckpt
 
 ```text
 # log.txt
+2023-01-16 23:26:49,218:INFO:
 =============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.442
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.635
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.479
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.274
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.485
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.567
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.331
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.545
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.590
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.418
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.638
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.717
-```
-
-### Test-dev
-
-```bash
-python test.py \
-    --data_dir=./dataset/coco2017 \
-    --pretrained=yolov4.ckpt \
-    --testing_shape=608 > log.txt 2>&1 &
-OR
-bash run_test.sh dataset/coco2017 checkpoint/yolov4.ckpt
-```
-
-predict_xxx.json文件位于test/outputs/%Y-%m-%d_time_%H_%M_%S/。
-将文件predict_xxx.json重命名为detections_test-dev2017_yolov4_results.json，并将其压缩为detections_test-dev2017_yolov4_results.zip。
-将detections_test-dev2017_yolov4_results.zip文件提交到MS COCO评估服务器用于test-dev 2019 (bbox) <https://competitions.codalab.org/competitions/20794#participate>。
-您将在文件末尾获得这样的结果。查看评分输出日志。
-
-```text
-overall performance
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.447
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.642
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.487
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.267
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.485
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.549
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.335
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.547
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.584
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.392
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.627
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.711
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.390
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.682
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.390
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.292
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.429
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.375
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.185
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.410
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.501
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.433
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.532
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.464
+2023-01-16 23:26:49,225:INFO:testing cost time 0.48 h
 ```
 
 ## [转换过程](#目录)
@@ -506,6 +484,17 @@ python export.py --ckpt_file [CKPT_PATH] --file_name [FILE_NAME] --file_format [
 
 ### 用法
 
+方法一、使用inference.py进行推理
+
+脚本支持GPU下的多个bacth_size推理，推荐设置batch_size=1，避免漏检出现运行逻辑错误。使用方式如下：
+
+```python
+# GPU inference
+python inference.py --img_path=[img_path] --ckpt_path=[ckpt_path] --batch_size=1
+```
+
+方法二、使用.sh进行推理
+
 在执行推理之前，必须在910环境上通过导出脚本导出MINDIR文件。
 当前批处理大小只能设置为1。 精度计算过程需要70G+内存空间。
 
@@ -516,70 +505,47 @@ bash run_infer_310.sh [MINDIR_PATH] [DATA_PATH] [DEVICE_ID] [ANN_FILE]
 
 `DEVICE_ID`是可选参数，默认值为0。
 
-### 结果
-
-推理结果保存在当前路径中，您可以在ac.log文件中找到类似如下结果。
-
-```text
-=============coco eval reulst=========
-Average Precision (AP) @[ IoU=0.50:0.95 | area= all   | maxDets=100 ] = 0.438
-Average Precision (AP) @[ IoU=0.50      | area= all   | maxDets=100 ] = 0.630
-Average Precision (AP) @[ IoU=0.75      | area= all   | maxDets=100 ] = 0.475
-Average Precision (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.272
-Average Precision (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.481
-Average Precision (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.567
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets=  1 ] = 0.330
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets= 10 ] = 0.542
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets=100 ] = 0.588
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.410
-Average Recall    (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.636
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.716
-```
-
 # [模型说明](#目录)
 
 ## [性能](#目录)
 
-### 评估性能
+### 训练性能
 
-YOLOv4应用于118000张图像上（标注和数据格式必须与COCO 2017相同）
+| 参数          | YOLOv4                                                       |
+| ------------- | ------------------------------------------------------------ |
+| 资源          | Ascend 910；CPU 2.60GHz, 192核；内存：755G；系统：EulerOS 2.8； |
+| 上传日期      | 2023年1月16日                                                |
+| luojianet版本 | 1.0.6                                                        |
+| 数据集        | DOTA-V1.5                                                    |
+| 训练参数      | epoch=320, batch_size=8, lr=0.012,momentum=0.9               |
+| 优化器        | Momentum                                                     |
+| 损失函数      | Sigmoid Cross Entropy with logits, Giou Loss                 |
+| 输出          | 框和标签                                                     |
+| 损失          | 200                                                          |
+| 速度          | 8卡： 500ms/step                                             |
+| 总时长        | 17h22min                                                     |
+| 微调检查点    | 约500M（.ckpt文件）                                          |
+
+### 评估性能
 
 |参数| YOLOv4 |
 | -------------------------- | ----------------------------------------------------------- |
 |资源| Ascend 910；CPU 2.60GHz, 192核；内存：755G；系统：EulerOS 2.8；|
-|上传日期|2020年10月16日|
-| MindSpore版本|1.0.0-alpha|
-|数据集|118000张图像|
+|上传日期|2023年1月16日|
+| luojianet版本|1.0.6|
+|数据集|DOTA-V1.5|
 |训练参数|epoch=320, batch_size=8, lr=0.012,momentum=0.9|
 | 优化器                  | Momentum                                                    |
 |损失函数|Sigmoid Cross Entropy with logits, Giou Loss|
 |输出|框和标签|
-|损失| 50 |
-|速度| 1卡：53FPS；8卡：390FPS (shape=416) 220FPS (动态形状)|
-|总时长|48小时（动态形状）|
+|损失| 200                                                          |
+|速度| 1卡：114FPS |
+|总时长|29min|
 |微调检查点|约500M（.ckpt文件）|
-|脚本| <https://gitee.com/mindspore/models/tree/master/official/cv/yolov4> |
-
-### 推理性能
-
-YOLOv4应用于20000张图像上（标注和数据格式必须与COCO test 2017相同）
-
-|参数| YOLOv4 |
-| -------------------------- | ----------------------------------------------------------- |
-| 资源                   | Ascend 910；CPU 2.60GHz，192核；内存：755G             |
-|上传日期|2020年10月16日|
-| MindSpore版本|1.0.0-alpha|
-|数据集|20000张图像|
-|批处理大小|1|
-|输出|边框位置和分数，以及概率|
-|精度|map >= 44.7%(shape=608)|
-|推理模型|约500M（.ckpt文件）|
+|Map|68.2%|
 
 # [随机情况说明](#目录)
 
 在dataset.py中，我们设置了“create_dataset”函数内的种子。
 在var_init.py中，我们设置了权重初始化的种子。
 
-# [ModelZoo主页](#目录)
-
-请浏览官网[主页](https://gitee.com/mindspore/models)。

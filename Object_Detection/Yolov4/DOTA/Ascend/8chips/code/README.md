@@ -5,6 +5,7 @@
 - [Pretrain Model](#pretrain-model)
 - [Dataset](#dataset)
 - [Environment Requirements](#environment-requirements)
+- [CKPT](#ckpt)
 - [Quick Start](#quick-start)
 - [Script Description](#script-description)
     - [Script and Sample Code](#script-and-sample-code)
@@ -36,11 +37,15 @@ YOLOv4 choose CSPDarknet53 backbone, SPP additional module, PANet path-aggregati
 
 # [Pretrain Model](#contents)
 
-YOLOv4 needs a CSPDarknet53 backbone to extract image features for detection. The pretrained checkpoint trained with ImageNet2012 can be downloaded at [hear](https://download.mindspore.cn/model_zoo/r1.2/cspdarknet53_ascend_v120_imagenet2012_official_cv_bs64_top1acc7854_top5acc9428/cspdarknet53_ascend_v120_imagenet2012_official_cv_bs64_top1acc7854_top5acc9428.ckpt).
+YOLOv4 needs a CSPDarknet53 backbone to extract image features for detection. The pretrained checkpoint trained with ImageNet2012 can be downloaded at [hear](https://download.luojianet.cn/model_zoo/r1.2/cspdarknet53_ascend_v120_imagenet2012_official_cv_bs64_top1acc7854_top5acc9428/cspdarknet53_ascend_v120_imagenet2012_official_cv_bs64_top1acc7854_top5acc9428.ckpt).
 
 # [Dataset](#contents)
 
-Dataset used: [COCO2017](https://cocodataset.org/#download)
+Dataset used:  [DOTA-V1.5]([DOTA (captain-whu.github.io)](https://captain-whu.github.io/DOTA/dataset.html)). The image is clipped to 600*600 pixel size and 20% overlap. You can get the process code and processed dataset form here.
+
+* Process code: https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/preprocess.zip
+* Dataset（clipped）: https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/DOTA.zip
+
 Dataset support: [COCO2017] or datasetd with the same format as MS COCO
 Annotation support: [COCO2017] or annotation as the same format as MS COCO
 
@@ -48,7 +53,7 @@ Annotation support: [COCO2017] or annotation as the same format as MS COCO
 
     ```text
         ├── dataset
-            ├── YOLOv4
+            ├── DOTA(coco_root)
                 ├── annotations
                 │   ├─ train.json
                 │   └─ val.json
@@ -65,19 +70,25 @@ Annotation support: [COCO2017] or annotation as the same format as MS COCO
 we suggest user to use MS COCO dataset to experience our model,
 other datasets need to use the same format as MS COCO.
 
+# [CKPT](#contents)
+
+Here we give the .ckpt file. You can use this file to pretrain, eval and infer. The link is as follows:
+
+* https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/OUTPUT/yolov4/DOTA/mult/test1_lr0.012_bs8/train/2023-01-10_time_16_40_38/ckpt_0/0-320_120960.ckpt
+
 # [Environment Requirements](#contents)
 
-- Hardware（Ascend）
-    - Prepare hardware environment with Ascend processor.
+- Hardware（Ascend/GPU）
+- Prepare hardware environment with Ascend or GPU processor.
 - Framework
-    - [MindSpore](https://www.mindspore.cn/install/en)
+    - [Luojianet]([首页](http://58.48.42.237/luojiaNet/home))
 - For more information, please check the resources below：
-    - [MindSpore tutorials](https://www.mindspore.cn/tutorials/en/master/index.html)
-    - [MindSpore Python API](https://www.mindspore.cn/docs/en/master/index.html)
+    - [Luojianet Tutorials]([初学入门](http://58.48.42.237/luojiaNet/tutorial/quickstart))
+    - [Luojianet API]([API](http://58.48.42.237/luojiaNet/luojiaNetapi/))
 
 # [Quick Start](#contents)
 
-- After installing MindSpore via the official website, you can start training and evaluation as follows:
+- After installing Luojianet via the official website, you can start training and evaluation as follows:
 - Prepare the CSPDarknet53.ckpt and hccl_8p.json files, before run network.
     - Please refer to [Pretrain Model]
 
@@ -137,6 +148,13 @@ other datasets need to use the same format as MS COCO.
 
   ```python
   # Train 8p with Ascend
+  # Here we give two methods. Method 1 use parser, which you can set these parameters on modelarts.
+  # Method 1.
+  # (1) Set the appropriate parameters in the get_args() of train.py. The function of these parameters are explained in config.yaml.
+  # (2) Upload your code and dataset to obs bucket.
+  # (3) Set the startup file to "train.py" on the website UI interface.
+  # (4) Set the parser arguments on the website UI interface. Here is the tutotial: https://support.huaweicloud.com/modelarts_faq/modelarts_05_0265.html
+  # Method 2.
   # (1) Perform a or b.
   #       a. Set "enable_modelarts=True" on base_config.yaml file.
   #          Set "data_dir='/cache/data/coco/'" on base_config.yaml file.
@@ -239,7 +257,6 @@ other datasets need to use the same format as MS COCO.
 └─yolov4
   ├─README.md
   ├─README_CN.md
-  ├─mindspore_hub_conf.py             # config for mindspore hub
   ├─scripts
     ├─run_standalone_train.sh         # launch standalone training(1p) in ascend
     ├─run_distribute_train.sh         # launch distributed training(8p) in ascend
@@ -250,7 +267,7 @@ other datasets need to use the same format as MS COCO.
     ├─config.py                       # parameter configuration
     ├─cspdarknet53.py                 # backbone of network
     ├─distributed_sampler.py          # iterator of dataset
-    ├─export.py                       # convert mindspore model to air model
+    ├─export.py                       # convert luojianet model to air model
     ├─initializer.py                  # initializer of parameters
     ├─logger.py                       # log function
     ├─loss.py                         # loss function
@@ -334,7 +351,7 @@ optional arguments:
 YOLOv4 can be trained from the scratch or with the backbone named cspdarknet53.
 Cspdarknet53 is a classifier which can be trained on some dataset like ImageNet(ILSVRC2012).
 It is easy for users to train Cspdarknet53. Just replace the backbone of Classifier Resnet50 with cspdarknet53.
-Resnet50 is easy to get in mindspore model zoo.
+Resnet50 is easy to get in luojianet model zoo.
 
 ### Training
 
@@ -364,15 +381,10 @@ After training, you'll get some checkpoint files under the outputs folder by def
 ```text
 
 # grep "loss:" train/log.txt
-2020-10-16 15:00:37,483:INFO:epoch[0], iter[0], loss:8248.610352, 0.03 imgs/sec, lr:2.0466639227834094e-07
-2020-10-16 15:00:52,897:INFO:epoch[0], iter[100], loss:5058.681709, 51.91 imgs/sec, lr:2.067130662908312e-05
-2020-10-16 15:01:08,286:INFO:epoch[0], iter[200], loss:1583.772806, 51.99 imgs/sec, lr:4.1137944208458066e-05
-2020-10-16 15:01:23,457:INFO:epoch[0], iter[300], loss:1229.840823, 52.75 imgs/sec, lr:6.160458724480122e-05
-2020-10-16 15:01:39,046:INFO:epoch[0], iter[400], loss:1155.170310, 51.32 imgs/sec, lr:8.207122300518677e-05
-2020-10-16 15:01:54,138:INFO:epoch[0], iter[500], loss:920.922433, 53.02 imgs/sec, lr:0.00010253786604152992
-2020-10-16 15:02:09,209:INFO:epoch[0], iter[600], loss:808.610681, 53.09 imgs/sec, lr:0.00012300450180191547
-2020-10-16 15:02:24,240:INFO:epoch[0], iter[700], loss:621.931513, 53.23 imgs/sec, lr:0.00014347114483825862
-2020-10-16 15:02:39,280:INFO:epoch[0], iter[800], loss:527.155985, 53.20 imgs/sec, lr:0.00016393778787460178
+2023-01-10 17:29:07,004:INFO:epoch[1], iter[377], loss:1280.677487, per step time: 7642.25 ms, fps: 8.37, lr:0.003000000026077032
+2023-01-10 17:32:11,619:INFO:epoch[2], iter[755], loss:681.348236, per step time: 488.40 ms, fps: 131.04, lr:0.006000000052154064
+2023-01-10 17:35:15,484:INFO:epoch[3], iter[1133], loss:595.682223, per step time: 486.41 ms, fps: 131.58, lr:0.008999999612569809
+2023-01-10 17:38:18,124:INFO:epoch[4], iter[1511], loss:566.903601, per step time: 483.17 ms, fps: 132.46, lr:0.012000000104308128
 ...
 ```
 
@@ -389,19 +401,14 @@ The above shell script will run distribute training in the background. You can v
 ```text
 # distribute training result(8p, dynamic shape)
 ...
-2020-10-16 20:40:17,148:INFO:epoch[0], iter[800], loss:283.765033, 248.93 imgs/sec, lr:0.00026233625249005854
-2020-10-16 20:40:43,576:INFO:epoch[0], iter[900], loss:257.549973, 242.18 imgs/sec, lr:0.00029508734587579966
-2020-10-16 20:41:12,743:INFO:epoch[0], iter[1000], loss:252.426355, 219.43 imgs/sec, lr:0.00032783843926154077
-2020-10-16 20:41:43,153:INFO:epoch[0], iter[1100], loss:232.104760, 210.46 imgs/sec, lr:0.0003605895326472819
-2020-10-16 20:42:12,583:INFO:epoch[0], iter[1200], loss:236.973975, 217.47 imgs/sec, lr:0.00039334059692919254
-2020-10-16 20:42:39,004:INFO:epoch[0], iter[1300], loss:228.881298, 242.24 imgs/sec, lr:0.00042609169031493366
-2020-10-16 20:43:07,811:INFO:epoch[0], iter[1400], loss:255.025714, 222.19 imgs/sec, lr:0.00045884278370067477
-2020-10-16 20:43:38,177:INFO:epoch[0], iter[1500], loss:223.847151, 210.76 imgs/sec, lr:0.0004915939061902463
-2020-10-16 20:44:07,766:INFO:epoch[0], iter[1600], loss:222.302487, 216.30 imgs/sec, lr:0.000524344970472157
-2020-10-16 20:44:37,411:INFO:epoch[0], iter[1700], loss:211.063779, 215.89 imgs/sec, lr:0.0005570960929617286
-2020-10-16 20:45:03,092:INFO:epoch[0], iter[1800], loss:210.425542, 249.21 imgs/sec, lr:0.0005898471572436392
-2020-10-16 20:45:32,767:INFO:epoch[1], iter[1900], loss:208.449521, 215.67 imgs/sec, lr:0.0006225982797332108
-2020-10-16 20:45:59,163:INFO:epoch[1], iter[2000], loss:209.700071, 242.48 imgs/sec, lr:0.0006553493440151215
+2023-01-10 17:29:07, 004: INF0:epoch[1], iter[377]， loss:1280. 677487，per step time: 7642. 25 ms, fps: 8. 37,
+1r:0. 0000000026077032
+2023-01-10 17:32:11, 619: INF0:epoch[2]，iter[755]， loss:681. 348236, per step time: 488. 40 ms, fps: 131. 04,
+1r:0. 0000000052154064
+2023-01-10 17:35:15, 484: INF0:epoch[3]，iter[1133]， loss:595. 682223, per step time: 486. 41 ms, fps: 131. 58,
+1r :0.008999999612569809
+2023-01-10 17:38:18, 124: INFO:epoch[4]，iter[1511]， loss:566. 903601, per step time: 483. 17 ms, fps: 132. 46,
+1r:0. 012000000104308128
 ...
 ```
 
@@ -434,51 +441,21 @@ The above python command will run in the background. You can view the results th
 
 ```text
 # log.txt
+2023-01-16 23:26:49,218:INFO:
 =============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.442
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.635
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.479
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.274
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.485
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.567
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.331
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.545
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.590
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.418
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.638
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.717
-```
-
-### Test-dev
-
-```bash
-python test.py \
-    --data_dir=./dataset/coco2017 \
-    --pretrained=yolov4.ckpt \
-    --testing_shape=608 > log.txt 2>&1 &
-OR
-bash run_test.sh dataset/coco2017 checkpoint/yolov4.ckpt
-```
-
-The predict_xxx.json will be found in test/outputs/%Y-%m-%d_time_%H_%M_%S/.
-Rename the file predict_xxx.json to detections_test-dev2017_yolov4_results.json and compress it to detections_test-dev2017_yolov4_results.zip
-Submit file detections_test-dev2017_yolov4_results.zip to the MS COCO evaluation server for the test-dev2019 (bbox) <https://competitions.codalab.org/competitions/20794#participate>
-You will get such results in the end of file View scoring output log.
-
-```text
-overall performance
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.447
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.642
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.487
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.267
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.485
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.549
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.335
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.547
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.584
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.392
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.627
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.711
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.390
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.682
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.390
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.292
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.429
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.375
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.185
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.410
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.501
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.433
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.532
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.464
+2023-01-16 23:26:49,225:INFO:testing cost time 0.48 h
 ```
 
 ## [Convert Process](#contents)
@@ -499,6 +476,17 @@ The ckpt_file parameter is required,
 
 ### Usage
 
+Method 1. Use inference.py
+
+This .py file support GPU and batch_size can be set randomly. We suggest you set the batch_size as 1 to avoid error caused by leak detection. The usage is as follows:
+
+```python
+# GPU inference
+python inference.py --img_path=[img_path] --ckpt_path=[ckpt_path] --batch_size=1
+```
+
+Method 2. Use .sh
+
 Before performing inference, the mindir file must be exported by export script on the 910 environment.
 Current batch_Size can only be set to 1. The precision calculation process needs about 70G+ memory space.
 
@@ -509,70 +497,46 @@ bash run_infer_310.sh [MINDIR_PATH] [DATA_PATH] [DEVICE_ID] [ANN_FILE]
 
 `DEVICE_ID` is optional, default value is 0.
 
-### result
-
-Inference result is saved in current path, you can find result like this in acc.log file.
-
-```text
-=============coco eval reulst=========
-Average Precision (AP) @[ IoU=0.50:0.95 | area= all   | maxDets=100 ] = 0.438
-Average Precision (AP) @[ IoU=0.50      | area= all   | maxDets=100 ] = 0.630
-Average Precision (AP) @[ IoU=0.75      | area= all   | maxDets=100 ] = 0.475
-Average Precision (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.272
-Average Precision (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.481
-Average Precision (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.567
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets=  1 ] = 0.330
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets= 10 ] = 0.542
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets=100 ] = 0.588
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.410
-Average Recall    (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.636
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.716
-```
-
 # [Model Description](#contents)
 
 ## [Performance](#contents)
 
+### Train Performance
+
+| Parameters                 | YOLOv4                                                       |
+| -------------------------- | ------------------------------------------------------------ |
+| Resource                   | Ascend 910; CPU 2.60GHz, 192cores; Memory, 755G; System, Euleros 2.8; |
+| uploaded Date              | 01/16/2023 (month/day/year)                                  |
+| Luojianet Version          | 1.0.6                                                        |
+| Dataset                    | DOTA-V1.5                                                    |
+| Training Parameters        | epoch=320, batch_size=8, lr=0.012,momentum=0.9               |
+| Optimizer                  | Momentum                                                     |
+| Loss Function              | Sigmoid Cross Entropy with logits, Giou Loss                 |
+| outputs                    | boxes and label                                              |
+| Loss                       | 200                                                          |
+| Speed                      | 8p: 500ms/step                                               |
+| Total time                 | 17h22min                                                     |
+| Checkpoint for Fine tuning | about 500M (.ckpt file)                                      |
+
 ### Evaluation Performance
 
-YOLOv4 on 118K images(The annotation and data format must be the same as coco2017)
-
-| Parameters                 | YOLOv4                                                      |
-| -------------------------- | ----------------------------------------------------------- |
-| Resource                   | Ascend 910; CPU 2.60GHz, 192cores; Memory, 755G; System, Euleros 2.8;|
-| uploaded Date              | 10/16/2020 (month/day/year)                                 |
-| MindSpore Version          | 1.0.0-alpha                                                 |
-| Dataset                    | 118K images                                                 |
-| Training Parameters        | epoch=320, batch_size=8, lr=0.012,momentum=0.9              |
-| Optimizer                  | Momentum                                                    |
-| Loss Function              | Sigmoid Cross Entropy with logits, Giou Loss                |
-| outputs                    | boxes and label                                             |
-| Loss                       | 50                                                          |
-| Speed                      | 1p 53FPS 8p 390FPS(shape=416) 220FPS(dynamic shape)         |
-| Total time                 | 48h(dynamic shape)                                          |
-| Checkpoint for Fine tuning | about 500M (.ckpt file)                                     |
-| Scripts                    | <https://gitee.com/mindspore/models/tree/master/official/cv/yolov4> |
-
-### Inference Performance
-
-YOLOv4 on 20K images(The annotation and data format must be the same as coco test2017 )
-
-| Parameters                 | YOLOv4                                                      |
-| -------------------------- | ----------------------------------------------------------- |
-| Resource                   | Ascend 910; CPU 2.60GHz, 192cores; Memory, 755G             |
-| uploaded Date              | 10/16/2020 (month/day/year)                                 |
-| MindSpore Version          | 1.0.0-alpha                                                 |
-| Dataset                    | 20K images                                                  |
-| batch_size                 | 1                                                           |
-| outputs                    | box position and sorces, and probability                    |
-| Accuracy                   | map >= 44.7%(shape=608)                                     |
-| Model for inference        | about 500M (.ckpt file)                                     |
+| Parameters                 | YOLOv4                                                       |
+| -------------------------- | ------------------------------------------------------------ |
+| Resource                   | Ascend 910; CPU 2.60GHz, 192cores; Memory, 755G; System, Euleros 2.8; |
+| uploaded Date              | 01/16/2023 (month/day/year)                                  |
+| Luojianet Version          | 1.0.6                                                        |
+| Dataset                    | DOTA-V1.5                                                    |
+| Training Parameters        | epoch=320, batch_size=8, lr=0.012,momentum=0.9               |
+| Optimizer                  | Momentum                                                     |
+| Loss Function              | Sigmoid Cross Entropy with logits, Giou Loss                 |
+| outputs                    | boxes and label                                              |
+| Loss                       | 200                                                          |
+| Speed                      | 1p: 114FPS                                                   |
+| Total time                 | 29min                                                        |
+| Checkpoint for Fine tuning | about 500M (.ckpt file)                                      |
+| Map                        | 68.2%                                                        |
 
 # [Description of Random Situation](#contents)
 
 In dataset.py, we set the seed inside ```create_dataset``` function.
 In var_init.py, we set seed for weight initialization
-
-# [ModelZoo Homepage](#contents)
-
- Please check the official [homepage](https://gitee.com/mindspore/models).

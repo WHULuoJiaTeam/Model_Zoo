@@ -7,6 +7,7 @@
 - [模型架构](#模型架构)
 - [数据集](#数据集)
 - [环境要求](#环境要求)
+- [CKPT](#ckpt)
 - [快速入门](#快速入门)
 - [脚本说明](#脚本说明)
     - [脚本及样例代码](#脚本及样例代码)
@@ -47,17 +48,18 @@ YOLOv3使用DarkNet53执行特征提取，这是YOLOv2中的Darknet-19和残差�
 
 # 数据集
 
-使用的数据集：[COCO 2014](https://cocodataset.org/#download)
+使用的数据集：[DOTA-V1.5](https://captain-whu.github.io/DOTA/dataset.html)。数据集被切分为为600*600像素大小， overlap为20%。您可以从以下链接下载数据预处理（切分、coco格式转换等）代码及切分后的DOTA数据集。
 
-- 数据集大小：19G，123287张图片，80个物体类别
-    - 训练集：13G，82783张图像  
-    - 验证集：6GM，40504张图像
-    - 标注：241M，训练/验证标注
+* 数据预处理：https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/preprocess.zip
+* 数据集：https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/DOTA.zip
+
+DOTA-V1.5包含16个常见类别和402,089个实例。在使用Yolov4进行训练之前，请将数据集修改为coco数据格式。目录结构如下所示。您可以查看脚本描述了解更多信息。
+
 - 数据集的文件目录结构如下所示
 
     ```ext
         ├── dataset
-            ├── coco2014
+            ├── DOTA(coco_root)
                 ├── annotations
                 │   ├─ train.json
                 │   └─ val.json
@@ -79,16 +81,23 @@ YOLOv3使用DarkNet53执行特征提取，这是YOLOv2中的Darknet-19和残差�
 - 硬件（Ascend/GPU）
     - 使用Ascend或GPU处理器来搭建硬件环境。
 - 框架
-    - [MindSpore](https://www.mindspore.cn/install)
+    - [Luojianet]([首页](http://58.48.42.237/luojiaNet/home))
 - 如需查看详情，请参见如下资源：
-    - [MindSpore教程](https://www.mindspore.cn/tutorials/zh-CN/master/index.html)
-    - [MindSpore Python API](https://www.mindspore.cn/docs/zh-CN/master/index.html)
+    - [Luojianet Tutorials]([初学入门](http://58.48.42.237/luojiaNet/tutorial/quickstart))
+    - [Luojianet API]([API](http://58.48.42.237/luojiaNet/luojiaNetapi/))
+    
+
+# CKPT
+
+此处提供在DOTA-V1.5上训练得到的ckpt文件，您可以将其用于微调、评估以及推理测试。下载链接为：
+
+* https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/OUTPUT/yolov3/DOTA/mult/test1_lr0.0012/train/2023-01-10_time_10_34_46/ckpt_0/yolov3_320_189.ckpt
 
 # 快速入门
 
-- 通过官方网站安装MindSpore后，您可以按照如下步骤进行训练和评估：如果在GPU上运行，请在python命令中添加`--device_target=GPU`，或者使用“_gpu”shell脚本（“xxx_gpu.sh”）。
+- 通过官方网站安装Luojianet后，您可以按照如下步骤进行训练和评估：如果在GPU上运行，请在python命令中添加`--device_target=GPU`，或者使用“_gpu”shell脚本（“xxx_gpu.sh”）。
 - 在运行任务之前，需要准备backbone_darknet53.ckpt和hccl_8p.json文件。
-    - 使用yolov3_darknet53路径下的convert_weight.py脚本将darknet53.conv.74转换成mindspore ckpt格式。
+    - 使用yolov3_darknet53路径下的convert_weight.py脚本将darknet53.conv.74转换成luojianet ckpt格式。
 
       ```command
       python convert_weight.py --input_file ./darknet53.conv.74
@@ -156,6 +165,13 @@ YOLOv3使用DarkNet53执行特征提取，这是YOLOv2中的Darknet-19和残差�
 
   ```python
   # 在modelarts上进行8卡训练（Ascend）
+  # 此处给出两种方法，方法一在modelarts云平台中定义参数传入即可，方法二在config文件中进行配置。推荐方法一。
+  # 方法一
+  # (1) 在train.py中将get_args()函数的相关参数设置自己的数据路径及超参数等。
+  # (2) 将代码及数据集上传到obs桶中。
+  # (3) 在网页上将启动文件设置为train.py。
+  # (4) 在网页上设置对应的parser参数。可参考教程链接：https://support.huaweicloud.com/modelarts_faq/modelarts_05_0265.html
+  # 方法二
   # (1) 执行a或者b
   #       a. 在 base_config.yaml 文件中配置 "enable_modelarts=True"
   #          在 base_config.yaml 文件中配置 "data_dir='/cache/data/coco2014/'"
@@ -210,7 +226,6 @@ YOLOv3使用DarkNet53执行特征提取，这是YOLOv2中的Darknet-19和残差�
 .
 └─yolov3_darknet53
   ├─README.md
-  ├─mindspore_hub_conf.md             # Mindspore Hub配置
   ├─scripts
     ├─run_standalone_train.sh         # 在Ascend中启动单机训练(1卡)
     ├─run_distribute_train.sh         # 在Ascend中启动分布式训练(8卡)
@@ -260,7 +275,7 @@ train.py中主要参数如下：
                         lr changing轮次，用“,”分隔。默认设置：220,250。
   --lr_gamma LR_GAMMA   降低lr的exponential lr_scheduler因子。默认设置：0.1。
   --eta_min ETA_MIN     cosine_annealing调度器中的eta_min。默认设置：0。
-  --T_max T_MAX         cosine_annealing调度器中的T-max。默认设置：320。
+  --T_max T_MAX         cosine_annealing调度器中的t_max。默认设置：0。
   --max_epoch MAX_EPOCH
                         训练模型的最大轮次数。默认设置：320。
   --warmup_epochs WARMUP_EPOCHS
@@ -324,9 +339,9 @@ python train.py \
 
 ```text
 # grep "loss:" train/log.txt
-2020-08-20 14:14:43,640:INFO:epoch[0], iter[0], loss:7809.262695, 0.15 imgs/sec, lr:9.746589057613164e-06
-2020-08-20 14:15:05,142:INFO:epoch[0], iter[100], loss:2778.349033, 133.92 imgs/sec, lr:0.0009844054002314806
-2020-08-20 14:15:31,796:INFO:epoch[0], iter[200], loss:535.517361, 130.54 imgs/sec, lr:0.0019590642768889666
+epoch[1], iter[1], loss:13689.215820, fps:0.77 imgs/sec, lr:1.5873015399847645e-06, per step time: 165381.98685646057ms
+epoch[2], iter[1], loss:303.118072, fps:14.70 imgs/sec, lr:1.5873015399847645e-06, per step time: 8706.60572203379ms
+epoch[3], iter[1], loss:114.398706, fps:97.77 imgs/sec, lr:1.5873015399847645e-06, per step time: 1309.2485950106668ms
 ...
 ```
 
@@ -386,19 +401,21 @@ bash run_eval.sh dataset/coco2014/ train_parallel0/outputs/{year}-{month}-{day}_
 
 ```text
 # log.txt
-=============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.311
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.528
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.322
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.127
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.323
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.428
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.259
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.398
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.423
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.224
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.442
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.551
+2023-01-17 15:36:37,827:INFO:
+=============coco eval result=========
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.247
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.506
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.209
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.183
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.336
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.206
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.144
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.337
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.425
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.349
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.464
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.357
+
 ```
 
 ## 导出mindir，onnx模型
@@ -414,6 +431,17 @@ python export.py --ckpt_file [CKPT_PATH] --file_name [FILE_NAME] --file_format [
 ## 推理过程
 
 ### 用法
+
+方法一、使用inference.py进行推理
+
+脚本支持GPU下的多个bacth_size推理，推荐设置batch_size=1，避免漏检出现运行逻辑错误。使用方式如下：
+
+```python
+# GPU inference
+python inference.py --img_path=[img_path] --ckpt_path=[ckpt_path] --batch_size=1
+```
+
+方法二、使用.sh进行推理
 
 运行以下命令。如果在GPU上运行，请在python命令中添加`--device_target=GPU`。
 
@@ -434,87 +462,47 @@ bash run_infer_gpu.sh [DATA_PATH] [ONNX_PATH]
 
 DATA_PATH为推理数据所在的路径，路径下应包含数据注解文件，如instances_val2014.json。
 
-### 结果
-
-Ascend310 推理结果保存在当前路径，可在acc.log中看到最终精度结果。
-
-```eval log
-# acc.log
-=============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.311
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.528
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.322
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.127
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.323
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.428
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.259
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.398
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.423
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.224
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.442
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.551
-```
-
-onnx 推理结果保存在当前路径，可在log.txt中看到最终精度结果。
-
-```log
-# log.txt
-=============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.314
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.532
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.326
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.133
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.328
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.449
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.263
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.405
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.431
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.234
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.453
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.579
-```
-
 # 模型描述
 
 ## 性能
 
+### 训练性能
+
+| 参数          | YOLO                                                     |
+| ------------- | -------------------------------------------------------- |
+| 模型版本      | YOLOv3                                                   |
+| 资源          | Ascend 910；CPU 2.60GHz，192核；内存 755G；系统 Euler2.8 |
+| 上传日期      | 2023-01-17                                               |
+| Luojianet版本 | 1.0.6                                                    |
+| 数据集        | DOTA-V1.5                                                |
+| 训练参数      | epoch=320，batch_size=16，lr=0.0012，momentum=0.9        |
+| 优化器        | Momentum                                                 |
+| 损失函数      | 带logits的Sigmoid交叉熵                                  |
+| 输出          | 边界框和标签                                             |
+| 损失          | 34                                                       |
+| 速度          | 8卡：1200-1400毫秒/步;                                   |
+| 总时长        | 8卡：22小时                                              |
+| 微调检查点    | 474M (.ckpt文件)                                         |
+
 ### 评估性能
 
-| 参数                 | YOLO                                                        |YOLO                                                         |
-| -------------------------- | ----------------------------------------------------------- |------------------------------------------------------------ |
-| 模型版本              | YOLOv3                                                      |YOLOv3                                                       |
-| 资源                   | Ascend 910；CPU 2.60GHz，192核；内存 755G；系统 Euler2.8             | NV SMX2 V100-16G；CPU 2.10GHz，96核；内存：251G        |
-| 上传日期              | 2020-06-31                                 | 2020-09-02                                  |
-| MindSpore版本          | 1.1.1                                                 | 1.1.1                                                       |
-| 数据集                    | COCO2014                                                    | COCO2014                                                    |
-| 训练参数        | epoch=320，batch_size=32，lr=0.001，momentum=0.9            | epoch=320，batch_size=32，lr=0.1，momentum=0.9            |
-| 优化器                  | Momentum                                                    | Momentum                                                    |
-| 损失函数              | 带logits的Sigmoid交叉熵                           | 带logits的Sigmoid交叉熵                           |
-| 输出                    | 边界框和标签                                             | 边界框和标签                                             |
-| 损失                       | 34                                                          | 34                                                          |
-| 速度                      | 1卡：350毫秒/步;                                           | 1卡: 600毫秒/步;                                           |
-| 总时长                 | 8卡：13小时                                               | 8卡: 18小时(shape=416)                                    |
-| 参数(M)             | 62.1                                                        | 62.1                                                        |
-| 微调检查点 | 474M (.ckpt文件)                                           | 474M (.ckpt文件)                                           |
-
-### 推理性能
-
-| 参数          | YOLO                        |YOLO                          |
-| ------------------- | --------------------------- |------------------------------|
-| 模型版本       | YOLOv3                      | YOLOv3                       |
-| 资源            | Ascend 910；系统 Euler2.8                   | NV SMX2 V100-16G             |
-| 上传日期       |  2020-06-31 | 2020-08-20  |
-| MindSpore版本   | 1.1.1                 | 1.1.1                        |
-| 数据集             | COCO2014，40504张图像    | COCO2014，40504张图像     |
-| batch_size          | 1                           | 1                            |
-| 输出             | mAP                         | mAP                          |
-| 准确性            | 8卡: 31.1%                 | 8卡: 29.7%~30.3% (shape=416)|
-| 推理模型 | 474M (.ckpt文件)           | 474M (.ckpt文件)            |
+| 参数                 | YOLO                                                        |
+| -------------------------- | ----------------------------------------------------------- |
+| 模型版本              | YOLOv3                                                      |
+| 资源                   | Ascend 910；CPU 2.60GHz，192核；内存 755G；系统 Euler2.8             |
+| 上传日期              | 2023-01-17                             |
+| Luojianet版本 | 1.0.6                                               |
+| 数据集                    | DOTA-V1.5                                           |
+| 训练参数        | epoch=320，batch_size=32，lr=0.0012，momentum=0.9     |
+| 优化器                  | Momentum                                                    |
+| 损失函数              | 带logits的Sigmoid交叉熵                           |
+| 输出                    | 边界框和标签                                             |
+| 损失                       | 34                                                          |
+| 速度                      | 1卡：177FPS                         |
+| 总时长                 | 8卡：0.48小时                               |
+| 微调检查点 | 474M (.ckpt文件)                                           |
+| Map | 50.6% |
 
 # 随机情况说明
 
 在distributed_sampler.py、transforms.py、yolo_dataset.py文件中有随机种子。
-
-# ModelZoo主页
-
- 请浏览官网[主页](https://gitee.com/mindspore/models)。

@@ -5,6 +5,7 @@
     - [Model Architecture](#model-architecture)
     - [Dataset](#dataset)
     - [Environment Requirements](#environment-requirements)
+    - [CKPT](#ckpt)
     - [Quick Start](#quick-start)
     - [Script Description](#script-description)
         - [Script and Sample Code](#script-and-sample-code)
@@ -21,7 +22,6 @@
             - [Evaluation Performance](#evaluation-performance)
             - [Inference Performance](#inference-performance)
     - [Description of Random Situation](#description-of-random-situation)
-    - [ModelZoo Homepage](#modelzoo-homepage)
 
 ## [YOLOv3-DarkNet53 Description](#contents)
 
@@ -43,29 +43,27 @@ YOLOv3 use DarkNet53 for performing feature extraction, which is a hybrid approa
 
 Note that you can run the scripts based on the dataset mentioned in original paper or widely used in relevant domain/network architecture. In the following sections, we will introduce how to run the scripts using the related dataset below.
 
-Dataset used: [COCO2014](https://cocodataset.org/#download)
+Dataset used: [DOTA-V1.5]([DOTA (captain-whu.github.io)](https://captain-whu.github.io/DOTA/dataset.html)). The image is clipped to 600*600 pixel size and 20% overlap. You can get the process code and processed dataset form here.
 
-- Dataset size: 19G, 123,287 images, 80 object categories.
-    - Train：13G, 82,783 images
-    - Val：6G, 40,504 images
-    - Annotations: 241M, Train/Val annotations
-- The directory structure is as follows.
+* Process code: https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/preprocess.zip
+* Dataset（clipped）: https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/DOTA.zip
 
-    ```text
-        ├── dataset
-            ├── coco2014
-                ├── annotations
-                │   ├─ train.json
-                │   └─ val.json
-                ├─ train
-                │   ├─picture1.jpg
-                │   ├─ ...
-                │   └─picturen.jpg
-                └─ val
-                    ├─picture1.jpg
-                    ├─ ...
-                    └─picturen.jpg
-    ```
+DOTA-V1.5 contains 16 common categories and 402,089 instances. Before use Yolov3 to train, please modify the dataset as coco data format. The directory structure is as follows. You can see the script description to know more. 
+```text
+    ├── dataset
+        ├── DOTA(coco_root)
+            ├── annotations
+            │   ├─ train.json
+            │   └─ val.json
+            ├─ train
+            │   ├─picture1.jpg
+            │   ├─ ...
+            │   └─picturen.jpg
+            └─ val
+                ├─picture1.jpg
+                ├─ ...
+                └─picturen.jpg
+```
 
 - If the user uses his own data set, the data set format needs to be converted to coco data format,
   and the data in the JSON file should correspond to the image data one by one.
@@ -77,16 +75,22 @@ Dataset used: [COCO2014](https://cocodataset.org/#download)
 - Hardware（Ascend/GPU）
 - Prepare hardware environment with Ascend or GPU processor.
 - Framework
-    - [MindSpore](https://www.mindspore.cn/install/en)
+    - [Luojianet]([首页](http://58.48.42.237/luojiaNet/home))
 - For more information, please check the resources below：
-    - [MindSpore Tutorials](https://www.mindspore.cn/tutorials/en/master/index.html)
-    - [MindSpore Python API](https://www.mindspore.cn/docs/en/master/index.html)
+    - [Luojianet Tutorials]([初学入门](http://58.48.42.237/luojiaNet/tutorial/quickstart))
+    - [Luojianet API]([API](http://58.48.42.237/luojiaNet/luojiaNetapi/))
+
+## [CKPT](#contents)
+
+Here we give the .ckpt file. You can use this file to pretrain, eval and infer. The link is as follows:
+
+* https://naniko.obs.cn-central-221.ovaijisuan.com/object_detection/OUTPUT/yolov3/DOTA/mult/test1_lr0.0012/train/2023-01-10_time_10_34_46/ckpt_0/yolov3_320_189.ckpt
 
 ## [Quick Start](#contents)
 
-- After installing MindSpore via the official website, you can start training and evaluation in as follows. If running on GPU, please add `--device_target=GPU` in the python command or use the "_gpu" shell script ("xxx_gpu.sh").
+- After installing Luojianet via the official website, you can start training and evaluation in as follows. If running on GPU, please add `--device_target=GPU` in the python command or use the "_gpu" shell script ("xxx_gpu.sh").
 - Prepare the backbone_darknet53.ckpt and hccl_8p.json files, before run network.
-    - Pretrained_backbone can use convert_weight.py, convert darknet53.conv.74 to mindspore ckpt.
+    - Pretrained_backbone can use convert_weight.py, convert darknet53.conv.74 to luojianet ckpt.
 
       ```
       python convert_weight.py --input_file ./darknet53.conv.74
@@ -99,14 +103,15 @@ Dataset used: [COCO2014](https://cocodataset.org/#download)
       wget https://pjreddie.com/media/files/darknet53.conv.74
       ```
 
-    - Genatating hccl_8p.json, Run the script of utils/hccl_tools/hccl_tools.py.(Only useful for Ascend device)
+    - Genarating hccl_8p.json, Run the script of utils/hccl_tools/hccl_tools.py.(Only useful for Ascend device)
       The following parameter "[0-8)" indicates that the hccl_8p.json file of cards 0 to 7 is generated.
+      
         - The name of json file generated by this command is hccl_8p_01234567_{host_ip}.json. For convenience of expression, use hccl_8p.json represents the json file.
-
+      
       ```
       python hccl_tools.py --device_num "[0,8)"
       ```
-
+    
 - Train on local
 
   ```network
@@ -155,6 +160,13 @@ Dataset used: [COCO2014](https://cocodataset.org/#download)
 
   ```python
   # Train 8p with Ascend
+  # Here we give two methods. Method 1 use parser, which you can set these parameters on modelarts.
+  # Method 1.
+  # (1) Set the appropriate parameters in the get_args() of train.py. The function of these parameters are explained in config.yaml.
+  # (2) Upload your code and dataset to obs bucket.
+  # (3) Set the startup file to "train.py" on the website UI interface.
+  # (4) Set the parser arguments on the website UI interface. Here is the tutotial: https://support.huaweicloud.com/modelarts_faq/modelarts_05_0265.html
+  # Method 2.
   # (1) Perform a or b.
   #       a. Set "enable_modelarts=True" on base_config.yaml file.
   #          Set "data_dir='/cache/data/coco2014/'" on base_config.yaml file.
@@ -209,7 +221,6 @@ Dataset used: [COCO2014](https://cocodataset.org/#download)
 .
 └─yolov3_darknet53
   ├─README.md
-  ├─mindspore_hub_conf.md             # config for mindspore hub
   ├─scripts
     ├─run_standalone_train.sh         # launch standalone training(1p) in ascend
     ├─run_distribute_train.sh         # launch distributed training(8p) in ascend
@@ -329,9 +340,9 @@ After training, you'll get some checkpoint files under the outputs folder by def
 
 ```log
 # grep "loss:" train/log.txt
-2020-08-20 14:14:43,640:INFO:epoch[0], iter[0], loss:7809.262695, 0.15 imgs/sec, lr:9.746589057613164e-06
-2020-08-20 14:15:05,142:INFO:epoch[0], iter[100], loss:2778.349033, 133.92 imgs/sec, lr:0.0009844054002314806
-2020-08-20 14:15:31,796:INFO:epoch[0], iter[200], loss:535.517361, 130.54 imgs/sec, lr:0.0019590642768889666
+epoch[1], iter[1], loss:13689.215820, fps:0.77 imgs/sec, lr:1.5873015399847645e-06, per step time: 165381.98685646057ms
+epoch[2], iter[1], loss:303.118072, fps:14.70 imgs/sec, lr:1.5873015399847645e-06, per step time: 8706.60572203379ms
+epoch[3], iter[1], loss:114.398706, fps:97.77 imgs/sec, lr:1.5873015399847645e-06, per step time: 1309.2485950106668ms
 ...
 ```
 
@@ -355,16 +366,16 @@ The above shell script will run distribute training in the background. You can v
 
 ```log
 # distribute training result(8p)
-epoch[0], iter[0], loss:14623.384766, 1.23 imgs/sec, lr:7.812499825377017e-07
-epoch[0], iter[100], loss:746.253051, 22.01 imgs/sec, lr:7.890690624925494e-05
-epoch[0], iter[200], loss:101.579535, 344.41 imgs/sec, lr:0.00015703124925494192
-epoch[0], iter[300], loss:85.136754, 341.99 imgs/sec, lr:0.00023515624925494185
-epoch[1], iter[400], loss:79.429322, 405.14 imgs/sec, lr:0.00031328126788139345
+epoch[0], iter[0], loss:14623.384766, 1.23 imgs/sec, lr:7.812499825377017e-05
+epoch[0], iter[100], loss:1486.253051, 15.01 imgs/sec, lr:0.007890624925494194
+epoch[0], iter[200], loss:288.579535, 490.41 imgs/sec, lr:0.015703124925494194
+epoch[0], iter[300], loss:153.136754, 531.99 imgs/sec, lr:0.023515624925494194
+epoch[1], iter[400], loss:106.429322, 405.14 imgs/sec, lr:0.03132812678813934
 ...
-epoch[318], iter[102000], loss:30.504046, 458.03 imgs/sec, lr:9.63797575082026e-08
-epoch[319], iter[102100], loss:31.599150, 341.08 imgs/sec, lr:2.409552052995423e-08
-epoch[319], iter[102200], loss:31.652273, 372.57 imgs/sec, lr:2.409552052995423e-08
-epoch[319], iter[102300], loss:31.952403, 496.02 imgs/sec, lr:2.409552052995423e-08
+epoch[318], iter[102000], loss:34.135306, 431.06 imgs/sec, lr:9.63797629083274e-06
+epoch[319], iter[102100], loss:35.652469, 449.52 imgs/sec, lr:2.409552052995423e-06
+epoch[319], iter[102200], loss:34.652273, 384.02 imgs/sec, lr:2.409552052995423e-06
+epoch[319], iter[102300], loss:35.430038, 423.49 imgs/sec, lr:2.409552052995423e-06
 ...
 ```
 
@@ -385,23 +396,26 @@ bash run_eval.sh dataset/coco2014/ train_parallel0/outputs/{year}-{month}-{day}_
 
 The above python command will run in the background. You can view the results through the file "log.txt". The mAP of the test dataset will be as follows:
 
-This the standard format from `pycocotools`, you can refer to [cocodataset](https://cocodataset.org/#detection-eval) for more detail.
+This the standard format from `pycocotools`, you can refer to [cocodataset](https://cocodataset.org/#detection-eval) for more detail. And the result is as follows: 
 
 ```eval log
 # log.txt
-=============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.311
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.528
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.322
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.127
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.323
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.428
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.259
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.398
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.423
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.224
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.442
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.551
+2023-01-17 15:36:37,827:INFO:
+=============coco eval result=========
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.247
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.506
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.209
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.183
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.336
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.206
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.144
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.337
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.425
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.349
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.464
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.357
+
+2023-01-17 15:36:37,846:INFO:testing cost time 0.48 h
 ```
 
 ### [Export MindIR or ONNX](#contents)
@@ -421,6 +435,17 @@ Currently,`FILE_FORMAT` should be in ["AIR", "ONNX", "MINDIR"]
 
 #### Usage
 
+Method 1. Use inference.py
+
+This .py file support GPU and batch_size can be set randomly. We suggest you set the batch_size as 1 to avoid error caused by leak detection. The usage is as follows:
+
+```python
+# GPU inference
+python inference.py --img_path=[img_path] --ckpt_path=[ckpt_path] --batch_size=1
+```
+
+Method 2. Use .sh
+
 Before performing inference, the air or onnx file must be exported by export.py.
 Current batch_Size can only be set to 1. Because the DVPP hardware is used for processing, the picture must comply with the JPEG encoding format, Otherwise, an error will be reported. For example, the COCO_val2014_000000320612.jpg in coco2014 dataset needs to be deleted.
 
@@ -438,87 +463,45 @@ bash run_infer_gpu.sh [DATA_PATH] [ONNX_PATH]
 
 DATA_PATH is evaluation data path, include annotation file path, json format. e.g., instances_val2014.json.
 
-#### result
-
-Inference result in Ascend is saved in current path, you can find result in acc.log file.
-
-```eval log
-# acc.log
-=============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.311
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.528
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.322
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.127
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.323
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.428
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.259
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.398
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.423
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.224
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.442
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.551
-```
-
-Inference result in ONNX is saved in current path, you can find result in log.txt file.
-
-```log
-# log.txt
-=============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.314
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.532
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.326
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.133
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.328
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.449
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.263
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.405
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.431
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.234
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.453
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.579
-```
-
-## [Model Description](#contents)
-
 ### [Performance](#contents)
+
+#### Train Performance
+
+| Parameters                 | YOLO                                                        |
+| -------------------------- | ----------------------------------------------------------- |
+| Model Version              | YOLOv3                                                      |
+| Resource                   | Ascend 910; CPU 2.60GHz, 192cores; Memory 755G; OS Euler2.8 |
+| uploaded Date              | 01/17/2023 (month/day/year)                                 |
+| Luojianet Version          | 1.0.6                                                       |
+| Dataset                    | DOTA-V1.5                                                   |
+| Training Parameters        | epoch=320, batch_size=16, lr=0.0012, momentum=0.9           |
+| Optimizer                  | Momentum                                                    |
+| Loss Function              | Sigmoid Cross Entropy with logits                           |
+| outputs                    | boxes and label                                             |
+| Loss                       | 34                                                          |
+| Speed                      | 1pc: 1200-1400 ms/step;                                     |
+| Total time                 | 8pc: 22 hours                                               |
+| Checkpoint for Fine tuning | 474M (.ckpt file)                                           |
 
 #### Evaluation Performance
 
-| Parameters                 | YOLO                                                        |YOLO                                                         |
-| -------------------------- | ----------------------------------------------------------- |------------------------------------------------------------ |
-| Model Version              | YOLOv3                                                      |YOLOv3                                                       |
-| Resource                   |  Ascend 910; CPU 2.60GHz, 192cores; Memory 755G; OS Euler2.8               | NV SMX2 V100-16G; CPU 2.10GHz, 96cores; Memory, 251G        |
-| uploaded Date              | 09/15/2020 (month/day/year)                                 | 09/02/2020 (month/day/year)                                 |
-| MindSpore Version          | 1.1.1                                                       | 1.1.1                                                       |
-| Dataset                    | COCO2014                                                    | COCO2014                                                    |
-| Training Parameters        | epoch=320, batch_size=32, lr=0.001, momentum=0.9            | epoch=320, batch_size=32, lr=0.1, momentum=0.9            |
-| Optimizer                  | Momentum                                                    | Momentum                                                    |
-| Loss Function              | Sigmoid Cross Entropy with logits                           | Sigmoid Cross Entropy with logits                           |
-| outputs                    | boxes and label                                             | boxes and label                                             |
-| Loss                       | 34                                                          | 34                                                          |
-| Speed                      | 1pc: 350 ms/step;                                           | 1pc: 600 ms/step;                                           |
-| Total time                 | 8pc: 13 hours                                               | 8pc: 18 hours(shape=416)                                    |
-| Parameters (M)             | 62.1                                                        | 62.1                                                        |
-| Checkpoint for Fine tuning | 474M (.ckpt file)                                           | 474M (.ckpt file)                                           |
-
-#### Inference Performance
-
-| Parameters          | YOLO                        |YOLO                          |
-| ------------------- | --------------------------- |------------------------------|
-| Model Version       | YOLOv3                      | YOLOv3                       |
-| Resource            |  Ascend 910; OS Euler2.8                  | NV SMX2 V100-16G             |
-| Uploaded Date       | 09/15/2020 (month/day/year) | 08/20/2020 (month/day/year)  |
-| MindSpore Version   | 1.1.1                       | 1.1.1                        |
-| Dataset             | COCO2014, 40,504  images    | COCO2014, 40,504  images     |
-| batch_size          | 1                           | 1                            |
-| outputs             | mAP                         | mAP                          |
-| Accuracy            | 8pcs: 31.1%                 | 8pcs: 29.7%~30.3% (shape=416)|
-| Model for inference | 474M (.ckpt file)           | 474M (.ckpt file)            |
+| Parameters                 | YOLO                                                        |
+| -------------------------- | ----------------------------------------------------------- |
+| Model Version              | YOLOv3                                                      |
+| Resource                   | Ascend 910; CPU 2.60GHz, 192cores; Memory 755G; OS Euler2.8 |
+| uploaded Date              | 01/17/2023 (month/day/year)                                 |
+| Luojianet Version          | 1.0.6                                                       |
+| Dataset                    | DOTA-V1.5                                                   |
+| Training Parameters        | epoch=320, batch_size=16, lr=0.0012, momentum=0.9           |
+| Optimizer                  | Momentum                                                    |
+| Loss Function              | Sigmoid Cross Entropy with logits                           |
+| outputs                    | boxes and label                                             |
+| Loss                       | 34                                                          |
+| Speed                      | 1pc: 177FPS                                                 |
+| Total time                 | 8pc: 0.48 hours                                             |
+| Checkpoint for Fine tuning | 474M (.ckpt file)                                           |
+| Map                        | 50.6%                                                       |
 
 ## [Description of Random Situation](#contents)
 
 There are random seeds in distributed_sampler.py, transforms.py, yolo_dataset.py files.
-
-## [ModelZoo Homepage](#contents)
-
- Please check the official [homepage](https://gitee.com/mindspore/models).
