@@ -116,10 +116,22 @@ other datasets need to use the same format as WHU-MVS.
 
 # [Quick Start](#contents)
 
+- After installing MindSpore via the official website, you can start training and evaluation as follows:
+
+- Run on local
+
+  ```text
+  #run training example(1p) by python command (Training with a single scale)
+  python train.py --data_root=./dataset/xxx 
+
+  # run evaluation by python command
+  python eval.py --data_root=./dataset/xxx --loadckpt=./chechpoints/xxx
+  ```
+
 - Train on [ModelArts](https://support.huaweicloud.com/modelarts/)
 
   ```text
-  # Train 8p with Ascend
+  # Train 1p with Ascend
   # (1) Perform a or b.
   #       a. Set "enable_modelarts=True" on base_config.yaml file.
   #          Set "data_root='s3://dir_to_your_data'" on base_config.yaml file.
@@ -131,12 +143,12 @@ other datasets need to use the same format as WHU-MVS.
   #          Add other parameters on the website UI interface.
   # (3) Upload or copy your pretrained model to S3 bucket.
   # (4) Upload a zip dataset to S3 bucket. (you could also upload the origin dataset, but it can be so slow.)
-  # (5) Set the code directory to "/path/MVSNet" on the website UI interface.
+  # (5) Set the code directory to "/path/yolov4" on the website UI interface.
   # (6) Set the startup file to "train.py" on the website UI interface.
   # (7) Set the "Dataset path" and "Output file path" and "Job log path" to your path on the website UI interface.
   # (8) Create your job.
   #
-  # Eval 8p with Ascend
+  # Eval 1p with Ascend
   # (1) Perform a or b.
   #       a. Set "enable_modelarts=True" on base_config.yaml file.
   #          Set "data_root='s3://dir_to_your_data'" on base_config.yaml file.
@@ -148,12 +160,12 @@ other datasets need to use the same format as WHU-MVS.
   #          Add other parameters on the website UI interface.
   # (3) Upload or copy your pretrained model to S3 bucket.
   # (4) Upload a zip dataset to S3 bucket. (you could also upload the origin dataset, but it can be so slow.)
-  # (5) Set the code directory to "/path/MVSNet" on the website UI interface.
-  # (6) Set the startup file to "eval.py" on the website UI interface.
+  # (5) Set the code directory to "/path/yolov4" on the website UI interface.
+  # (6) Set the startup file to "train.py" on the website UI interface.
   # (7) Set the "Dataset path" and "Output file path" and "Job log path" to your path on the website UI interface.
   # (8) Create your job.
   #
-  # Test 8p with Ascend
+  # Eval 1p with Ascend
   # (1) Perform a or b.
   #       a. Set "enable_modelarts=True" on base_config.yaml file.
   #          Set "data_root='s3://dir_to_your_data'" on base_config.yaml file.
@@ -167,8 +179,8 @@ other datasets need to use the same format as WHU-MVS.
   #          Add other parameters on the website UI interface.
   # (3) Upload or copy your pretrained model to S3 bucket.
   # (4) Upload a zip dataset to S3 bucket. (you could also upload the origin dataset, but it can be so slow.)
-  # (5) Set the code directory to "/path/MVSNet" on the website UI interface.
-  # (6) Set the startup file to "predict.py" on the website UI interface.
+  # (5) Set the code directory to "/path/yolov4" on the website UI interface.
+  # (6) Set the startup file to "train.py" on the website UI interface.
   # (7) Set the "Dataset path" and "Output file path" and "Job log path" to your path on the website UI interface.
   # (8) Create your job.
   ```
@@ -229,7 +241,7 @@ optional arguments:
 
 ### Training
 
-For Ascend device, standalone training example(8p) by console
+For Ascend device, standalone training example(1p) by console
 
 ```bash
 sh train.sh

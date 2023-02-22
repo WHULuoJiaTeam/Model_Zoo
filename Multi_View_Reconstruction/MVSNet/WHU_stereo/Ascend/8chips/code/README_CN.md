@@ -15,6 +15,7 @@
     - [迁移学习](#迁移学习)
   - [评估过程](#评估过程)
     - [验证](#验证)
+    - [Test-dev](#test-dev)
   - [转换过程](#转换过程)
     - [转换](#转换)
   - [推理过程](#推理过程)
@@ -116,20 +117,10 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
 
 - 通过官方网站安装LuoJiaNet后，您可以按照如下步骤进行训练和评估：
 
-- 本地运行
-
-  ```text
-  # 使用python命令执行单尺度训练示例（1卡）
-  python train.py --data_root=./dataset/xxx 
-
-  # 使用python命令评估
-  python eval.py --data_root=./dataset/xxx --loadckpt=./chechpoints/xxx
-  ```
-
 - [ModelArts](https://support.huaweicloud.com/modelarts/)上训练
 
   ```text
-  # 在Ascend上训练1卡
+  # 在Ascend上训练8卡
   # （1）执行a或b。
   #       a. 在base_config.yaml文件中设置“enable_modelarts=True”。
   #          在base_config.yaml文件中设置“data_root='s3://dir_to_your_data'”。
@@ -146,7 +137,7 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
   # （7）在网站UI界面上设置“数据集路径”、“输出文件路径”和“作业日志路径”。
   # （8）创建作业。
   #
-  # 在Ascend上评估1卡
+  # 在Ascend上评估8卡
   # （1）执行a或b。
   #       a. 在base_config.yaml文件中设置“enable_modelarts=True”。
   #          在base_config.yaml文件中设置“data_root='s3://dir_to_your_data'”。
@@ -163,7 +154,7 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
   # （7）在网站UI界面上设置“数据集路径”、“输出文件路径”和“作业日志路径”。
   # （8）创建作业。
   #
-  # 在Ascend上测试1卡
+  # 在Ascend上测试8卡
   # （1）执行a或b。
   #       a. 在base_config.yaml文件中设置“enable_modelarts=True”。
   #          在base_config.yaml文件中设置“data_root='s3://dir_to_your_data'”。
@@ -239,7 +230,7 @@ train.py中主要参数如下：
 
 ### 训练
 
-在Ascend设备上，使用命令行语句执行单机训练示例（1卡）
+在Ascend设备上，使用命令行语句执行单机训练示例（8卡）
 
 ```bash
 sh train.sh
