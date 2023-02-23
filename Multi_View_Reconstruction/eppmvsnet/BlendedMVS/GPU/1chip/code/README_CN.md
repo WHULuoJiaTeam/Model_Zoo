@@ -27,7 +27,7 @@ strategy)模块进行优化。同时，通过对3D正则网络进行精简，进
 Ma X, Gong Y, Wang Q, et al. Epp-mvsnet: Epipolar-assembling based depth prediction for multi-view stereo[C]//Proceedings of the IEEE/CVF International Conference on Computer Vision. 2021: 5732-5740.
 # [模型架构](#目录)
 
-![](figs/network.png)
+![](./figs/network.png)
 
 # [数据集](#目录)
 
