@@ -28,7 +28,7 @@ Ma X, Gong Y, Wang Q, et al. Epp-mvsnet: Epipolar-assembling based depth predict
 
 # [Model Architecture](#contents)
 
-![](../../../Ascend/1chip/code/figs/network.png)
+![](figs/network.png)
 
 # [Dataset](#contents)
 
