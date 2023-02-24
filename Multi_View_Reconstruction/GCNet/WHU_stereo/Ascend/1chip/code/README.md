@@ -1,7 +1,7 @@
 # Contents
 
 - [Contents](#contents)
-- [MVSNet Description](#MVSNet-description)
+- [MVSNetDescription](#mvsnetdescription)
 - [Model Architecture](#model-architecture)
 - [Dataset](#dataset)
 - [Environment Requirements](#environment-requirements)
@@ -15,7 +15,7 @@
     - [Valid](#valid)
   - [Inference Process](#inference-process)
     - [Usage](#usage)
-    - [result](#result)
+    - [结果](#结果)
 - [ModelZoo Homepage](#modelzoo-homepage)
 
 # [MVSNetDescription](#contents)
@@ -182,7 +182,7 @@ other datasets need to use the same format as WHU-stereo.
     ├─GCNet.py                        # GCNet network model
   ├─eval.py                           # Evaluate test results
   ├─predict.py                        # Inference side code
-  └─train.py                          # Training network
+  └─train.py                          Inference side code
 ```
 
 ## [Script Parameters](#contents)

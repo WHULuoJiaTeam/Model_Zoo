@@ -42,8 +42,8 @@
 - Framework
     - [LuojiaNet](http://58.48.42.237/luojiaNet/)
 - For more information, please check the resources below：
-    - [MindSpore tutorials](http://58.48.42.237/luojiaNet/tutorial/quickstart/)
-    - [MindSpore Python API](http://58.48.42.237/luojiaNet/luojiaNetapi/)
+    - [LuojiaNet tutorials](http://58.48.42.237/luojiaNet/tutorial/quickstart/)
+    - [LuojiaNet Python API](http://58.48.42.237/luojiaNet/luojiaNetapi/)
 
 ## [Quick Start(Optional)](#contents)
 ==(**Instructions on different hardware platforms**)==

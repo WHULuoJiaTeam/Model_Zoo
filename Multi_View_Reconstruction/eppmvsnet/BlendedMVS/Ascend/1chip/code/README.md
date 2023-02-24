@@ -1,18 +1,18 @@
 # Contents
 
 - [Contents](#contents)
-- [EPP-MVSNet Description](#EPP-MVSNet-description)
+- [EPP-MVSNet Description](#epp-mvsnet-description)
 - [Model Architecture](#model-architecture)
 - [Dataset](#dataset)
 - [Environment Requirements](#environment-requirements)
 - [Quick Start](#quick-start)
 - [Script Description](#script-description)
-    - [Script and Sample Code](#script-and-sample-code)
-    - [Script Parameters](#script-parameters)
-    - [Training Process](#training-process)
-        - [Training](#training)
-    - [Evaluation Process](#evaluation-process)
-        - [Valid](#valid)
+  - [Script and Sample Code](#script-and-sample-code)
+  - [Script Parameters](#script-parameters)
+  - [Training Process](#training-process)
+    - [Training](#training)
+  - [Evaluation Process](#evaluation-process)
+    - [Valid](#valid)
 - [ModelZoo Homepage](#modelzoo-homepage)
 
 # [EPP-MVSNet Description](#contents)
@@ -69,7 +69,7 @@ other datasets need to use the same format as BlendedMVS.
 
 # [Quick Start](#contents)
 
-- After installing MindSpore via the official website, you can start training and evaluation as follows:
+- After installing LuojiaNet via the official website, you can start training and evaluation as follows:
 
 - Train on [ModelArts](https://support.huaweicloud.com/modelarts/)
 
