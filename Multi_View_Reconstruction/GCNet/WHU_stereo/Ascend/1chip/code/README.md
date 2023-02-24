@@ -84,10 +84,10 @@ other datasets need to use the same format as WHU-stereo.
 - Hardware（Ascend）
     - Prepare hardware environment with Ascend processor.
 - Framework
-    - [MindSpore](https://www.mindspore.cn/install/en)
+    - [LuojiaNet](http://58.48.42.237/luojiaNet/)
 - For more information, please check the resources below：
-    - [MindSpore tutorials](https://www.mindspore.cn/tutorials/en/master/index.html)
-    - [MindSpore Python API](https://www.mindspore.cn/docs/en/master/index.html)
+    - [LuojiaNet tutorials](https://www.luojianet.cn/tutorials/zh-CN/master/index.html)
+    - [LuojiaNet Python API](https://www.luojianet.cn/docs/zh-CN/master/index.html)
 
 # [Quick Start](#contents)
 
