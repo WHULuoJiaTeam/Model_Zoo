@@ -19,6 +19,7 @@ import time
 from luojianet_ms.communication.management import get_rank
 import os
 from luojianet_ms import nn
+import numpy as np
 
 class MyMAE(nn.Metric):
     def __init__(self):

@@ -80,10 +80,10 @@ Cao Y, Xu J, Lin S, et al. Gcnet: Non-local networks meet squeeze-excitation net
 - 硬件 Ascend
     - 使用Ascend处理器准备硬件环境。
 - 框架
-    - [LuoJiaNet](https://www.mindspore.cn/install)
+    - [LuoJiaNet](http://58.48.42.237/luojiaNet/)
 - 更多关于LuojiaNet的信息，请查看以下资源：
-    - [LuoJiaNet教程](https://www.mindspore.cn/tutorials/zh-CN/master/index.html)
-    - [LuoJiaNet Python API](https://www.mindspore.cn/docs/zh-CN/master/index.html)
+    - [LuoJiaNet教程](https://www.luojianet.cn/tutorials/zh-CN/master/index.html)
+    - [LuoJiaNet Python API](https://www.luojianet.cn/docs/zh-CN/master/index.html)
 
 # [快速入门](#目录)
 
