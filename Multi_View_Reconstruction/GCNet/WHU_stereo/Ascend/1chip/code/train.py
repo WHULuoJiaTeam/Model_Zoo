@@ -26,7 +26,7 @@ from luojianet_ms.nn import Metric, rearrange_inputs
 from luojianet_ms.train.callback import Callback, ModelCheckpoint, CheckpointConfig, LossMonitor, TimeMonitor
 import numpy as np
 import argparse
-
+import luojianet_ms as ms
 
 # gpu setting
 #os.environ["CUDA_VISIBLE_DEVICES"] = '1'
@@ -45,6 +45,9 @@ parser.add_argument("--batch", type=int, default=1, help="batch size")
 parser.add_argument("--epochs", type=int, default=30, help="the number of epoch")
 parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
 parser.add_argument("--amp_level", type=str, default='O0', help="amp level")
+parser.add_argument('--save_ckpt_epochs', type=int, default=5, help='number of epochs to save ckpt')
+parser.add_argument('--keep_checkpoint_max', type=int, default=100, help='number of epochs to keep ckpt')
+parser.add_argument("--logdir", type=str, default="logdir", help="the directory for ckpt")
 opt = parser.parse_args()
 
 def read_list(list_path):
@@ -125,9 +128,7 @@ if __name__ == "__main__":
 
     # 执行训练
     model = Model(net, loss_func, net_opt,
-                  metrics={"PEP(1 pixel)": PixelErrorPercentage(1.0),
-                           "PEP(2 pixel)": PixelErrorPercentage(2.0),
-                           "PEP(3 pixel)": PixelErrorPercentage(3.0)},
+                  metrics={'loss':nn.Loss(), 'mae':ms.train.MAE()},
                   amp_level=opt.amp_level)
 
     data_list = read_list(opt.train_list)
@@ -152,7 +153,7 @@ if __name__ == "__main__":
 
     # save checkpoint of the model
     config_ck = CheckpointConfig(save_checkpoint_steps=ds_train.get_dataset_size(), keep_checkpoint_max=opt.epochs)
-    ckpoint_cb = ModelCheckpoint(prefix="checkpoint_gcnet_whu", directory="checkpoint", config=config_ck)
+    ckpoint_cb = ModelCheckpoint(prefix="checkpoint_gcnet_whu", directory=opt.logdir, config=config_ck)
     time_cb = TimeMonitor()
 
     output = model.train(opt.epochs, ds_train, callbacks=[ckpoint_cb, LossMonitor(1), time_cb],

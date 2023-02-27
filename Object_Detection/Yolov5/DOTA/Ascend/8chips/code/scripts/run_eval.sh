@@ -30,19 +30,54 @@
 # limitations under the License.
 # ============================================================================
 
-# eval script
-SRC_NUM=4
-VIEW_NUM=$[${SRC_NUM}+1]
-
 if [ $# != 2 ]
 then
-    echo "Usage: sh eval.sh [DATA_PATH] [GPU_ID]"
+    echo "Usage: bash run_eval.sh [DATASET_PATH] [CHECKPOINT_PATH]"
 exit 1
 fi
 
-DATA_PATH=$1
-GPU_ID=$2
+get_real_path(){
+  if [ "${1:0:1}" == "/" ]; then
+    echo "$1"
+  else
+    echo "$(realpath -m $PWD/$1)"
+  fi
+}
+DATASET_PATH=$(get_real_path $1)
+CHECKPOINT_PATH=$(get_real_path $2)
+echo $DATASET_PATH
+echo $CHECKPOINT_PATH
 
-CUDA_VISIBLE_DEVICES=${GPU_ID} python -u validate.py --root_dir "${DATA_PATH}/dataset_low_res" --dataset_name blendedmvs --img_wh 768 576 --n_views ${VIEW_NUM} --n_depths 32 16 8 --interval_ratios 4.0 2.0 1.0 --levels 3 --split val > log.txt 2>&1 &
+if [ ! -d $DATASET_PATH ]
+then
+    echo "error: DATASET_PATH=$PATH1 is not a directory"
+exit 1
+fi
 
+if [ ! -f $CHECKPOINT_PATH ]
+then
+    echo "error: CHECKPOINT_PATH=$PATH2 is not a file"
+exit 1
+fi
+
+export DEVICE_NUM=1
+export DEVICE_ID=0
+export RANK_SIZE=$DEVICE_NUM
+export RANK_ID=0
+
+if [ -d "eval" ];
+then
+    rm -rf ./eval
+fi
+mkdir ./eval
+cp ../*.py ./eval
+cp ../*.yaml ./eval
+cp -r ../src ./eval
+cp -r ../model_utils ./eval
+cd ./eval || exit
+env > env.log
+echo "start inferring for device $DEVICE_ID"
+python eval.py \
+    --data_dir=$DATASET_PATH \
+    --pretrained=$CHECKPOINT_PATH > log.txt 2>&1 &
 cd ..

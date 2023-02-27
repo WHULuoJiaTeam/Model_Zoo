@@ -1,10 +1,9 @@
 # Contents
 
-- [EPP-MVSNet](#thinking-path-re-ranker)
+- [Contents](#contents)
+- [EPP-MVSNet Description](#EPP-MVSNet-description)
 - [Model Architecture](#model-architecture)
 - [Dataset](#dataset)
-- [Features](#features)
-    - [Mixed Precision](#mixed-precision)
 - [Environment Requirements](#environment-requirements)
 - [Quick Start](#quick-start)
 - [Script Description](#script-description)
@@ -13,136 +12,189 @@
     - [Training Process](#training-process)
         - [Training](#training)
     - [Evaluation Process](#evaluation-process)
-        - [Evaluation](#evaluation)
-- [Model Description](#model-description)
-    - [Performance](#performance)
-- [Description of random situation](#description-of-random-situation)
+        - [Valid](#valid)
 - [ModelZoo Homepage](#modelzoo-homepage)
 
-# [EPP-MVSNet](#contents)
+# [EPP-MVSNet Description](#contents)
 
 EPP-MVSNet was proposed in 2021 by Parallel Distributed Computing Lab & Huawei Riemann Lab. By aggregating features at high resolution to a
 limited cost volume with an optimal depth range, thus, EPP-MVSNet leads to effective and efﬁcient 3D construction. Moreover, EPP-MVSNet achieved
 highest F-Score on the online TNT intermediate benchmark. This is a example of evaluation of EPP-MVSNet with BlendedMVS dataset in MindSpore. More
 importantly, this is the first open source version for EPP-MVSNet.
 
+[Paper](https://openaccess.thecvf.com/content/ICCV2021/html/Ma_EPP-MVSNet_Epipolar-Assembling_Based_Depth_Prediction_for_Multi-View_Stereo_ICCV_2021_paper.html)：
+Ma X, Gong Y, Wang Q, et al. Epp-mvsnet: Epipolar-assembling based depth prediction for multi-view stereo[C]//Proceedings of the IEEE/CVF International Conference on Computer Vision. 2021: 5732-5740.
+
+
 # [Model Architecture](#contents)
 
-Specially, EPP-MVSNet contains two main modules. The first part is feature extraction network, which extracts 2D features of a group of pictures(one reference
-view and some source views) iteratively. The second part which contains three stages, iteratively regularizes the 3D cost volume composed of 2D features
-using homography transformation, and finally predicts depth map.
+![](figs/network.png)
 
 # [Dataset](#contents)
 
-The dataset used in this example is BlendedMVS, which is a large-scale MVS dataset for generalized multi-view stereo networks. The dataset contains
-17k MVS training samples covering a variety of 113 scenes, including architectures, sculptures and small objects.
+Dataset used：[BlendedMVS](https://github.com/YoYo000/BlendedMVS)  
+Annotation support：[BlendedMVS]or annotation as the same format as BlendedMVS 
 
-# [Features](#contents)
+- The directory structure is as follows：
 
-## [3D Feature](#contents)
-
-This implementation version of EPP-MVSNet utilizes the newest 3D features of MindSpore.
+    ```text
+        ├── dataset
+            ├── BlendedMVS
+                ├── training_list.txt
+                ├── 57f8d9bbe73f6760f10e916a
+                │   ├─ blended_images
+                │   │  ├─ 00000000.jpg
+                │   │  ├─ 00000000_masked.jpg  
+                │   │  └─ ...
+                │   ├── cams
+                │   │  ├─ 00000000_cam.txt
+                │   │  └─ ...
+                │   ├── rendered_depth_maps
+                │      ├─ 00000000.pfm
+                │      └─ ...
+                └─ ...
+    ```
+we suggest user to use BlendedMVS dataset to experience our model,
+other datasets need to use the same format as BlendedMVS.
 
 # [Environment Requirements](#contents)
 
-- Hardware (GPU)
+- Hardware（Ascend）
+    - Prepare hardware environment with Ascend processor.
 - Framework
-    - [MindSpore](https://www.mindspore.cn/install/en)
-- For more information, please check the resources below:
-    - [MindSpore Tutorials](https://www.mindspore.cn/tutorials/en/master/index.html)
-    - [MindSpore Python API](https://www.mindspore.cn/docs/en/master/index.html)
+    - [LuojiaNet](http://58.48.42.237/luojiaNet/)
+- For more information, please check the resources below：
+    - [LuojiaNet tutorials](https://www.luojianet.cn/tutorials/zh-CN/master/index.html)
+    - [LuojiaNet Python API](https://www.luojianet.cn/docs/zh-CN/master/index.html)
 
 # [Quick Start](#contents)
 
-After installing MindSpore via the official website and Dataset is correctly generated, you can start training and evaluation as follows.
+- After installing MindSpore via the official website, you can start training and evaluation as follows:
 
-- running on GPU
+- Train on [ModelArts](https://support.huaweicloud.com/modelarts/)
 
-  ```python
-  # run evaluation example with BlendedMVS dataset
-  sh eval.sh [DATA_PATH] [GPU_ID]
+  ```text
+  # Train 1p with Ascend
+  # (1) Perform a or b.
+  #       a. Set "enable_modelarts=True" on base_config.yaml file.
+  #          Set "root_dir='s3://dataset/BlendedMVS/'" on base_config.yaml file.
+  #          Set "ckpt_dir='s3://checkpoints/'" on base_config.yaml file.
+  #          Set other parameters on base_config.yaml file you need.
+  #       b. Add "enable_modelarts=True" on the website UI interface.
+  #          Add "root_dir=s3://dataset/BlendedMVS/" on the website UI interface.
+  #          Add "ckpt_dir=s3://checkpoints/" on the website UI interface.
+  #          Add other parameters on the website UI interface.
+  # (3) Upload or copy your pretrained model to S3 bucket.
+  # (4) Upload a zip dataset to S3 bucket. (you could also upload the origin dataset, but it can be so slow.)
+  # (5) Set the code directory to "/path/EPPMVSNet" on the website UI interface.
+  # (6) Set the startup file to "train.py" on the website UI interface.
+  # (7) Set the "Dataset path" and "Output file path" and "Job log path" to your path on the website UI interface.
+  # (8) Create your job.
+  #
+  # Eval 1p with Ascend
+  # (1) Perform a or b.
+  #       a. Set "enable_modelarts=True" on base_config.yaml file.
+  #          Set "root_dir='s3://dataset/BlendedMVS/'" on base_config.yaml file.
+  #          Set "ckpt_path='s3://checkpoints/'" on base_config.yaml file.
+  #          Set other parameters on base_config.yaml file you need.
+  #       b. Add "enable_modelarts=True" on the website UI interface.
+  #          Add "root_dir=s3://dataset/BlendedMVS/" on the website UI interface.
+  #          Add "ckpt_path=s3://checkpoints/" on the website UI interface.
+  #          Add other parameters on the website UI interface.
+  # (3) Upload or copy your pretrained model to S3 bucket.
+  # (4) Upload a zip dataset to S3 bucket. (you could also upload the origin dataset, but it can be so slow.)
+  # (5) Set the code directory to "/path/EPPMVSNet" on the website UI interface.
+  # (6) Set the startup file to "validate.py" on the website UI interface.
+  # (7) Set the "Dataset path" and "Output file path" and "Job log path" to your path on the website UI interface.
+  # (8) Create your job.
   ```
-
 # [Script Description](#contents)
 
 ## [Script and Sample Code](#contents)
 
-```shell
-.
+```
 └─eppmvsnet
   ├─README.md
-  ├─scripts
-  | └─run_eval.sh                       # Launch evaluation in gpu
-  |
+  ├─README_CN.md
   ├─src
   | ├─blendedmvs.py                     # build blendedmvs data
   | ├─eppmvsnet.py                      # main architecture of EPP-MVSNet
   | ├─modules.py                        # math operations used in EPP-MVSNet
   | ├─networks.py                       # sub-networks of EPP-MVSNet
   | └─utils.py                          # other operations used for evaluation
-  |
   ├─validate.py                         # Evaluation process on blendedmvs
+  ├─train.py                            # Train process on blendedmvs
 ```
 
 ## [Script Parameters](#contents)
 
-Parameters for EPP-MVSNet evaluation can be set in validate.py.
+Major parameters train.py as follows:
 
-- config for EPP-MVSNet
 
-  ```python
-  "n_views": 5,                         # Num of views used in a depth prediction
-  "depth_interval": 128,                # Init depth numbers
-  "n_depths": [32, 16, 8],              # Depth numbers of three stages
-  "interval_ratios": [4.0, 2.0, 1.0],   # Depth interval's expanding ratios of three stages
-  "img_wh": [768, 512],                 # Image resolution of evaluation
+  ```
+  Optional parameter：
+    --gpu_id              ID of the device to be trained
+    --root_dir            Data set storage path
+    --split               Training or testing
+    --scan                Specifies the scan to be evaluated
+    --n_views             Number of views used in the test (including refs)
+    --depth_interval      The unit of depth interval is mm
+    --n_depths            The depth of each layer
+    --interval_ratios     The depth interval ratio multiplied by depth_interval in each layer
+    --img_wh              The image resolution (img_w, img_h) must be a multiple of 32
+    --ckpt_path           Pre-trained ckpt path loading
+    --save_visual         Save depth and proba visualization
+    --conf                The minimum confidence of pixels is valid
+    --levels              Number of FPN levels (fixed at 3!)
+    --amp_level           amp level
+    --epochs              Total number of training
+    --ckpt_dir            ckpt output path
   ```
 
-  validate.py for more configuration.
+## [Training Process](#contents)
+
+### Training
+
+For Ascend device, standalone training example(1p) by console
+
+```
+python train.py --root_dir='./dataset/BlendedMVS' --ckpt_dir='./checkpoints'
+```
+
+The python command above will run in the background, you can view the results through the console.
+
+After the training, you can find the checkpoint file under the specified output folder. The following loss values are obtained：
+
+```text
+INFO:epoch[1], iter[1], loss:20.10311508178711
+INFO:epoch[1], iter[100], loss:6.747747421264648
+INFO:epoch[1], iter[200], loss:2.997436046600342
+INFO:epoch[1], iter[300], loss:1.9435290098190308
+INFO:epoch[1], iter[400], loss:1.1061981916427612
+INFO:epoch[1], iter[500], loss:0.5989788770675659
+...
+```
 
 ## [Evaluation Process](#contents)
 
-### Evaluation
+### Valid
 
-- EPP-MVSNet evaluation on GPU
+Execute the following commands in the LuoJiaNet environment for evaluation
 
-  ```python
-  sh eval.sh [DATA_PATH] [GPU_ID]
-  ```
+```
+python validate.py --root_dir='./dataset/BlendedMVS' --ckpt_path='./checkpoints'
+```
 
-  Evaluation result will be stored in "./results/blendedmvs/val/metrics.txt". You can find the result like the
-  followings in log.
+The above python command will run in the background. You can view the results via the file metrics.txt.
 
-  ```python
-  stage3_l1_loss:1.1738
-  stage3_less1_acc:0.8734
-  stage3_less3_acc:0.938
-  mean forward time(s/pic):0.1259
-  ```
+```text
+stage3_l1_loss:1.1738
+stage3_less1_acc:0.8734
+stage3_less3_acc:0.938
+mean forward time(s/pic):0.1259
+```
 
-# [Model Description](#contents)
-
-## [Performance](#contents)
-
-### Inference Performance
-
-| Parameter                      | EPP-MVSNet GPU               |
-| ------------------------------ | ---------------------------- |
-| Model Version                  | Inception V2                 |
-| Resource                       | Tesla V100 16GB; Ubuntu16.04 |
-| uploaded Date                  | 07/27/2021(month/day/year)   |
-| MindSpore Version              | 1.3.0                        |
-| Dataset                        | BlendedMVS                   |
-| Batch_size                     | 1                            |
-| Output                         | ./results/blendedmvs/val     |
-| Acc_less_1mm                   | 0.8734                       |
-| Acc_less_3mm                   | 0.938                        |
-| mean_time(s/pic)               | 0.1259                       |
-
-# [Description of random situation](#contents)
-
-No random situation for evaluation.
 
 # [ModelZoo Homepage](#contents)
 
-Please check the official [homepage](http://gitee.com/mindspore/models).
+ Please check the official [homepage](https://gitee.com/mindspore/models).

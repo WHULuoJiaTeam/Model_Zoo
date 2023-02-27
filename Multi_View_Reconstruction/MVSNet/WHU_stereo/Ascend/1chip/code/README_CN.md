@@ -15,17 +15,11 @@
     - [迁移学习](#迁移学习)
   - [评估过程](#评估过程)
     - [验证](#验证)
-    - [Test-dev](#test-dev)
   - [转换过程](#转换过程)
     - [转换](#转换)
   - [推理过程](#推理过程)
     - [用法](#用法)
     - [结果](#结果)
-- [模型说明](#模型说明)
-  - [性能](#性能)
-    - [评估性能](#评估性能)
-    - [推理性能](#推理性能)
-- [随机情况说明](#随机情况说明)
 - [ModelZoo主页](#modelzoo主页)
 
 # [MVSNet说明](#目录)
@@ -45,26 +39,64 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
 
 # [数据集](#目录)
 
-使用的数据集：[WHU—MVS](http://gpcv.whu.edu.cn/data/WHU_MVS_Stereo_dataset.html)  
-支持的数据集：[WHU—MVS]或与WHU-MVS格式相同的数据集  
+使用的数据集：[WHU-MVS](http://gpcv.whu.edu.cn/data/WHU_MVS_Stereo_dataset.html)  
+支持的数据集：[WHU-MVS]或与WHU-MVS格式相同的数据集  
 
 
-- 目录结构如下，由用户定义目录和文件的名称：
+- 目录结构如下：
 
     ```text
         ├── dataset
-            ├── YOLOv4
-                ├── annotations
-                │   ├─ train.json
-                │   └─ val.json
-                ├─train
-                │   ├─picture1.jpg
-                │   ├─ ...
-                │   └─picturen.jpg
-                ├─ val
-                    ├─picture1.jpg
-                    ├─ ...
-                    └─picturen.jpg
+            ├── WHU_MVS_dataset
+                ├── README.txt
+                ├── test
+                │   ├─ index.txt
+                │   ├─ pair.txt
+                │   ├─ Cams
+                │   │   ├─ 009_53
+                │   │   │  ├─ 0
+                │   │   │  │  ├─ 000000.txt
+                │   │   │  │  └─ ...
+                │   │   │  └─ ...
+                │   │   └─ ...
+                │   ├─ Depths
+                │   │   ├─ 009_53
+                │   │   │  ├─ 0
+                │   │   │  │  ├─ 000000.png
+                │   │   │  │  └─ ...
+                │   │   │  └─ ...
+                │   │   └─ ...
+                │   ├─ Images
+                │   │   ├─ 009_53
+                │   │   │  ├─ 0
+                │   │   │  │  ├─ 000000.png
+                │   │   │  │  └─ ...
+                │   │   │  └─ ...
+                │   │   └─ ...
+                ├── train
+                    ├─ index.txt
+                    ├─ pair.txt
+                    ├─ Cams
+                    │   ├─ 009_53
+                    │   │  ├─ 0
+                    │   │  │  ├─ 000000.txt
+                    │   │  │  └─ ...
+                    │   │  └─ ...
+                    │   └─ ...
+                    ├─ Depths
+                    │   ├─ 009_53
+                    │   │  ├─ 0
+                    │   │  │  ├─ 000000.png
+                    │   │  │  └─ ...
+                    │   │  └─ ...
+                    │   └─ ...
+                    ├─ Images
+                        ├─ 009_53
+                        │  ├─ 0
+                        │  │  ├─ 000000.png
+                        │  │  └─ ...
+                        │  └─ ...
+                        └─ ...
     ```
 
 建议用户使用WHU-MVS数据集来体验模型，
@@ -75,10 +107,10 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
 - 硬件 Ascend
     - 使用Ascend处理器准备硬件环境。
 - 框架
-    - [LuoJiaNet](https://www.mindspore.cn/install)
+    - [LuoJiaNet](http://58.48.42.237/luojiaNet/)
 - 更多关于LuojiaNet的信息，请查看以下资源：
-    - [LuoJiaNet教程](https://www.mindspore.cn/tutorials/zh-CN/master/index.html)
-    - [LuoJiaNet Python API](https://www.mindspore.cn/docs/zh-CN/master/index.html)
+    - [LuoJiaNet教程](https://www.luojianet.cn/tutorials/zh-CN/master/index.html)
+    - [LuoJiaNet Python API](https://www.luojianet.cn/docs/zh-CN/master/index.html)
 
 # [快速入门](#目录)
 
@@ -87,91 +119,29 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
 - 本地运行
 
   ```text
-  # training_shape参数用于定义网络图像形状，默认为
-                     [416, 416],
-                     [448, 448],
-                     [480, 480],
-                     [512, 512],
-                     [544, 544],
-                     [576, 576],
-                     [608, 608],
-                     [640, 640],
-                     [672, 672],
-                     [704, 704],
-                     [736, 736].
-  # 意思是使用11种形状作为输入形状，或者可以设置某种形状。
-
   # 使用python命令执行单尺度训练示例（1卡）
-  python train.py \
-      --data_dir=./dataset/xxx \
-      --pretrained_backbone=cspdarknet53_backbone.ckpt \
-      --is_distributed=0 \
-      --lr=0.1 \
-      --t_max=320 \
-      --max_epoch=320 \
-      --warmup_epochs=4 \
-      --training_shape=416 \
-      --lr_scheduler=cosine_annealing > log.txt 2>&1 &
-
-  # 使用shell脚本执行单尺度单机训练示例（1卡）
-  bash run_standalone_train.sh dataset/xxx cspdarknet53_backbone.ckpt
-
-  # 在Ascend设备上，使用shell脚本执行多尺度分布式训练示例（8卡）
-  bash run_distribute_train.sh dataset/xxx cspdarknet53_backbone.ckpt rank_table_8p.json
+  python train.py --data_root=./dataset/xxx 
 
   # 使用python命令评估
-  python eval.py \
-      --data_dir=./dataset/xxx \
-      --pretrained=yolov4.ckpt \
-      --testing_shape=608 > log.txt 2>&1 &
-
-  # 使用shell脚本评估
-  bash run_eval.sh dataset/xxx checkpoint/xxx.ckpt
+  python eval.py --data_root=./dataset/xxx --loadckpt=./chechpoints/xxx
   ```
 
 - [ModelArts](https://support.huaweicloud.com/modelarts/)上训练
 
   ```text
-  # 在Ascend上训练8卡
-  # （1）执行a或b。
-  #       a. 在base_config.yaml文件中设置“enable_modelarts=True”。
-  #          在base_config.yaml文件中设置“data_dir='/cache/data/coco/'”。
-  #          在base_config.yaml文件中设置"checkpoint_url='s3://dir_to_your_pretrain/'"。
-  #          在base_config.yaml文件中设置“pretrained_backbone='/cache/checkpoint_path/cspdarknet53_backbone.ckpt'”。
-  #          在base_config.yaml文件中设置其他参数。
-  #       b. 在网站UI界面添加“enable_modelarts=True”。
-  #          在网站UI界面添加“data_dir=/cache/data/coco/”。
-  #          在网站UI界面上添加“checkpoint_url=s3://dir_to_your_pretrain/”。
-  #          在网站UI界面上添加“pretrained_backbone=/cache/checkpoint_path/cspdarknet53_backbone.ckpt”。
-  #          在网站UI界面添加其他参数。
-  # （3）上传或复制预训练的模型到S3桶。
-  # （4）上传zip数据集到S3桶。 (您也可以上传源数据集，但可能很慢。)
-  # （5）在网站UI界面上设置代码目录为“/path/yolov4”。
-  # （6）在网站UI界面上设置启动文件为“train.py”。
-  # （7）在网站UI界面上设置“数据集路径”、“输出文件路径”和“作业日志路径”。
-  # （8）创建作业。
-  #
   # 在Ascend上训练1卡
   # （1）执行a或b。
   #       a. 在base_config.yaml文件中设置“enable_modelarts=True”。
-  #          在base_config.yaml文件中设置“data_dir='/cache/data/coco/'”。
-  #          在base_config.yaml文件中设置"checkpoint_url='s3://dir_to_your_pretrain/'"。
-  #          在base_config.yaml文件中设置“pretrained_backbone='/cache/checkpoint_path/cspdarknet53_backbone.ckpt'”。
-  #          在base_config.yaml文件中设置“is_distributed=0”。
-  #          在base_config.yaml文件中设置“warmup_epochs=4”。
-  #          在base_config.yaml文件中设置“training_shape=416”。
+  #          在base_config.yaml文件中设置“data_root='s3://dir_to_your_data'”。
+  #          在base_config.yaml文件中设置"logdir='s3://dir_to_save_your_checkpoints/'"。
   #          在base_config.yaml文件中设置其他参数。
   #       b. 在网站UI界面添加“enable_modelarts=True”。
-  #          在网站UI界面添加“data_dir=/cache/data/coco/”。
-  #          在网站UI界面上添加“checkpoint_url=s3://dir_to_your_pretrain/”。
-  #          在网站UI界面上添加“pretrained_backbone=/cache/checkpoint_path/cspdarknet53_backbone.ckpt”。
-  #          在网站UI界面添加“is_distributed=0”。
-  #          在网站UI界面添加“warmup_epochs=4”。
-  #          在网站UI界面添加“training_shape=416”。
+  #          在网站UI界面添加“data_root=s3://dir_to_your_data”。
+  #          在网站UI界面上添加“logdir=s3://dir_to_save_your_checkpoints/”。
   #          在网站UI界面添加其他参数。
   # （3）上传或复制预训练的模型到S3桶。
   # （4）上传zip数据集到S3桶。 (您也可以上传源数据集，但可能很慢。)
-  # （5）在网站UI界面上设置代码目录为“/path/yolov4”。
+  # （5）在网站UI界面上设置代码目录为“/path/MVSNet”。
   # （6）在网站UI界面上设置启动文件为“train.py”。
   # （7）在网站UI界面上设置“数据集路径”、“输出文件路径”和“作业日志路径”。
   # （8）创建作业。
@@ -179,22 +149,16 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
   # 在Ascend上评估1卡
   # （1）执行a或b。
   #       a. 在base_config.yaml文件中设置“enable_modelarts=True”。
-  #          在base_config.yaml文件中设置“data_dir='/cache/data/coco/'”。
-  #          在base_config.yaml文件中设置"checkpoint_url='s3://dir_to_your_trained_ckpt/'"。
-  #          在base_config.yaml文件中设置“pretrained='/cache/checkpoint_path/model.ckpt'”。
-  #          在base_config.yaml文件中设置“is_distributed=0”。
-  #          在base_config.yaml文件中设置“"per_batch_size=1”。
+  #          在base_config.yaml文件中设置“data_root='s3://dir_to_your_data'”。
+  #          在base_config.yaml文件中设置"loadckpt='s3://dir_to_your_trained_ckpt/'"。
   #          在base_config.yaml文件中设置其他参数。
   #       b. 在网站UI界面添加“enable_modelarts=True”。
-  #          在网站UI界面添加“data_dir=/cache/data/coco/”。
-  #          在网站UI界面上添加“checkpoint_url=s3://dir_to_your_trained_ckpt/”。
-  #          在网站UI界面上添加“pretrained=/cache/checkpoint_path/model.ckpt”。
-  #          在网站UI界面添加“is_distributed=0”。
-  #          在网站UI界面添加“per_batch_size=1”。
+  #          在网站UI界面添加“data_root=s3://dir_to_your_data”。
+  #          在网站UI界面上添加“loadckpt=s3://dir_to_save_your_checkpoints/”。
   #          在网站UI界面添加其他参数。
   # （3）上传或复制训练好的模型到S3桶。
   # （4）上传zip数据集到S3桶。 (您也可以上传源数据集，但可能很慢。)
-  # （5）在网站UI界面上设置代码目录为“/path/yolov4”。
+  # （5）在网站UI界面上设置代码目录为“/path/MVSNet”。
   # （6）在网站UI界面上设置启动文件为“eval.py”。
   # （7）在网站UI界面上设置“数据集路径”、“输出文件路径”和“作业日志路径”。
   # （8）创建作业。
@@ -202,27 +166,19 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
   # 在Ascend上测试1卡
   # （1）执行a或b。
   #       a. 在base_config.yaml文件中设置“enable_modelarts=True”。
-  #          在base_config.yaml文件中设置“data_dir='/cache/data/coco/'”。
-  #          在base_config.yaml文件中设置"checkpoint_url='s3://dir_to_your_trained_ckpt/'"。
-  #          在base_config.yaml文件中设置“pretrained='/cache/checkpoint_path/model.ckpt'”。
-  #          在base_config.yaml文件中设置“is_distributed=0”。
-  #          在base_config.yaml文件中设置“"per_batch_size=1”。
-  #          在base_config.yaml文件中设置“test_nms_thresh=0.45”。
-  #          在base_config.yaml文件中设置“test_ignore_threshold=0.001”。
+  #          在base_config.yaml文件中设置“data_root='s3://dir_to_your_data'”。
+  #          在base_config.yaml文件中设置"loadckpt='s3://dir_to_your_trained_ckpt/'"。
+  #          在base_config.yaml文件中设置“output='s3://dir_to_your_output'”。
   #          在base_config.yaml文件中设置其他参数。
   #       b. 在网站UI界面添加“enable_modelarts=True”。
-  #          在网站UI界面添加“data_dir=/cache/data/coco/”。
-  #          在网站UI界面上添加“checkpoint_url=s3://dir_to_your_trained_ckpt/”。
-  #          在网站UI界面上添加“pretrained=/cache/checkpoint_path/model.ckpt”。
-  #          在网站UI界面添加“is_distributed=0”。
-  #          在网站UI界面添加“per_batch_size=1”。
-  #          在网站UI界面添加“test_nms_thresh=0.45”。
-  #          在网站UI界面添加“test_ignore_threshold=0.001”。
+  #          在网站UI界面添加“data_root=s3://dir_to_your_data”。
+  #          在网站UI界面上添加“loadckpt=s3://dir_to_save_your_checkpoints/”。
+  #          在网站UI界面添加“output=s3://dir_to_your_output”。
   #          在网站UI界面添加其他参数。
   # （3）上传或复制训练好的模型到S3桶。
   # （4）上传zip数据集到S3桶。 (您也可以上传源数据集，但可能很慢。)
-  # （5）在网站UI界面上设置代码目录为“/path/yolov4”。
-  # （6）在网站UI界面上设置启动文件为“test.py”。
+  # （5）在网站UI界面上设置代码目录为“/path/MVSNet”。
+  # （6）在网站UI界面上设置启动文件为“predict.py”。
   # （7）在网站UI界面上设置“数据集路径”、“输出文件路径”和“作业日志路径”。
   # （8）创建作业。
   ```
@@ -239,8 +195,8 @@ Yao Y, Luo Z, Li S, et al. Mvsnet: Depth inference for unstructured multi-view s
     ├─network.png
     ├─result.png 
   ├─scripts
-    ├─eval.sh                         # 在Ascend中启动单机训练（1卡）
-    ├─predict.sh                      # 在Ascend中启动分布式训练（8卡）
+    ├─eval.sh                         # 在Ascend中启动单机验证
+    ├─predict.sh                      # 在Ascend中启动单机预测
     ├─train.sh                        # 在Ascend中启动单机训练
   ├─src
     ├─dataset.py                      # 数据读取文件
@@ -285,6 +241,10 @@ train.py中主要参数如下：
 
 在Ascend设备上，使用命令行语句执行单机训练示例（1卡）
 
+```bash
+sh train.sh
+```
+或
 ```
 python train.py --data_root='/mnt/gj/stereo' --view_num=3 --ndepths=200 --max_w=768 --max_h=384 --epochs=50 --lr=0.001
 ```
@@ -294,7 +254,6 @@ python train.py --data_root='/mnt/gj/stereo' --view_num=3 --ndepths=200 --max_w=
 训练结束后，您可在指定的输出文件夹下找到checkpoint文件。 得到如下损失值：
 
 ```text
-# grep "loss:" train/log.txt
 INFO:epoch[1], iter[1], loss:5.710720062255859
 INFO:epoch[1], iter[100], loss:0.36795997619628906
 INFO:epoch[1], iter[200], loss:0.10597513616085052
@@ -306,158 +265,69 @@ INFO:epoch[1], iter[500], loss:0.010647434741258621
 
 ## [评估过程](#目录)
 
-### 验证
+### 评估
+
+在LuoJiaNet环境下执行以下命令进行评估
 
 ```bash
-python eval.py \
-    --data_dir=./dataset/coco2017 \
-    --pretrained=yolov4.ckpt \
-    --testing_shape=608 > log.txt 2>&1 &
-OR
-bash run_eval.sh dataset/coco2017 checkpoint/yolov4.ckpt
+sh eval.sh
+```
+或
+```
+python eval.py --data_root='/mnt/gj/stereo' --loadckpt='./checkpoint_mvsnet/checkpoint_mvsnet_whu-30_3600.ckpt' --view_num=3 --ndepths=200
 ```
 
-上述python命令将在后台运行。 您可以通过log.txt文件查看结果。 测试数据集的mAP如下：
+上述python命令将在后台运行。 您可以通过控制台查看结果。 
 
 ```text
-# log.txt
-=============coco eval reulst=========
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.442
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.635
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.479
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.274
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.485
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.567
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.331
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.545
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.590
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.418
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.638
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.717
+[237|23120] mae(m): 0.23365437984466553 less_0.1(%):0.5838620310809849 less_0.3(%):0.8617089455319813 less_0.6(%):0.933216234270465 costs(s):4.020957946777344
+[238|23120] mae(m): 0.27482447028160095 less_0.1(%):0.5554937658312621 less_0.3(%):0.8282509401268875 less_0.6(%):0.9103310535185669 costs(s):4.028299808502197
+[239|23120] mae(m): 0.19670110940933228 less_0.1(%):0.5958889013221027 less_0.3(%):0.87319478211923 less_0.6(%):0.9412428918751208 costs(s):4.023674488067627
+[240|23120] mae(m): 0.21704454720020294 less_0.1(%):0.5766613202396736 less_0.3(%):0.8653310772089616 less_0.6(%):0.9425298659550154 costs(s):4.017646551132202
+[241|23120] mae(m): 0.18784381449222565 less_0.1(%):0.6529787356692109 less_0.3(%):0.8859097952913969 less_0.6(%):0.9484990183345936 costs(s):4.014329195022583
+[242|23120] mae(m): 0.0660104751586914 less_0.1(%):0.8659562706242645 less_0.3(%):0.975391627862809 less_0.6(%):0.9924845434597553 costs(s):4.020938158035278
+[243|23120] mae(m): 0.07678035646677017 less_0.1(%):0.7962809118683264 less_0.3(%):0.9797159142927866 less_0.6(%):0.9941439959852294 costs(s):4.020266771316528
+[244|23120] mae(m): 0.10023777186870575 less_0.1(%):0.7594274844104453 less_0.3(%):0.9583871634978925 less_0.6(%):0.9808449386081808 costs(s):4.022864818572998
+[245|23120] mae(m): 0.1368318796157837 less_0.1(%):0.6864005045641353 less_0.3(%):0.9390928696407015 less_0.6(%):0.9690683196115398 costs(s):4.022674322128296
+[246|23120] mae(m): 0.27534329891204834 less_0.1(%):0.43458813874863084 less_0.3(%):0.8203653528567989 less_0.6(%):0.9094044280467831 costs(s):4.016152858734131
+[247|23120] mae(m): 0.4002946615219116 less_0.1(%):0.3775923338803966 less_0.3(%):0.780497646723724 less_0.6(%):0.8537238732079157 costs(s):4.008270978927612
+[248|23120] mae(m): 0.3604094684123993 less_0.1(%):0.4388138150867258 less_0.3(%):0.7510062903745401 less_0.6(%):0.841791146001119 costs(s):4.011101961135864
+[249|23120] mae(m): 0.3522142171859741 less_0.1(%):0.4051108758787287 less_0.3(%):0.7359030209266346 less_0.6(%):0.8401901310968162 costs(s):4.016809701919556
+[250|23120] mae(m): 0.19819286465644836 less_0.1(%):0.528171331078858 less_0.3(%):0.8644567381563728 less_0.6(%):0.9474257261185601 costs(s):4.015037536621094
+[251|23120] mae(m): 0.18713697791099548 less_0.1(%):0.5376998928479391 less_0.3(%):0.8651240386832504 less_0.6(%):0.9492655336579543 costs(s):4.009562253952026
+[252|23120] mae(m): 0.2237146645784378 less_0.1(%):0.4724661761215286 less_0.3(%):0.8232511613712659 less_0.6(%):0.9257298836933302 costs(s):3.998124361038208
+...
 ```
-
-### Test-dev
-
-```bash
-python test.py \
-    --data_dir=./dataset/coco2017 \
-    --pretrained=yolov4.ckpt \
-    --testing_shape=608 > log.txt 2>&1 &
-OR
-bash run_test.sh dataset/coco2017 checkpoint/yolov4.ckpt
-```
-
-predict_xxx.json文件位于test/outputs/%Y-%m-%d_time_%H_%M_%S/。
-将文件predict_xxx.json重命名为detections_test-dev2017_yolov4_results.json，并将其压缩为detections_test-dev2017_yolov4_results.zip。
-将detections_test-dev2017_yolov4_results.zip文件提交到MS COCO评估服务器用于test-dev 2019 (bbox) <https://competitions.codalab.org/competitions/20794#participate>。
-您将在文件末尾获得这样的结果。查看评分输出日志。
-
-```text
-overall performance
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.447
- Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.642
- Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.487
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.267
- Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.485
- Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.549
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.335
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.547
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.584
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.392
- Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.627
- Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.711
-```
-
-## [转换过程](#目录)
-
-### 转换
-
-如果您想推断Ascend 310上的网络，则应将模型转换为MINDIR：
-
-```python
-python export.py --ckpt_file [CKPT_PATH] --file_name [FILE_NAME] --file_format [FILE_FORMAT]
-```
-
-必须设置ckpt_file参数。
-`FILE_FORMAT`取值为["AIR", "ONNX", "MINDIR"]。
 
 ## [推理过程](#目录)
 
 ### 用法
 
-在执行推理之前，必须在910环境上通过导出脚本导出MINDIR文件。
-当前批处理大小只能设置为1。 精度计算过程需要70G+内存空间。
-
 ```shell
-# Ascend 310推理
-bash run_infer_310.sh [MINDIR_PATH] [DATA_PATH] [DEVICE_ID] [ANN_FILE]
+python predict.py --data_root='/mnt/gj/stereo' --loadckpt='./checkpoint_mvsnet/checkpoint_mvsnet_whu-30_3600.ckpt' --view_num=3 --ndepths=200 --output="result"
 ```
-
-`DEVICE_ID`是可选参数，默认值为0。
 
 ### 结果
 
-推理结果保存在当前路径中，您可以在ac.log文件中找到类似如下结果。
+推理结果保存在当前路径中，您可以在log文件中找到类似如下结果。
 
 ```text
-=============coco eval reulst=========
-Average Precision (AP) @[ IoU=0.50:0.95 | area= all   | maxDets=100 ] = 0.438
-Average Precision (AP) @[ IoU=0.50      | area= all   | maxDets=100 ] = 0.630
-Average Precision (AP) @[ IoU=0.75      | area= all   | maxDets=100 ] = 0.475
-Average Precision (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.272
-Average Precision (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.481
-Average Precision (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.567
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets=  1 ] = 0.330
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets= 10 ] = 0.542
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= all   | maxDets=100 ] = 0.588
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.410
-Average Recall    (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.636
-Average Recall    (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.716
+epoch: 2 step: 17790, loss is 0.02419212833046913
+epoch: 2 step: 17906, loss is 0.011356251314282417
+epoch: 2 step: 17972, loss is 0.02342096157371998
+epoch: 2 step: 17960, loss is 0.004157776013016701
+epoch: 2 step: 17980, loss is 0.05269428342580795
+epoch: 2 step: 17923, loss is 0.04649455100297928
+epoch: 2 step: 17923, loss is 0.006960269529372454
+epoch: 2 step: 17939, loss is 0.028233932331204414
+epoch: 2 step: 17791, loss is 0.02926710993051529
+epoch: 2 step: 17907, loss is 0.021246621385216713
+epoch: 2 step: 17973, loss is 0.02130107581615448
+epoch: 2 step: 17961, loss is 0.029121998697519302
+epoch: 2 step: 17981, loss is 0.07342060655355453
+epoch: 2 step: 17924, loss is 0.09391187131404877
+...
 ```
-
-# [模型说明](#目录)
-
-## [性能](#目录)
-
-### 评估性能
-
-YOLOv4应用于118000张图像上（标注和数据格式必须与COCO 2017相同）
-
-|参数| YOLOv4 |
-| -------------------------- | ----------------------------------------------------------- |
-|资源| Ascend 910；CPU 2.60GHz, 192核；内存：755G；系统：EulerOS 2.8；|
-|上传日期|2020年10月16日|
-| MindSpore版本|1.0.0-alpha|
-|数据集|118000张图像|
-|训练参数|epoch=320, batch_size=8, lr=0.012,momentum=0.9|
-| 优化器                  | Momentum                                                    |
-|损失函数|Sigmoid Cross Entropy with logits, Giou Loss|
-|输出|框和标签|
-|损失| 50 |
-|速度| 1卡：53FPS；8卡：390FPS (shape=416) 220FPS (动态形状)|
-|总时长|48小时（动态形状）|
-|微调检查点|约500M（.ckpt文件）|
-|脚本| <https://gitee.com/mindspore/models/tree/master/official/cv/yolov4> |
-
-### 推理性能
-
-YOLOv4应用于20000张图像上（标注和数据格式必须与COCO test 2017相同）
-
-|参数| YOLOv4 |
-| -------------------------- | ----------------------------------------------------------- |
-| 资源                   | Ascend 910；CPU 2.60GHz，192核；内存：755G             |
-|上传日期|2020年10月16日|
-| MindSpore版本|1.0.0-alpha|
-|数据集|20000张图像|
-|批处理大小|1|
-|输出|边框位置和分数，以及概率|
-|精度|map >= 44.7%(shape=608)|
-|推理模型|约500M（.ckpt文件）|
-
-# [随机情况说明](#目录)
-
-在dataset.py中，我们设置了“create_dataset”函数内的种子。
-在var_init.py中，我们设置了权重初始化的种子。
 
 # [ModelZoo主页](#目录)
 

@@ -1,50 +1,141 @@
-# 遥感影像变化检测
-## 深度监督影像融合网络DSIFN用于高分辨率双时相遥感影像变化检测
-论文：2020ISPRS《A deeply supervised image fusion network for change detection in high resolution bi-temporal remote sening images》  
-链接：[https://doi.org/10.1016/j.isprsjprs.2020.06.003](https://doi.org/10.1016/j.isprsjprs.2020.06.003)  
-代码参考：[https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images)  
-![网络图](image.png)
-&emsp;
-1. 下载常用的遥感变化检测影像数据集，如WHU ChangeDetection, LEVIR-CD等
-2. 将数据集整理成如下格式：
-注意：A、B、label中的图片名字必须对应！
+# Readme
+
+## Contents
+
+- [Readme](#readme)
+  - [Contents](#contents)
+  - [Model Description](#model-description)
+  - [Model Architecture](#model-architecture)
+  - [Dataset](#dataset)
+  - [Environment Requirements](#environment-requirements)
+  - [Script Description](#script-description)
+    - [Script and Sample Code](#script-and-sample-code)
+    - [Training Process](#training-process)
+      - [Script Parameters](#script-parameters)
+      - [Training](#training)
+    - [Evaluation Process](#evaluation-process)
+    - [Inference Process](#inference-process)
+  - [Description of Random Situation](#description-of-random-situation)
+  - [ModelZoo Homepage](#modelzoo-homepage)
+
+## [Model Description](#contents)
+
+ This is a deeply supervised image fusion network (IFN) for change detection in high resolution bi-temporal remote sensing images.  Specifically, highly representative deep features of bi-temporal images are firstly extracted through a fully convolutional two-stream architecture.  Then, the extracted deep features are fed into a deeply supervised difference discrimination network (DDN) for change detection.  To improve boundary completeness and internal compactness of objects in the output change maps, multi-level deep features of raw images are fused with image difference features by means of attention modules for change map reconstruction.  DDN is further enhanced by directly introducing change map losses to intermediate layers in the network, and the whole network is trained in an end-to-end manner.
+
+[Paper:](https://doi.org/10.1016/j.isprsjprs.2020.06.003)  
+C. Zhang et al., "A deeply supervised image fusion network for change detection in high resolution bi-temporal remote sensing images," ISPRS Journal of Photogrammetry and Remote Sensing, vol. 166, pp. 183-200, 2020/08/01/ 2020, doi: https://doi.org/10.1016/j.isprsjprs.2020.06.003.
+
+
+
+Github:
+[https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images)  
+
+## [Model Architecture](#contents)
+
+![Network Figure](image.png)
+
+## [Dataset](#contents)
+
+1. Download remote sensing building change detection image dataset, such as WHU ChangeDetection, LEVIR-CD, etc.
+  The dataset used for this example：[LEVIR-CD](https://justchenhao.github.io/LEVIR/)
+
+2. Organize the data set into the following format:
+**Note:** The picture names in **T1, T2 and Label** must correspond!
+
 ```
 .. code-block::
         .
         └── image_folder_dataset_directory
-             ├── A
+             ├── T1
              │    ├── 000000000001.jpg
              │    ├── 000000000002.jpg
              │    ├── ...
-             ├── B
+             ├── T2
              │    ├── 000000000001.jpg
              │    ├── 000000000002.jpg
              │    ├── ...
-             ├── label
+             ├── Label
              │    ├── 000000000001.jpg
              │    ├── 000000000002.jpg
              │    ├── ...
 ```
-3. 根据需求修改config中的参数
+## [Environment Requirements](#contents)
+
+This code is GPU platform **1P** version
+
+- Hardware
+    - Prepare hardware environment with GPU platform.
+- Framework
+    - [LuojiaNet](http://58.48.42.237/luojiaNet/)
+- For more information, please check the resources below：
+    - [LuojiaNet tutorials](http://58.48.42.237/luojiaNet/tutorial/quickstart/)
+    - [LuojiaNet Python API](http://58.48.42.237/luojiaNet/luojiaNetapi/)
+
+
+## [Script Description](#contents)
+
+### [Script and Sample Code](#contents)
+
+```text
+└─Building_CD
+  ├─README.md
+  ├─README_CN.md
+  ├─dataset.py                      # Dataset IO
+  ├─IFN.py                          # IFN network model
+  ├─loss.py                         # Loss function
+  ├─eval.py                         # Evaluating results
+  ├─prediction.py                   # Inference side code
+  ├─config.py                       # Model configuration
+  └─train.py                        # Training the network
 ```
-    "device_target":"GPU",      #GPU或CPU
-    "device_id":1,  #显卡ID
-    "dataset_path": "./CD_data",  #数据存放位置
-    "save_checkpoint_path": "./checkpoint",  #保存的参数存放位置
-    "resume":True,   #是否载入模型训练
+
+
+### [Training Process](#contents)
+
+#### [Script Parameters](#contents)
+
+Major parameters ``config.py`` as follows:
+
+
+```
+    "device_target":"GPU",      #GPU \ CPU \ Ascend
+    "device_id":0,  # device ID
+    "dataset_path": "/cache/data/",  # datset path
+    "save_checkpoint_path": "/cache/checkpoint",   # save checkpoint path
+    "resume":False,   # Whether to load pretrained model to train
     "batch_size": 8,
     "aug" : True,
-    "step_per_epoch": 200,
-    "epoch_size": 200, #训练次数
-    "save_checkpoint": True, #是否保存模型
-    "save_checkpoint_epochs": 200, #多少次迭代保存一次模型
-    "keep_checkpoint_max": 10, #保存模型的最大个数
-    "decay_epochs": 20, #学习率衰减的epoch数
-    "max_lr": 0.001, #最大学习率
-    "min_lr": 0.00001 #最小学习率
+    "steps_per_epoch": 200,
+    "epoch_size": 200, 
+    "save_checkpoint": True, # Whether to save checkpoint
+    "save_checkpoint_epochs": 200, # Save the model for every xx epoches
+    "keep_checkpoint_max": 10, # The maximum number of models to save
+    "decay_epochs": 20, # The number of epochs that the learning rate decays
+    "max_lr": 0.001, # Maximum learning rate
+    "min_lr": 0.00001 # Minimum learning rate
 ```
-4. 设置完毕后，在终端运行``python train.py``进行训练
-5. 训练好的模型会根据前面设置的参数保存在相应的目录下，选择合适的模型，使用prediction.py进行推理，在终端运行``python prediction.py --checkpoint_path **** --dataset_path ****``或``python prediction.py --checkpoint_path **** --left_input_file **** --right_input_file ****``进行推理，其参数设置如下   
+
+
+#### [Training](#contents)
+
+Run ``python train.py`` on the terminal for training
+
+
+### [Evaluation Process](#contents)
+
+Run ``python eval.py --checkpoint_path **** --dataset_path ****`` on the terminal to evaluate, with the following parameters:
+
+```
+    --checkpoint_path, type=str, default=None, help='Saved checkpoint file path'
+    --dataset_path, type=str, default=None, help='Eval dataset path'
+    --device_target, type=str, default=config.device_target, help='Device target'
+    --device_id, type=int, default=config.device_id, help='Device id'
+```
+
+### [Inference Process](#contents)
+
+Run``python prediction.py --checkpoint_path **** --dataset_path ****`` or ``python prediction.py --checkpoint_path **** --left_input_file **** --right_input_file ****`` on the terminal to inference, with the following parameters:
+
 ```
     --checkpoint_path, type=str, default=None, help='Saved checkpoint file path'
     --dataset_path, type=str, default=None, help='Predict dataset path'
@@ -54,10 +145,11 @@
     --device_target, type=str, default=config.device_target, help='Device target'
     --device_id, type=int, default=config.device_id, help='Device id'
 ```
-6. 训练好的模型会根据前面设置的参数保存在相应的目录下，选择合适的模型，使用eval.py进行评估，在终端运行``python eval.py --checkpoint_path **** --dataset_path ****``进行评估，其参数设置如下   
-```
-    --checkpoint_path, type=str, default=None, help='Saved checkpoint file path'
-    --dataset_path, type=str, default=None, help='Eval dataset path'
-    --device_target, type=str, default=config.device_target, help='Device target'
-    --device_id, type=int, default=config.device_id, help='Device id'
-```
+
+## [Description of Random Situation](#contents)
+
+There are random seeds in ``eval.py`` and ``prediction.py`` files.
+
+## [ModelZoo Homepage](#contents)
+
+Please check the [Model Zoo](https://github.com/WHULuoJiaTeam/Model_Zoo).

@@ -1,13 +1,47 @@
-# 遥感影像变化检测
-## 深度监督影像融合网络DSIFN用于高分辨率双时相遥感影像变化检测
-论文：2020TGRS《Building Change Detection for Remote Sensing Images Using a Dual-Task Constrained Deep Siamese Convolutional Network Model》  
-链接：[https://doi.org/10.1109/LGRS.2020.2988032](https://doi.org/10.1109/LGRS.2020.2988032)  
-代码参考：[https://github.com/fitzpchao/DTCDSCN](https://github.com/fitzpchao/DTCDSCN)  
-![网络图](image.png)
-&emsp;
-1. 下载常用的遥感变化检测影像数据集，如WHU ChangeDetection等带对应时相标签的数据集（按照论文内的设置）
-2. 将数据集整理成如下格式：
-注意：A、B、label中的图片名字必须对应！
+# Readme
+
+## Contents
+
+- [Readme](#readme)
+  - [Contents](#contents)
+  - [Model Description](#model-description)
+  - [Model Architecture](#model-architecture)
+  - [Dataset](#dataset)
+  - [Environment Requirements](#environment-requirements)
+  - [Quick Start(Optional)](#quick-startoptional)
+  - [Script Description](#script-description)
+    - [Script and Sample Code](#script-and-sample-code)
+    - [Training Process](#training-process)
+      - [Script Parameters](#script-parameters)
+      - [Training](#training)
+    - [Evaluation Process](#evaluation-process)
+    - [Inference Process](#inference-process)
+  - [Description of Random Situation](#description-of-random-situation)
+  - [ModelZoo Homepage](#modelzoo-homepage)
+
+## [Model Description](#contents)
+
+This is a dual-task constrained deep Siamese convolutional network (DTCDSCN) model, which contains three subnetworks: a change detection network and two semantic segmentation networks.  DTCDSCN can accomplish both change detection and semantic segmentation at the same time, which can help to learn more discriminative object-level features and obtain a complete change detection map.  
+
+[Paper:](https://doi.org/10.1109/LGRS.2020.2988032) 
+Y. Liu, C. Pang, Z. Zhan, X. Zhang and X. Yang, "Building Change Detection for Remote Sensing Images Using a Dual-Task Constrained Deep Siamese Convolutional Network Model," in IEEE Geoscience and Remote Sensing Letters, vol. 18, no. 5, pp. 811-815, May 2021, doi: 10.1109/LGRS.2020.2988032.
+
+Github:
+[https://github.com/fitzpchao/DTCDSCN](https://github.com/fitzpchao/DTCDSCN)   
+
+## [Model Architecture](#contents)
+
+![Network Figure](image.png)
+
+## [Dataset](#contents)
+
+1. Download remote sensing building change detection image dataset, such as WHU ChangeDetection, LEVIR-CD, etc.
+  The dataset used for this example：[WHU Building change detection dataset](http://gpcv.whu.edu.cn/data/building_dataset.html) 
+
+2. Organize the data set into the following format:
+**Note:** The picture names in **A, B, building_A, building_B, and label** must correspond!
+Where, **A** and **building_A** are phase **A** image and corresponding building mask respectively, **B** and **building_B** are phase **B** image and corresponding building mask respectively, and **label** is the corresponding change mask
+
 ```
 .. code-block::
         .
@@ -33,26 +67,106 @@
              │    ├── 000000000002.jpg
              │    ├── ...
 ```
-3. 根据需求修改config中的参数
+
+## [Environment Requirements](#contents)
+
+This code is Huawei Modelarts Ascend platform **1P** version
+
+- Hardware
+    - Prepare hardware environment with Ascend platform.
+- Framework
+    - [LuojiaNet](http://58.48.42.237/luojiaNet/)
+- For more information, please check the resources below：
+    - [LuojiaNet tutorials](http://58.48.42.237/luojiaNet/tutorial/quickstart/)
+    - [LuojiaNet Python API](http://58.48.42.237/luojiaNet/luojiaNetapi/)
+
+## [Quick Start(Optional)](#contents)
+
+- After installing LuojiaNet via the official website, you can start training and evaluation as follows:
+
+- Train on [ModelArts](https://support.huaweicloud.com/modelarts/)
+
+ ```text
+  # Train 1p with Ascend
+  # (1) Upload or copy your pretrained model to S3 bucket.
+  # (2) Upload a zip dataset to S3 bucket. (you could also upload the origin dataset, but it can be so slow.)
+  # (3) Set the code directory to "/path/Building-CD" on the website UI interface.
+  # (4) Set the startup file to "train.py" on the website UI interface.
+  # (5) Set the "Dataset path" and "Output file path" and "Job log path" to your path on the website UI interface.
+  # (6) Create your job.
+  #
+  # Eval 1p with Ascend
+  # (1) Upload or copy your pretrained model to S3 bucket.
+  # (2) Upload a zip dataset to S3 bucket. (you could also upload the origin dataset, but it can be so slow.)
+  # (3) Set the code directory to "/path/Building-CD" on the website UI interface.
+  # (4) Set the startup file to "prediction.py" on the website UI interface.
+  # (5) Set the "Dataset path" and "Output file path" and "Job log path" to your path on the website UI interface.
+  # (6) Create your job.
+  ```
+
+## [Script Description](#contents)
+
+### [Script and Sample Code](#contents)
+
+```text
+└─Building_CD
+  ├─README.md
+  ├─README_CN.md
+  ├─dataset.py                      # Dataset IO
+  ├─module.py                       # DTCDSCN network model
+  ├─cdloss.py                       # Loss function
+  ├─eval.py                         # Evaluating results
+  ├─prediction.py                   # Inference side code
+  ├─config.py                       # Model configuration
+  └─train.py                        # Training the network
 ```
-    "device_target":"GPU",      #GPU或CPU
-    "device_id": 2,  #显卡ID
-    "dataset_path": "./CD_data",  #数据存放位置
-    "save_checkpoint_path": "./checkpoint",  #保存的参数存放位置
-    "resume":False,   #是否载入模型训练
-    "batch_size": 8,
+
+
+### [Training Process](#contents)
+
+#### [Script Parameters](#contents)
+
+Major parameters ``config.py`` as follows:
+
+```
+    "device_target":"Ascend",     #GPU \ CPU \ Ascend
+    "device_id": 0, # device ID
+    "dataset_path": "/cache/data/",  # datset path
+    "save_checkpoint_path": "/cache/checkpoint",  # save checkpoint path
+    "resume":False,  # Whether to load pretrained model to train
+    "batch_size": 4,
     "aug" : True,
     "step_per_epoch": 200,
-    "epoch_size": 200, #训练次数
-    "save_checkpoint": True, #是否保存模型
-    "save_checkpoint_epochs": 200, #多少次迭代保存一次模型
-    "keep_checkpoint_max": 10, #保存模型的最大个数
-    "decay_epochs": 20, #学习率衰减的epoch数
-    "max_lr": 0.001, #最大学习率
-    "min_lr": 0.00001 #最小学习率
+    "epoch_size": 200, 
+    "save_checkpoint": True, # Whether to save checkpoint
+    "save_checkpoint_epochs": 200, # Save the model for every xx epoches
+    "keep_checkpoint_max": 10, # The maximum number of models to save
+    "decay_epochs": 20, # The number of epochs that the learning rate decays
+    "max_lr": 0.001, # Maximum learning rate
+    "min_lr": 0.00001 # Minimum learning rate
 ```
-4. 设置完毕后，在终端运行``python train.py``进行训练
-5. 训练好的模型会根据前面设置的参数保存在相应的目录下，选择合适的模型，使用prediction.py进行推理，在终端运行``python prediction.py --checkpoint_path **** --dataset_path ****``或``python prediction.py --checkpoint_path **** --left_input_file **** --right_input_file ****``进行推理，其参数设置如下   
+
+
+#### [Training](#contents)
+
+Run ``python train.py`` on the terminal for training
+
+
+### [Evaluation Process](#contents)
+
+Run ``python eval.py --checkpoint_path **** --dataset_path ****`` on the terminal to evaluate, with the following parameters:
+
+```
+    --checkpoint_path, type=str, default=None, help='Saved checkpoint file path'
+    --dataset_path, type=str, default=None, help='Eval dataset path'
+    --device_target, type=str, default=config.device_target, help='Device target'
+    --device_id, type=int, default=config.device_id, help='Device id'
+```
+
+### [Inference Process](#contents)
+
+Run``python prediction.py --checkpoint_path **** --dataset_path ****`` or ``python prediction.py --checkpoint_path **** --left_input_file **** --right_input_file ****`` on the terminal to inference, with the following parameters:
+
 ```
     --checkpoint_path, type=str, default=None, help='Saved checkpoint file path'
     --dataset_path, type=str, default=None, help='Predict dataset path'
@@ -62,10 +176,11 @@
     --device_target, type=str, default=config.device_target, help='Device target'
     --device_id, type=int, default=config.device_id, help='Device id'
 ```
-6. 训练好的模型会根据前面设置的参数保存在相应的目录下，选择合适的模型，使用eval.py进行评估，在终端运行``python eval.py --checkpoint_path **** --dataset_path ****``进行评估，其参数设置如下   
-```
-    --checkpoint_path, type=str, default=None, help='Saved checkpoint file path'
-    --dataset_path, type=str, default=None, help='Eval dataset path'
-    --device_target, type=str, default=config.device_target, help='Device target'
-    --device_id, type=int, default=config.device_id, help='Device id'
-```
+
+## [Description of Random Situation](#contents)
+
+There are random seeds in ``eval.py`` and ``prediction.py`` files.
+
+## [ModelZoo Homepage](#contents)
+
+Please check the [Model Zoo](https://github.com/WHULuoJiaTeam/Model_Zoo).

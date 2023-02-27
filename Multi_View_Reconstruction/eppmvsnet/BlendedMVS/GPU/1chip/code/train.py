@@ -67,7 +67,7 @@ def get_opts():
     """set options"""
     parser = ArgumentParser()
     parser.add_argument('--gpu_id', type=int, default=0, choices=[0, 1, 2, 3, 4, 5, 6, 7],
-                        help='which gpu used to inference')
+                        help='which gpu used to train')
     ## data
     parser.add_argument('--root_dir', type=str,
                         default='D:\\eppmvsnet\\BlendedMVS',
