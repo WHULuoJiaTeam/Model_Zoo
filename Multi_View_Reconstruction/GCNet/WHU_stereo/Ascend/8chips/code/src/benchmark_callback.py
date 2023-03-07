@@ -21,31 +21,57 @@ import os
 from luojianet_ms import nn
 import numpy as np
 
+# class MyMAE(nn.Metric):
+#     def __init__(self):
+#         super(MyMAE, self).__init__()
+#         self.clear()
+#
+#     def clear(self):
+#         """初始化变量_abs_error_sum和_samples_num"""
+#         self._abs_error_sum = 0  # 保存误差和
+#         self._samples_num = 0    # 累计数据量
+#
+#     def update(self, *inputs):
+#         """更新_abs_error_sum和_samples_num"""
+#         y_pred = inputs[0].asnumpy()
+#         y = inputs[1].asnumpy()
+#
+#         # 计算预测值与真实值的绝对误差
+#         abs_error_sum = np.abs(y - y_pred)
+#         self._abs_error_sum += abs_error_sum.sum()
+#
+#         # 样本的总数
+#         self._samples_num += y.shape[0]
+#
+#     def eval(self):
+#         """计算最终评估结果"""
+#         return self._abs_error_sum / self._samples_num
+
 class MyMAE(nn.Metric):
+    """定义metric"""
+
     def __init__(self):
         super(MyMAE, self).__init__()
         self.clear()
 
     def clear(self):
-        """初始化变量_abs_error_sum和_samples_num"""
-        self._abs_error_sum = 0  # 保存误差和
-        self._samples_num = 0    # 累计数据量
+        """初始化变量abs_error_sum和samples_num"""
+        self.abs_error_sum = 0
+        self.samples_num = 0
 
     def update(self, *inputs):
-        """更新_abs_error_sum和_samples_num"""
+        """更新abs_error_sum和samples_num"""
         y_pred = inputs[0].asnumpy()
         y = inputs[1].asnumpy()
 
         # 计算预测值与真实值的绝对误差
-        abs_error_sum = np.abs(y - y_pred)
-        self._abs_error_sum += abs_error_sum.sum()
-
-        # 样本的总数
-        self._samples_num += y.shape[0]
+        error_abs = np.abs(y.reshape(y_pred.shape) - y_pred)
+        self.abs_error_sum += error_abs.sum()
+        self.samples_num += y.shape[0]  # 样本的总数
 
     def eval(self):
         """计算最终评估结果"""
-        return self._abs_error_sum / self._samples_num
+        return self.abs_error_sum / self.samples_num
 
 class BenchmarkTraining(Callback):
     """BenchmarkTraining callback util"""
@@ -80,9 +106,9 @@ class BenchmarkTraining(Callback):
         dtime = btime - atic
         total_time = btime - self.tic
         print(f"----------epoch: {cb_params.cur_epoch_num}, loss: "
-              f"{eval_result['0']} eval_result: {eval_result['1']}----------")
+              f"{eval_result['loss']} eval_result: {eval_result['mae']}----------")
         print('One eval elapsed:' + str(dtime))
-        self.res.append({'epoch': cb_params.cur_epoch_num, 'loss': eval_result['0'], 'eval_result': eval_result['1'],
+        self.res.append({'epoch': cb_params.cur_epoch_num, 'loss': eval_result['loss'], 'eval_result': eval_result['mae'],
                          'eval_elapsed': dtime, 'total_elapsed': total_time})
         # if eval_result > self.train_threshold:
         #     print("================================")

@@ -146,8 +146,10 @@ if __name__ == "__main__":
                   loss_scale_manager=loss_scale)
 
     data_list = read_list(opt.train_list)
+    data_list_val = read_list(opt.valid_list)
 
     data_path = []
+    data_path_val = []
 
     for item_list in data_list:
         tmp_data_path = []
@@ -155,8 +157,15 @@ if __name__ == "__main__":
             tmp_data_path.append(opt.data_root + item)
         data_path.append(tmp_data_path)
 
+    for item_list in data_list:
+        tmp_data_path = []
+        for item in item_list:
+            tmp_data_path.append(opt.data_root + item)
+        data_path_val.append(tmp_data_path)
+
+
     ds_train = create_dataset(data_path, opt.batch, opt.crop_w, opt.crop_h, opt.dataset_type)
-    ds_val = create_dataset(opt.valid_list, opt.batch, opt.crop_w, opt.crop_h, opt.dataset_type)
+    ds_val = create_dataset(data_path_val, opt.batch, opt.crop_w, opt.crop_h, opt.dataset_type)
 
     train_data_size = ds_train.get_dataset_size()
 
