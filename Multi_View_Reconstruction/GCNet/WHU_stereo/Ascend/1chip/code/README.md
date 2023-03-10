@@ -218,7 +218,7 @@ sh train.sh
 ```
 or
 ```
-python train.py --train_list="list/whu_training.txt" --valid_list="list/whu_validation.txt" --crop_h=256 --crop_w=512 --max_disp=160 --batch=1 --epochs=30 --dataset_type="whu" --lr=0.001 --amp_level='O0'
+python train.py --train_list="list/whu_training.txt" --valid_list="list/whu_validation.txt" --data_root=your_dataset_path
 ```
 
 The python command above will run in the background, you can view the results through the console.

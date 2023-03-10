@@ -19,14 +19,19 @@ import luojianet_ms.dataset as ds
 from luojianet_ms import nn, ops
 from src.GCNet import GCNet
 import os
+import luojianet_ms as ms
 import luojianet_ms.context as context
 from luojianet_ms import dtype as mstype
 from luojianet_ms import Model
 from luojianet_ms.nn import Metric, rearrange_inputs
 from luojianet_ms.train.callback import Callback, ModelCheckpoint, CheckpointConfig, LossMonitor, TimeMonitor
+from luojianet_ms.communication.management import init,get_rank,get_group_size
+from luojianet_ms.train.loss_scale_manager import FixedLossScaleManager
+from luojianet_ms.nn import learning_rate_schedule
+from src.benchmark_callback import *
+
 import numpy as np
 import argparse
-import luojianet_ms as ms
 
 # gpu setting
 #os.environ["CUDA_VISIBLE_DEVICES"] = '1'
@@ -123,39 +128,50 @@ if __name__ == "__main__":
 
     # loss
     loss_func = L1Loss()
+    loss_scale = FixedLossScaleManager(1024, drop_overflow_update=False)
+
     # optimizer
     net_opt = nn.RMSProp(net.trainable_params(), learning_rate=opt.lr)
 
     # 执行训练
     model = Model(net, loss_func, net_opt,
-                  metrics={'loss':nn.Loss(), 'mae':ms.train.MAE()},
-                  amp_level=opt.amp_level)
+                  metrics={'loss':nn.Loss(), 'mae':MyMAE()},
+                  amp_level=opt.amp_level,
+                  loss_scale_manager=loss_scale)
 
     data_list = read_list(opt.train_list)
-    val_data_list = read_list(opt.valid_list)
+    data_list_val = read_list(opt.valid_list)
+
     data_path = []
-    val_data_path = []
-    
+    data_path_val = []
+
     for item_list in data_list:
         tmp_data_path = []
         for item in item_list:
             tmp_data_path.append(opt.data_root + item)
         data_path.append(tmp_data_path)
 
-    for item_list in val_data_list:
+    for item_list in data_list:
         tmp_data_path = []
         for item in item_list:
             tmp_data_path.append(opt.data_root + item)
-        val_data_path.append(tmp_data_path)
+        data_path_val.append(tmp_data_path)
 
     ds_train = create_dataset(data_path, opt.batch, opt.crop_w, opt.crop_h)
-    ds_val = create_dataset(val_data_path, opt.batch, opt.crop_w, opt.crop_h)
+    ds_val = create_dataset(data_path_val, opt.batch, opt.crop_w, opt.crop_h)
 
-    # save checkpoint of the model
-    config_ck = CheckpointConfig(save_checkpoint_steps=ds_train.get_dataset_size(), keep_checkpoint_max=opt.epochs)
+    train_data_size = ds_train.get_dataset_size()
+
+    callbacks = [LossMonitor(per_print_times=10),
+                 TimeMonitor(data_size=train_data_size),
+                 BenchmarkTraining(model, ds_val)]
+
+    time_cb = TimeMonitor(data_size=ds_train.get_dataset_size())
+    config_ck = CheckpointConfig(save_checkpoint_steps=opt.save_ckpt_epochs,
+                                     keep_checkpoint_max=opt.keep_checkpoint_max)
     ckpoint_cb = ModelCheckpoint(prefix="checkpoint_gcnet_whu", directory=opt.logdir, config=config_ck)
-    time_cb = TimeMonitor()
+    callbacks.append(ckpoint_cb)
 
-    output = model.train(opt.epochs, ds_train, callbacks=[ckpoint_cb, LossMonitor(1), time_cb],
-                         dataset_sink_mode=False)
-    accuracy = model.eval(ds_val, dataset_sink_mode=False)
+    output = model.train(opt.epochs, ds_train, callbacks=callbacks)
+
+

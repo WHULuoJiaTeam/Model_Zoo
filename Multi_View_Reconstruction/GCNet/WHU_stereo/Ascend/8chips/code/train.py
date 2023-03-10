@@ -49,7 +49,6 @@ parser.add_argument("--crop_w", type=int, default=512, help="crop width")
 parser.add_argument("--max_disp", type=int, default=160, help="max disparity")
 parser.add_argument("--batch", type=int, default=1, help="batch size")
 parser.add_argument("--epochs", type=int, default=30, help="the number of epoch")
-parser.add_argument("--dataset_type", type=str, default="whu", help="dataset")
 parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
 parser.add_argument("--amp_level", type=str, default='O0', help="amp level")
 parser.add_argument('--save_ckpt_epochs', type=int, default=5, help='number of epochs to save ckpt')
@@ -65,7 +64,7 @@ def read_list(list_path):
 
     return data
 
-def create_dataset(list_file, batch_size, crop_w, crop_h, dataset):
+def create_dataset(list_file, batch_size, crop_w, crop_h):
     # define dataset
     ds.config.set_seed(1)
     dataset_generator = DatasetGenerator(list_file, crop_h, crop_w)
@@ -164,8 +163,8 @@ if __name__ == "__main__":
         data_path_val.append(tmp_data_path)
 
 
-    ds_train = create_dataset(data_path, opt.batch, opt.crop_w, opt.crop_h, opt.dataset_type)
-    ds_val = create_dataset(data_path_val, opt.batch, opt.crop_w, opt.crop_h, opt.dataset_type)
+    ds_train = create_dataset(data_path, opt.batch, opt.crop_w, opt.crop_h)
+    ds_val = create_dataset(data_path_val, opt.batch, opt.crop_w, opt.crop_h)
 
     train_data_size = ds_train.get_dataset_size()
 
