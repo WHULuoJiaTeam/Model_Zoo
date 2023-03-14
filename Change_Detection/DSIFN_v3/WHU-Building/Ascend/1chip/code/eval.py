@@ -34,6 +34,7 @@ from dataset import create_Dataset
 from config import config 
 import argparse
 import moxing as mox
+from PIL import Image
 
 # caculate precision between output and target
 def precision(output, target):
@@ -109,6 +110,9 @@ def infer(model_path, data_path):
     for _, data in enumerate(data_loader):
         output = model(data["image"]).asnumpy()
         output = ((output > 0.12)*255).astype('uint8')
+        tim=Image.fromarray(output[0][0])
+        tim.save(f"/cache/opt/{_}.tiff")
+
         output=output/255
         pre = precision(output, data["mask"].asnumpy())
         precisions.update(pre, 1)
@@ -134,7 +138,7 @@ if __name__ == '__main__':
     mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/A_test/', config.dataset_path+'A/')
     mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/B_test/', config.dataset_path+'B/')
     mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/label_test/', config.dataset_path+'label/')
-
+    os.mkdir('/cache/opt')
 
     parser = argparse.ArgumentParser(description='Change Detection')
     parser.add_argument('--checkpoint_path', type=str, default=ckpt_cache, help='Saved checkpoint file path')
@@ -149,3 +153,4 @@ if __name__ == '__main__':
         infer(args.checkpoint_path,args.dataset_path)
     else:
         print("Error:There are no images to predict or no weights!")
+        

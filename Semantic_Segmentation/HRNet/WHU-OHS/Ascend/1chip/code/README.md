@@ -1,11 +1,40 @@
-### 高光谱遥感影像语义分割——HRNet-3D
-![HRNet-3D网络结构](HRNet3D.PNG)
+# Readme
 
-1.数据集组织格式
->数据集链接
->WHU_OHS:http://irsip.whu.edu.cn/resources/WHU_OHS_show.php
-将数据集的影像（训练集和测试集的所有影像）放入"image"文件夹，训练集标签放入"train"文件夹，测试集标签放入"test"文件夹，标签的名字和对应影像的名字相同，例如，将数据组织成以下格式：
+## Contents
 
+- [Readme](#readme)
+  - [Contents](#contents)
+  - [Model Description](#model-description)
+  - [Model Architecture](#model-architecture)
+  - [Dataset](#dataset)
+  - [Environment Requirements](#environment-requirements)
+  - [Script Description](#script-description)
+    - [Script and Sample Code](#script-and-sample-code)
+    - [Training Process](#training-process)
+      - [Script Parameters](#script-parameters)
+      - [Training](#training)
+    - [Evaluation Process](#evaluation-process)
+    - [Inference Process](#inference-process)
+  - [Description of Random Situation](#description-of-random-situation)
+  - [ModelZoo Homepage](#modelzoo-homepage)
+
+## [Model Description](#contents)
+HRNet, or High-Resolution Net, is a general purpose convolutional neural network for tasks like semantic segmentation, object detection and image classification. It is able to maintain high resolution representations through the whole process. We start from a high-resolution convolution stream, gradually add high-to-low resolution convolution streams one by one, and connect the multi-resolution streams in parallel. The authors conduct repeated multi-resolution fusions by exchanging the information across the parallel streams over and over.
+
+Link: https://doi.org/10.48550/arXiv.1908.07919
+
+## [Model Architecture](#contents)
+
+![Network Figure](image.png)
+
+## [Dataset](#contents)
+WHU-OHS dataset consists of about 90 million manually labeled samples of 7795 Orbita hyperspectral satellite (OHS) image patches (sized 512 × 512) from 40 Chinese locations. This dataset ranges from the visible to near-infrared range, with an average spectral resolution of 15 nm. The extensive geographical distribution, large spatial coverage, and widely used classification system make the WHU-OHS dataset a challenging benchmark. 
+
+Download Link: http://irsip.whu.edu.cn/resources/WHU_OHS_show.php
+
+Put the images of the data set (all images of the training set and test set) in the "image" folder, the training set label in the "train" folder, and the test set label in the "test" folder, with the name of the label the same as the name of the corresponding image. For example, organize the data in the following format:
+
+```    
     └── data
          ├── image
          │    ├── 1.tif
@@ -16,53 +45,79 @@
          │    ├── 2.tif
          ├── test
          │    ├── 3.tif
-    
+```
 
-2.网络训练
+## [Environment Requirements](#contents)
 
-（1）修改config.py中的参数
-    
-"device_target": "CPU"或"GPU" 
+- Hardware
+    - Prepare hardware environment with Ascend or GPU platform.
+- Framework
+    - [LuojiaNet](http://58.48.42.237/luojiaNet/)
+- For more information, please check the resources below：
+    - [LuojiaNet tutorials](http://58.48.42.237/luojiaNet/tutorial/quickstart/)
+    - [LuojiaNet Python API](http://58.48.42.237/luojiaNet/luojiaNetapi/)
 
-"dataset_path" : 数据集根目录
+## [Script Description](#contents)
 
-"normalize": 是否对影像进行归一化，False或True，若为True，则逐波段进行标准差归一化
+### [Script and Sample Code](#contents)
 
-"nodata_value": 标签中的Nodata值（即不作为样本的像素值）
+```text
+└─HRNET
+  ├── README.md
+  ├── README_CN.md
+  ├── config.py                     # model configuration
+  ├── dataset.py                    # data loading
+  ├── eval.py                       # evaluation 
+  ├── model.py                      # HRNET network model
+  ├── predict.py                    # prediction
+  └── train.py                      # training the network
+```
 
-"in_channels": 输入通道数，即影像波段数
+### [Training Process](#contents)
 
-"classnum": 类别数
+#### [Script Parameters](#contents)
 
-"batch_size": 训练集batchsize
-
-"num_epochs": 训练迭代次数
-
-"weight": 是否在损失函数中对各类别加权，默认为不加权（None），若需要加权，则给出一个各类别权重的list
-
-"learning_rate": 训练学习率
-
-"save_model_path": 训练模型保存文件夹路径
-
-（2）执行cmd命令进行网络的训练
+The main parameters in ``config.py`` are as follows:
 
 ```
-python train.py
+    device_target = 'Ascend', # device，CPU,Ascend or GPU
+    dataset_path = '/cache/dataset/', # dataset root path
+    normalize = False, # whether to normalize the image
+    nodata_value = 0, # the Nodata value in the label
+    in_channels = 32, # number of input channels (i.e. number of image bands)
+    classnum = 24, # class number
+    batch_size = 2, # batchsize
+    num_epochs = 100, # epoch
+    weight = None, # Whether to weight classes in the loss function. Default is None. If weighting is required, a list of class weights is given
+    learning_rate = 1e-4, # learning rate
+    save_model_path = '/cache/checkpoint/' # ckpt saving path
 ```
-3.网络测试
+#### [Training](#contents)
 
-执行cmd命令
+Run ``python train.py`` on the terminal for training
 
+
+### [Evaluation Process](#contents)
+
+Run
 ```
 python eval.py --dataset_path xxx --checkpoint_path xxx --device_target xxx
 ```
-进行网络的测试。其中--dataset_path为测试集根目录，--checkpoint_path为训练好的模型路径，--device_target为设备类型，包括CPU、GPU、Ascend
+in terminal to test the network. In the command, ``--dataset_path`` indicates the root directory of the test set, ``--checkpoint_path`` indicates the trained model path, and ``--device_target ``indicates the device type, including CPU, GPU and Ascend
 
-4.网络预测
 
-执行cmd命令
+### [Inference Process](#contents)
+Run 
 
 ```
 python predict.py --input_file xxx --output_folder xxx --checkpoint_path xxx --device_target xxx
 ```
-进行网络的预测。其中--input_file为输入的单张影像路径，--output_folder为输出的结果所在文件夹，输出结果文件名与输入影像相同，保存为tif格式，--checkpoint_path为训练好的模型路径，--device_target为设备类型，包括CPU、GPU、Ascend
+in terminal to interface. Where ``--input_file`` is the path of the input single image, ``--output_folder`` is the folder where the output results reside, the output result file name is the same as the input image and saved in tif format, and ``--checkpoint_path`` is the trained model path. ``--device_target`` Indicates the device type, including CPU, GPU, and Ascend
+
+## [Description of Random Situation](#contents)
+
+There are no random seed in our files.
+
+## [ModelZoo Homepage](#contents)
+
+Please check the [Model Zoo](https://github.com/WHULuoJiaTeam/Model_Zoo).

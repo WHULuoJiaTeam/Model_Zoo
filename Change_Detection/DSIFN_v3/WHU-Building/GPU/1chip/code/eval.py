@@ -96,6 +96,7 @@ def infer(model_path, data_path):
     for _, data in enumerate(data_loader):
         output = model(data["image"]).asnumpy()
         output = ((output > 0.12)*255).astype('uint8')
+        output = ((output > 0.95) * 255).astype('uint8')
         output=output/255
         pre = precision(output, data["mask"].asnumpy())
         precisions.update(pre, 1)

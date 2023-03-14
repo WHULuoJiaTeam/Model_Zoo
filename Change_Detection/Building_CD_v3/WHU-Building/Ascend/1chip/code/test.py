@@ -20,16 +20,14 @@ Created on Thu Apr 15 08:55:05 2021
 
 @author: dell
 """
-from turtle import forward
+
 from mainnet import *
 import luojianet_ms
 import numpy as np
 from PIL import Image
-import cv2
-from luojianet_ms import Tensor, load_checkpoint, load_param_into_net
+from luojianet_ms import  load_checkpoint, load_param_into_net
 import os
 import tqdm
-import luojianet_ms.dataset.vision.c_transforms as c_vision
 import luojianet_ms.dataset.vision.py_transforms as py_vision
 from luojianet_ms import context
 

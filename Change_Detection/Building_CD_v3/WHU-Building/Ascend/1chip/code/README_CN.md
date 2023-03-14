@@ -36,7 +36,7 @@ S. Gao, W. Li, K. Sun, J. Wei, Y. Chen, and X. Wang, “Built-Up Area Change Det
 
 1. 下载遥感建筑物变化检测影像数据集，推荐使用WHU Building change detection dataset
   本例中使用的数据集：[WHU Building change detection dataset](http://gpcv.whu.edu.cn/data/building_dataset.html) 
-1. 将数据集整理成如下格式：  
+2. 将数据集整理成如下格式：  
 注意：A、B、building_A、building_B、label中的图片名字必须对应！  
 其中，A，building_A分别为A时相影像以及对应的建筑物掩膜，B，building_B分别为B时相影像以及对应的建筑物掩膜，label为对应的变化掩膜
 

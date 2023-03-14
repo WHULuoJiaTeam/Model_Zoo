@@ -30,6 +30,8 @@ import luojianet_ms.dataset.vision.py_transforms as py_vision
 from PIL import Image
 import tqdm
 import moxing as mox
+from PIL import Image
+
 
 # caculate precision between output and target
 def precision(output, target):
@@ -132,7 +134,10 @@ def infer(model_path,data_path):
         output = model(in_tensor)
         output = output.squeeze(0).asnumpy()
         pd = output[2, :, :]
+        tim=Image.fromarray(pd)
         pd = ((pd > 0.5)*255).astype('uint8')
+        
+        tim.save(f"/cache/opt/{_}.tiff")
         pd2=pd/255
         target=target/255
         pre = precision(pd2, target)
@@ -152,8 +157,8 @@ def infer(model_path,data_path):
     print("Final Kappas: "+ str(Kappas.avg))
 
 if __name__ == '__main__':
-    # ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/code/best.ckpt'
-    ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/ckpt/CD-200_168.ckpt'
+    ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/code/best.ckpt'
+    # ckpt_obs = 'obs://luojianet-benchmark/Change_Detection/Building_CD_v3/WHU-BCD/1chip/ckpt/CD-200_168.ckpt'
 
     ckpt_cache = '/cache/ckpt/test.ckpt'
     mox.file.copy_parallel(ckpt_obs, ckpt_cache)
@@ -162,6 +167,7 @@ if __name__ == '__main__':
     mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/building_A_test/', config.dataset_path+'building_A/')
     mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/building_B_test/', config.dataset_path+'building_B/')
     mox.file.copy_parallel('obs://luojianet-benchmark-dataset/Change_Detection/WHU_CD_data_split/label_test/', config.dataset_path+'label/')
+    os.mkdir('/cache/opt')
     
     parser = argparse.ArgumentParser(description = 'Change Detection')
     parser.add_argument('--checkpoint_path', type = str, default = ckpt_cache, help = 'Saved checkpoint file path')
@@ -175,3 +181,4 @@ if __name__ == '__main__':
         infer(args.checkpoint_path,args.dataset_path)
     else:
         print("Error:There are no images to predict or no weights!")
+    mox.file.copy_parallel('/cache/opt', 'obs://luojianet-benchmark/test/')
